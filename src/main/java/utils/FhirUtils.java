@@ -24,15 +24,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class FhirUtils {
-  public static final String FHIR_MAIN_ROOT = "fhir";
   public static final String PRETTY = "_pretty";
   public static final String FORMAT = "_format";
   public static final String SUMMARY = "_summary";
   public static final String ELEMENTS = "_elements";
   public static final String GENERAL_PATH_PARAMETER_ERROR = "Error path parameter";
-  public static final String PREFER_MINIMAL = "minimal";
-  public static final String PREFER_REPRESENTATION = "representation";
-  public static final String PREFER_OPERATION_OUTCOME = "OperationOutcome";
   public static final String T4CINTERFACE_MAIN_ROOT = "t4cinterface";
   public static final String T4CINTERFACE_EVENTS_MESSAGE_SOURCE_ADDRESS = "t4cevents-address";
   public static final String T4CINTERFACE_EVENTS_MESSAGE_SOURCE_NAME = "t4cevents-message-source";
@@ -53,14 +49,14 @@ public class FhirUtils {
     if (preferHeader == null) {
       serverResponse.putHeader(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON)
         .end(dbResult.encodePrettily());
-    } else if (preferHeader.equalsIgnoreCase(FhirUtils.PREFER_MINIMAL)) {
+    } else if (preferHeader.equalsIgnoreCase(FhirHttpHeaderValues.RETURN_MINIMAL)) {
       serverResponse.putHeader(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.TEXT_PLAIN)
         .end();
-    } else if (preferHeader.equalsIgnoreCase(FhirUtils.PREFER_REPRESENTATION)) {
+    } else if (preferHeader.equalsIgnoreCase(FhirHttpHeaderValues.RETURN_REPRESENTATION)) {
       serverResponse.putHeader(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON);
       serverResponse.setStatusCode(HttpResponseStatus.CREATED.code()).
         end(dbResult.encodePrettily());
-    } else if (preferHeader.equalsIgnoreCase(FhirUtils.PREFER_OPERATION_OUTCOME)) {
+    } else if (preferHeader.equalsIgnoreCase(FhirHttpHeaderValues.RETURN_OPERATION_OUTCOME)) {
       serverResponse.putHeader(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON);
       OperationOutcome operationOutcome = new OperationOutcome();
       operationOutcome.setId(UUID.randomUUID().toString());
