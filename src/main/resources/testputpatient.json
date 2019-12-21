@@ -1,0 +1,13 @@
+{
+  "resourcedType": "Patient",
+  "id": "mybeautifulid",
+  "name": {
+    "given": [
+      "Giacomo"
+    ],
+    "family": "Zanotti"
+  },
+  "managingOrganization": {
+    "reference": "Organization/1"
+  }
+}

@@ -14,19 +14,16 @@ import model.elements.Metadata;
 import model.exceptions.NotValideFhirResourceException;
 import org.leadpony.justify.api.JsonSchema;
 import org.leadpony.justify.api.JsonValidationService;
-import org.leadpony.justify.api.ProblemHandler;
 
 import javax.json.JsonReader;
-import javax.rmi.CORBA.Util;
 import java.io.*;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-public class Utils {
+public class FhirUtils {
   public static final String FHIR_MAIN_ROOT = "fhir";
   public static final String PRETTY = "_pretty";
   public static final String FORMAT = "_format";
@@ -41,44 +38,29 @@ public class Utils {
   public static final String T4CINTERFACE_EVENTS_MESSAGE_SOURCE_NAME = "t4cevents-message-source";
   public static final String FHIR_EVENTS_PROXY_ADDRESS = "database-fhir-events-service";
   public static final DateTimeFormatter fullDateTime = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'hh:mm:ssZZZZZ");
-  public static final String PATH_ID = "ID";
-  public static final String SERVICE_ADDRESS = "database-fhir-service";
+  public static final String ID = "id";
+  public static final String USER_SERVICE_ADDRESS = "user-fhir-service";
+  public static final String DELETE_SERVICE_ADDRESS = "delete-fhir-service";
   public static final String HISTORY = "_history";
   public static final String PATH_VERSIONID = "vid";
+  public static final String BASE = "fhirAPI";
+  public static final String PATIENT_TYPE = "Patient";
+  public static final String PATIENTS_COLLECTION = "patients";
 
-
-  public static String getInternalIp() {
-    try {
-      return InetAddress.getLocalHost().getHostAddress();
-
-    } catch (UnknownHostException e) {
-      e.printStackTrace();
-      return "localhost";
-    }
-  }
-
-  public static String getHostName() {
-    try {
-      return InetAddress.getLocalHost().getHostName();
-    } catch (UnknownHostException e) {
-      e.printStackTrace();
-      return null;
-    }
-  }
 
   public static void createPostResponseBasedOnPreferHeader(String preferHeader, JsonObject dbResult,
                                                            HttpServerResponse serverResponse) {
     if (preferHeader == null) {
       serverResponse.putHeader(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON)
         .end(dbResult.encodePrettily());
-    } else if (preferHeader.equalsIgnoreCase(Utils.PREFER_MINIMAL)) {
+    } else if (preferHeader.equalsIgnoreCase(FhirUtils.PREFER_MINIMAL)) {
       serverResponse.putHeader(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.TEXT_PLAIN)
         .end();
-    } else if (preferHeader.equalsIgnoreCase(Utils.PREFER_REPRESENTATION)) {
+    } else if (preferHeader.equalsIgnoreCase(FhirUtils.PREFER_REPRESENTATION)) {
       serverResponse.putHeader(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON);
       serverResponse.setStatusCode(HttpResponseStatus.CREATED.code()).
         end(dbResult.encodePrettily());
-    } else if (preferHeader.equalsIgnoreCase(Utils.PREFER_OPERATION_OUTCOME)) {
+    } else if (preferHeader.equalsIgnoreCase(FhirUtils.PREFER_OPERATION_OUTCOME)) {
       serverResponse.putHeader(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON);
       OperationOutcome operationOutcome = new OperationOutcome();
       operationOutcome.setId(UUID.randomUUID().toString());
@@ -114,19 +96,19 @@ public class Utils {
     return MongoClient.createShared(vertx, configs, "fhir-pool");
   }
 
-  public static void validateJsonAgainstSchema(JsonObject patientJson) throws NotValideFhirResourceException {
+  public static void validateJsonAgainstSchema(JsonObject clientContent) throws NotValideFhirResourceException {
     JsonValidationService service = JsonValidationService.newInstance();
 
 
     ValidationHandler handler = new ValidationHandler();
 
-    InputStream inputStream = null;
+    InputStream inputStream;
     try {
-      inputStream = new BufferedInputStream(new FileInputStream(Utils.class.getClassLoader()
-        .getResource("fhir.schema.json").getFile()));
+      inputStream = new BufferedInputStream(new FileInputStream(Objects.requireNonNull(FhirUtils.class.getClassLoader()
+        .getResource("fhir.schema.json")).getFile()));
 
       JsonSchema schema = service.readSchema(inputStream);
-      InputStream json = new ByteArrayInputStream(patientJson.encode().getBytes());
+      InputStream json = new ByteArrayInputStream(clientContent.encode().getBytes());
       JsonReader reader = service.createReader(json, schema, handler);
 
       reader.readValue();

@@ -1,4 +1,4 @@
-package com.oracolo.fhir.database;
+package com.oracolo.fhir.database.user;
 
 import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.ProxyGen;
@@ -6,6 +6,7 @@ import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 
@@ -23,10 +24,14 @@ public interface UserDatabaseService {
   }
 
   @Fluent
-  UserDatabaseService createNewPatientResource(JsonObject requestBody, Handler<AsyncResult<JsonObject>> handler);
+  UserDatabaseService createOrUpdatePatientResource(JsonObject requestBody, Handler<AsyncResult<JsonObject>> handler);
 
   @Fluent
   UserDatabaseService fetchPatient(String id, List<String> queryParams, Handler<AsyncResult<JsonObject>> handler);
+
   @Fluent
   UserDatabaseService fetchPatientVersion(String id, String vId, List<String> queryParams, Handler<AsyncResult<JsonObject>> handler);
+
+  @Fluent
+  UserDatabaseService fetchAllPatient(String id, Handler<AsyncResult<JsonArray>> handler);
 }

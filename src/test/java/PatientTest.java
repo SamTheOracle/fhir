@@ -7,9 +7,8 @@ import model.exceptions.NotValideFhirResourceException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import utils.Utils;
+import utils.FhirUtils;
 
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -366,8 +365,8 @@ class PatientTest {
     Patient wrongPatient = Json.decodeValue(wrongPatientJsonString, Patient.class);
     Patient correctPatient = Json.decodeValue(correctPatientJsonString, Patient.class);
     Assertions.assertThrows(NotValideFhirResourceException.class,
-      () -> Utils.validateJsonAgainstSchema(JsonObject.mapFrom(wrongPatient)));
-    Assertions.assertDoesNotThrow(() -> Utils.validateJsonAgainstSchema(JsonObject.mapFrom(correctPatient)));
+      () -> FhirUtils.validateJsonAgainstSchema(JsonObject.mapFrom(wrongPatient)));
+    Assertions.assertDoesNotThrow(() -> FhirUtils.validateJsonAgainstSchema(JsonObject.mapFrom(correctPatient)));
 
   }
 
