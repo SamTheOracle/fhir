@@ -89,6 +89,26 @@ public class Gateway extends AbstractVerticle {
 
   }
 
+  private void errorHandler(RoutingContext routingContext) {
+    HttpServerResponse response = routingContext.response();
+    String errorMessage = routingContext.get("error");
+    String code = routingContext.get("code");
+    OperationOutcome operationOutcome = new OperationOutcome()
+      .setIssue(new OperationOutcomeIssue()
+        .setSeverity("error")
+        .setCode(code)
+        .setDiagnostics(errorMessage));
+    response
+      .putHeader(HttpHeaderNames.CONTENT_TYPE, FhirHttpHeaderValues.APPLICATION_JSON)
+      .setStatusCode(routingContext.statusCode())
+      .end(JsonObject.mapFrom(operationOutcome).encodePrettily());
+  }
+
+
+  //Diagnostics CRUD
+
+
+  //Patient CRUD
   private void handlePatientDelete(RoutingContext routingContext) {
     String id = routingContext.pathParam(FhirUtils.ID);
     //Step 1: find all resource with id
@@ -117,7 +137,6 @@ public class Gateway extends AbstractVerticle {
 
     });
   }
-
   private void handlePatientUpdate(RoutingContext routingContext) {
 
     //The request body SHALL be a Resource with an id element that has an identical value to the [id] in the URL
@@ -179,23 +198,6 @@ public class Gateway extends AbstractVerticle {
     }
 
   }
-
-
-  private void errorHandler(RoutingContext routingContext) {
-    HttpServerResponse response = routingContext.response();
-    String errorMessage = routingContext.get("error");
-    String code = routingContext.get("code");
-    OperationOutcome operationOutcome = new OperationOutcome()
-      .setIssue(new OperationOutcomeIssue()
-        .setSeverity("error")
-        .setCode(code)
-        .setDiagnostics(errorMessage));
-    response
-      .putHeader(HttpHeaderNames.CONTENT_TYPE, FhirHttpHeaderValues.APPLICATION_JSON)
-      .setStatusCode(routingContext.statusCode())
-      .end(JsonObject.mapFrom(operationOutcome).encodePrettily());
-  }
-
   private void handlePatientCreate(RoutingContext routingContext) {
 
 
@@ -257,18 +259,6 @@ public class Gateway extends AbstractVerticle {
 
 
   }
-
-
-  private void handleGetAllPatient(RoutingContext routingContext) {
-    MultiMap queryParams = routingContext.queryParams();
-    queryParams.forEach(entry -> {
-      String key = entry.getKey();//validate key if is valid
-      String value = entry.getValue();
-      String[] values = value.split(",");
-    });
-  }
-
-
   private void handlePatientVersionRead(RoutingContext routingContext) {
     String id = routingContext.pathParam(FhirUtils.ID);
     String vId = routingContext.pathParam(FhirUtils.PATH_VERSIONID);
@@ -320,8 +310,6 @@ public class Gateway extends AbstractVerticle {
       }
     });
   }
-
-
   //Does not support conditional read
   private void handlePatientRead(RoutingContext routingContext) {
 
