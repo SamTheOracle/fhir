@@ -2,7 +2,9 @@ package com.oracolo.fhir;
 
 import com.oracolo.fhir.database.delete.DeleteDatabaseVerticle;
 import com.oracolo.fhir.database.user.UserDatabaseVerticle;
+import com.oracolo.fhir.http.FhirServer;
 import com.oracolo.fhir.http.Gateway;
+import com.oracolo.fhir.http.T4CRestInterface;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Promise;
@@ -17,17 +19,16 @@ public class ApplicationBootstrap extends AbstractVerticle {
 
   @Override
   public void start(Promise<Void> startPromise) {
-    Promise<String> userDbVerticlePromise = Promise.promise();
-    Promise<String> deleteVerticlePromise = Promise.promise();
-    vertx.deployVerticle(new UserDatabaseVerticle(), userDbVerticlePromise);
-    userDbVerticlePromise.future().compose(deploymentResult -> {
-      vertx.deployVerticle(new DeleteDatabaseVerticle(), deleteVerticlePromise);
-      return deleteVerticlePromise.future();
-    }).compose(deploymentResult -> {
+    Promise<String> dbVerticle = Promise.promise();
+    vertx.deployVerticle(new UserDatabaseVerticle(), dbVerticle);
+    vertx.deployVerticle(new DeleteDatabaseVerticle());
+    dbVerticle.future().compose(deploymentResult -> {
       Promise<String> httpDeployPromise = Promise.promise();
       DeploymentOptions deploymentOptions = new DeploymentOptions()
-        .setInstances(5);
-      vertx.deployVerticle(Gateway.class,deploymentOptions,httpDeployPromise);
+        .setInstances(1);
+      vertx.deployVerticle(FhirServer.class, deploymentOptions, httpDeployPromise);
+      vertx.deployVerticle(new Gateway());
+      vertx.deployVerticle(new T4CRestInterface());
       return httpDeployPromise.future();
     }).setHandler(deploymentResult->{
       if(deploymentResult.succeeded()){

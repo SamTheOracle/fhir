@@ -42,6 +42,9 @@ public class FhirUtils {
   public static final String BASE = "fhirAPI";
   public static final String PATIENT_TYPE = "Patient";
   public static final String PATIENTS_COLLECTION = "patients";
+  public static final String FHIR_SERVICE = "fhir_service";
+  public static final String LOCALHOST = "localhost";
+  public static final String T4CSERVICE = "t4cservice";
 
 
   public static void createPostResponseBasedOnPreferHeader(String preferHeader, JsonObject dbResult,

@@ -1,6 +1,6 @@
 package com.oracolo.fhir;
 
-import com.oracolo.fhir.http.Gateway;
+import com.oracolo.fhir.http.FhirServer;
 import io.vertx.core.Vertx;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
@@ -8,14 +8,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @ExtendWith(VertxExtension.class)
 public class TestMainVerticle {
 
   @BeforeEach
   void deploy_verticle(Vertx vertx, VertxTestContext testContext) {
-    vertx.deployVerticle(new Gateway(), testContext.succeeding(id -> testContext.completeNow()));
+    vertx.deployVerticle(new FhirServer(), testContext.succeeding(id -> testContext.completeNow()));
   }
 
   @Test
