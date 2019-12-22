@@ -163,16 +163,18 @@ public class HumanName extends Element {
     return family;
   }
 
-  public void setFamily(String family) {
+  public HumanName setFamily(String family) {
     this.family = family;
+    return this;
   }
 
   public List<String> getGiven() {
     return given;
   }
 
-  public void setGiven(List<String> given) {
+  public HumanName setGiven(List<String> given) {
     this.given = given;
+    return this;
   }
 
   public List<String> getPrefix() {

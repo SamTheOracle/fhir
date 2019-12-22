@@ -54,6 +54,7 @@ public class Gateway extends BaseRestInterface {
 
     HttpEndpoint.getWebClient(discovery, record -> record.getName().equalsIgnoreCase(serviceName), webClientAsyncResult -> {
       WebClient webClient = webClientAsyncResult.result();
+
       Buffer body = routingContext.getBody();
       HttpServerRequest httpServerRequest = routingContext.request();
       HttpServerResponse httpServerResponse = routingContext.response();
@@ -66,6 +67,7 @@ public class Gateway extends BaseRestInterface {
 
       if (body != null) {
 
+        //send json object does not work...
         request.sendBuffer(body, httpResponseAsyncResult -> handleHttpResponseFromFhir(httpServerResponse, httpResponseAsyncResult));
       } else {
         request.send(httpResponseAsyncResult -> handleHttpResponseFromFhir(httpServerResponse, httpResponseAsyncResult));

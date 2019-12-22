@@ -120,7 +120,8 @@ public class EncounterHospitalization extends BackboneElement {
     return dischargeDisposition;
   }
 
-  public void setDischargeDisposition(CodeableConcept dischargeDisposition) {
+  public EncounterHospitalization setDischargeDisposition(CodeableConcept dischargeDisposition) {
     this.dischargeDisposition = dischargeDisposition;
+    return this;
   }
 }

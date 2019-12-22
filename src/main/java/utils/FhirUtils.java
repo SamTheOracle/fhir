@@ -45,6 +45,8 @@ public class FhirUtils {
   public static final String FHIR_SERVICE = "fhir_service";
   public static final String LOCALHOST = "localhost";
   public static final String T4CSERVICE = "t4cservice";
+  public static final String OBSERVATION_TYPE = "Observation";
+  public static final String GATEWAY_ENDPOINT = "http://localhost:8000";
 
 
   public static void createPostResponseBasedOnPreferHeader(String preferHeader, JsonObject dbResult,

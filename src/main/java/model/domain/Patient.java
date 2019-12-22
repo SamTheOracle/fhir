@@ -280,8 +280,9 @@ public class Patient extends DomainResource {
     this._multipleBirthInteger = _multipleBirthInteger;
   }
 
-  public void setName(List<HumanName> name) {
+  public Patient setName(List<HumanName> name) {
     this.name = name;
+    return this;
   }
 
   public List<ContactPoint> getContactPoints() {
@@ -313,8 +314,9 @@ public class Patient extends DomainResource {
     return deceasedBoolean;
   }
 
-  public void setDeceasedBoolean(boolean deceasedBoolean) {
+  public Patient setDeceasedBoolean(boolean deceasedBoolean) {
     this.deceasedBoolean = deceasedBoolean;
+    return this;
   }
 
   public Date getDeceasedDateTime() {

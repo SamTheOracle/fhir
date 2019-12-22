@@ -70,6 +70,13 @@ public class FhirServer extends BaseRestInterface {
     restApi.delete("/" + FhirUtils.BASE + "/" + FhirUtils.PATIENT_TYPE + "/:" + FhirUtils.ID)
       .handler(this::handlePatientDelete);
 
+    restApi.post("/" + FhirUtils.BASE + "/" + FhirUtils.OBSERVATION_TYPE)
+      .consumes(FhirHttpHeaderValues.APPLICATION_JSON)
+      .produces(HttpHeaderValues.APPLICATION_JSON.toString())
+      .produces(FhirHttpHeaderValues.APPLICATION_JSON)
+      .produces(FhirHttpHeaderValues.APPLICATION_JSON_VERSION_4)
+      .handler(this::handleObservationCreate)
+      .failureHandler(this::errorHandler);
 
     createAPIServer(0, restApi)
       .compose(httpServer -> {
@@ -99,6 +106,65 @@ public class FhirServer extends BaseRestInterface {
 //    });
 
 
+  }
+
+  private void handleObservationCreate(RoutingContext routingContext) {
+    //still to be supported
+
+    LOGGER.info("in observation");
+    MultiMap headers = routingContext.request().headers();
+    MultiMap queryParams = routingContext.queryParams();
+    String format = queryParams.get(FhirUtils.FORMAT);
+    String pretty = queryParams.get(FhirUtils.PRETTY);
+    String summary = queryParams.get(FhirUtils.SUMMARY);
+    String element = queryParams.get(FhirUtils.ELEMENTS);
+
+    JsonObject patientJson = routingContext.getBodyAsJson();
+
+    //validation
+
+    try {
+
+      FhirUtils.validateJsonAgainstSchema(patientJson);
+
+    } catch (NotValideFhirResourceException e) {
+      e.printStackTrace();
+      routingContext.put("error", "Not a valid Fhir Resource");
+      routingContext.put("code", "invariant");
+      routingContext.fail(HttpResponseStatus.BAD_REQUEST.code());
+    }
+
+    String newId = UUID.randomUUID().toString();
+    String newVersionId = UUID.randomUUID().toString();
+
+    patientJson.put("id", newId);
+    Metadata meta = new Metadata().setVersionId(newVersionId).setLastUpdated(Instant.now());
+    patientJson.put("meta", JsonObject.mapFrom(meta));
+    //Prefer header, response object depends on its value
+    String preferHeader = routingContext.request().headers().get(FhirHttpHeaderNames.PREFER);
+    //Db operation using service proxy
+    Promise<JsonObject> jsonObjectPromise = Promise.promise();
+
+    this.userService.createOrUpdatePatientResource(patientJson, jsonObjectPromise);
+    jsonObjectPromise.future().setHandler(asyncResult -> {
+      if (asyncResult.succeeded()) {
+        Patient clientPatient = Json.decodeValue(asyncResult.result().encode(), Patient.class);
+        String lastModified = clientPatient.getMeta().getLastUpdated().toString();
+        String versionId = clientPatient.getMeta().getVersionId();
+        String id = clientPatient.getId();
+        //creates response based on prefer header;
+        HttpServerResponse response = routingContext.response();
+        response.setStatusCode(HttpResponseStatus.CREATED.code());
+        response.putHeader(HttpHeaderNames.ETAG, versionId);
+        response.putHeader(HttpHeaderNames.LAST_MODIFIED, lastModified);
+        response.putHeader(HttpHeaderNames.LOCATION, FhirUtils.BASE + "/" + FhirUtils.PATIENT_TYPE + "/" + id + "/_history/" + versionId);
+        response.putHeader(HttpHeaderNames.CONTENT_TYPE, FhirHttpHeaderValues.APPLICATION_JSON);
+        FhirUtils.createPostResponseBasedOnPreferHeader(preferHeader, asyncResult.result(), response);
+      } else {
+        FhirUtils.createPostRequestErrorResponse(routingContext.response(), asyncResult.cause().getMessage());
+      }
+
+    });
   }
 
   private void errorHandler(RoutingContext routingContext) {
