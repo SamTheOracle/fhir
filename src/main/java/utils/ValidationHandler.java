@@ -1,6 +1,6 @@
 package utils;
 
-import model.exceptions.NotValideFhirResourceException;
+import model.exceptions.NotValidFhirResourceException;
 import org.leadpony.justify.api.Problem;
 import org.leadpony.justify.api.ProblemHandler;
 
@@ -22,10 +22,10 @@ public class ValidationHandler implements ProblemHandler {
     }
   }
 
-  public void checkProblems() throws NotValideFhirResourceException {
+  public void checkProblems() throws NotValidFhirResourceException {
     if (problems != null && problems.size() > 0) {
       problems.forEach(System.out::println);
-      throw new NotValideFhirResourceException(problems.get(1).getMessage());
+      throw new NotValidFhirResourceException(problems.get(1).getMessage());
     }
   }
 

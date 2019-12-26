@@ -1,6 +1,6 @@
 package model.exceptions;
 
-public class NoDatabaseCommandExecuted extends Exception {
+public class NotValidFhirResourceException extends Exception {
   /**
    * Constructs a new exception with the specified detail message.  The
    * cause is not initialized, and may subsequently be initialized by
@@ -9,7 +9,7 @@ public class NoDatabaseCommandExecuted extends Exception {
    * @param message the detail message. The detail message is saved for
    *                later retrieval by the {@link #getMessage()} method.
    */
-  public NoDatabaseCommandExecuted(String message) {
+  public NotValidFhirResourceException(String message) {
     super(message);
   }
 }

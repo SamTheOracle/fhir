@@ -11,7 +11,7 @@ import io.vertx.ext.mongo.MongoClient;
 import model.domain.OperationOutcome;
 import model.domain.OperationOutcomeIssue;
 import model.elements.Metadata;
-import model.exceptions.NotValideFhirResourceException;
+import model.exceptions.NotValidFhirResourceException;
 import org.leadpony.justify.api.JsonSchema;
 import org.leadpony.justify.api.JsonValidationService;
 
@@ -53,6 +53,8 @@ public class FhirUtils {
   public static final String DIAGNOSTICS_SERVICE_ADDRESS = "diagnostics-service";
   public static final String DELETE_COLLECTION = "deleted_resources";
   public static final String DATABASE_SERVICE_ADDRESS = "database_service";
+  public static final String DELETED = "DELETED";
+  public static final int MONGODB_CONNECTION_FAIL = 12;
 
 
   public static void createPostResponseBasedOnPreferHeader(String preferHeader, JsonObject dbResult,
@@ -99,7 +101,7 @@ public class FhirUtils {
     return MongoClient.createShared(vertx, configs, "fhir-pool");
   }
 
-  public static void validateJsonAgainstSchema(JsonObject clientContent) throws NotValideFhirResourceException {
+  public static void validateJsonAgainstSchema(JsonObject clientContent) throws NotValidFhirResourceException {
     JsonValidationService service = JsonValidationService.newInstance();
 
 

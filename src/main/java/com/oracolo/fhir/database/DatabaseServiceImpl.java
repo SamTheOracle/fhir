@@ -1,5 +1,6 @@
 package com.oracolo.fhir.database;
 
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
@@ -8,8 +9,8 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.BulkOperation;
 import io.vertx.ext.mongo.MongoClient;
+import io.vertx.serviceproxy.ServiceException;
 import model.elements.Metadata;
-import model.exceptions.ResourceNotFound;
 import utils.FhirUtils;
 
 import java.util.ArrayList;
@@ -32,12 +33,13 @@ public class DatabaseServiceImpl implements DatabaseService {
         requestBody.remove("_id");
         handler.handle(Future.succeededFuture(requestBody));
       } else {
-        handler.handle(Future.failedFuture(res.cause().getMessage()));
+        handler.handle(ServiceException.fail(FhirUtils.MONGODB_CONNECTION_FAIL, res.cause().getMessage()));
       }
     });
     return this;
   }
 
+  @SuppressWarnings("OptionalGetWithoutIsPresent")
   @Override
   public DatabaseService fetchDomainResourceWithQuery(String collection, JsonObject query, JsonObject fields, Handler<AsyncResult<JsonObject>> handler) {
     this.mongoClient.find(collection, query, res -> {
@@ -45,16 +47,21 @@ public class DatabaseServiceImpl implements DatabaseService {
         JsonObject jsonObjectResult = res.result()
           .stream()
           .peek(json -> json.remove("_id"))
-          .max(Comparator.comparing(jsonObject -> Json.decodeValue(jsonObject.getString("meta"), Metadata.class)
+          .max(Comparator.comparing(jsonObject -> Json.decodeValue(jsonObject.getJsonObject("meta").encode(), Metadata.class)
             .getLastUpdated()))
-          .orElse(null);
-        handler.handle(Future.succeededFuture(jsonObjectResult));
-      }
-      if (res.succeeded()) {
-        handler.handle(Future.failedFuture(new ResourceNotFound("Resource not Found")));
+          .get();
+        Metadata metadata = Json.decodeValue(jsonObjectResult.getJsonObject("meta").encode(), Metadata.class);
+        if (metadata.getTag() != null && metadata.getTag().contains(FhirUtils.DELETED)) {
+          handler.handle(ServiceException.fail(HttpResponseStatus.GONE.code(), "Resource already deleted"));
+        } else {
+          handler.handle(Future.succeededFuture(jsonObjectResult));
+
+        }
+      } else if (res.succeeded() && res.result() != null && res.result().size() == 0) {
+        handler.handle(ServiceException.fail(HttpResponseStatus.NOT_FOUND.code(), "No resource found"));
 
       } else {
-        handler.handle(Future.failedFuture(res.cause().getMessage()));
+        handler.handle(ServiceException.fail(FhirUtils.MONGODB_CONNECTION_FAIL, res.cause().getMessage()));
       }
     });
     return this;
@@ -103,9 +110,10 @@ public class DatabaseServiceImpl implements DatabaseService {
   }
 
   @Override
-  public DatabaseService deleteResourcesFromCollection(String collection, JsonObject query, Handler<AsyncResult<JsonObject>> handler) {
+  public DatabaseService deleteResourceFromCollection(String collection, JsonObject query, Handler<AsyncResult<JsonObject>> handler) {
     this.mongoClient.removeDocuments(collection, query, res -> {
       if (res.succeeded()) {
+
         handler.handle(Future.succeededFuture());
       } else {
         handler.handle(Future.failedFuture(res.cause()));

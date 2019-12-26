@@ -1,11 +1,12 @@
 package com.oracolo.fhir.handlers;
 
 import com.oracolo.fhir.database.DatabaseService;
+import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
-import model.exceptions.NotValideFhirResourceException;
+import model.exceptions.NotValidFhirResourceException;
 import utils.FhirHttpHeader;
 import utils.FhirQueryParameter;
 import utils.FhirUtils;
@@ -41,7 +42,7 @@ public class DeleteOperationHandler implements OperationHandler {
 
       FhirUtils.validateJsonAgainstSchema(jsonObject);
 
-    } catch (NotValideFhirResourceException e) {
+    } catch (NotValidFhirResourceException e) {
       e.printStackTrace();
       httpServerResponsePromise.fail("Not a valid Fhir Resource");
 
@@ -92,13 +93,6 @@ public class DeleteOperationHandler implements OperationHandler {
   @Override
   public OperationHandler writeResponseBody(JsonObject domainResource) {
 
-    domainResourceJsonObjectPromise
-      .future()
-      .onSuccess(jsonObject -> {
-        serverResponse.setStatusCode(HttpResponseStatus.NO_CONTENT.code());
-        httpServerResponsePromise.complete(serverResponse);
-      })
-      .onFailure(throwable -> httpServerResponsePromise.fail(throwable));
 
     return this;
   }
@@ -109,10 +103,23 @@ public class DeleteOperationHandler implements OperationHandler {
     domainResourceJsonObjectPromise
       .future()
       .onSuccess(jsonObject -> {
+        String eTag = httpHeaders
+          .stream()
+          .filter(fhirHttpHeader -> fhirHttpHeader.name().contentEquals(HttpHeaderNames.ETAG))
+          .map(FhirHttpHeader::value)
+          .findFirst()
+          .orElse("");
+        String location = httpHeaders
+          .stream()
+          .filter(fhirHttpHeader -> fhirHttpHeader.name().contentEquals(HttpHeaderNames.LOCATION))
+          .map(FhirHttpHeader::value)
+          .findFirst()
+          .orElse("");
+        serverResponse.putHeader(HttpHeaderNames.ETAG, eTag);
+        serverResponse.putHeader(HttpHeaderNames.LOCATION, location);
         serverResponse.setStatusCode(HttpResponseStatus.NO_CONTENT.code());
         httpServerResponsePromise.complete(serverResponse);
-      })
-      .onFailure(throwable -> httpServerResponsePromise.fail(throwable));
+      }).onFailure(throwable -> httpServerResponsePromise.fail(throwable));
 
     return this;
   }

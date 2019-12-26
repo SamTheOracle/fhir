@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import model.Element;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,14 +42,14 @@ public class Metadata extends Element {
    */
   private List<String> profile;
   /**
-   * 	Security labels applied to this resource. These tags connect resources in specific ways to the overall security policy
-   * 	and infrastructure. Security tags can be updated when the resource changes, or whenever the security sub-system chooses to.
+   * Security labels applied to this resource. These tags connect resources in specific ways to the overall security policy
+   * and infrastructure. Security tags can be updated when the resource changes, or whenever the security sub-system chooses to.
    * <p>Cardinality: 0..*</p>
    */
   private List<String> security;
   /**
-   * 	Tags applied to this resource. Tags are used to relate resources to process and workflow.
-   * 	Applications are not required to consider the tags when interpreting the meaning of a resource.
+   * Tags applied to this resource. Tags are used to relate resources to process and workflow.
+   * Applications are not required to consider the tags when interpreting the meaning of a resource.
    * <p>Cardinality: 0..*</p>
    */
   private List<String> tag;
@@ -103,4 +104,11 @@ public class Metadata extends Element {
     this.tag = tag;
   }
 
+  public Metadata addNewTag(String tagValue) {
+    if (tag == null) {
+      tag = new ArrayList<>();
+    }
+    tag.add(tagValue);
+    return this;
+  }
 }

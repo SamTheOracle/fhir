@@ -11,7 +11,7 @@ import io.vertx.core.json.JsonObject;
 import model.domain.OperationOutcome;
 import model.domain.OperationOutcomeIssue;
 import model.elements.Metadata;
-import model.exceptions.NotValideFhirResourceException;
+import model.exceptions.NotValidFhirResourceException;
 import utils.*;
 
 import java.nio.charset.Charset;
@@ -48,7 +48,7 @@ public class CreateUpdateOperationHandler implements OperationHandler {
 
       FhirUtils.validateJsonAgainstSchema(jsonObject);
 
-    } catch (NotValideFhirResourceException e) {
+    } catch (NotValidFhirResourceException e) {
       e.printStackTrace();
       httpServerResponsePromise.fail("Not a valid Fhir Resource");
 
@@ -98,16 +98,13 @@ public class CreateUpdateOperationHandler implements OperationHandler {
 
   @Override
   public OperationHandler writeResponseBody(JsonObject domainResource) {
+
     Metadata metadata = Json.decodeValue(domainResource.getJsonObject("meta").encode(), Metadata.class);
-    String lastModified = metadata.getLastUpdated().toString();
     String versionId = metadata.getVersionId();
+    String lastModified = metadata.getLastUpdated().toString();
     String id = domainResource.getString("id");
     //general parameter to be supported
-    serverResponse.setStatusCode(HttpResponseStatus.CREATED.code());
-    serverResponse.putHeader(HttpHeaderNames.ETAG, versionId);
-    serverResponse.putHeader(HttpHeaderNames.LAST_MODIFIED, lastModified);
-    serverResponse.putHeader(HttpHeaderNames.LOCATION, FhirUtils.BASE + "/" + FhirUtils.PATIENT_TYPE + "/" + id + "/_history/" + versionId);
-    serverResponse.setStatusCode(HttpResponseStatus.CREATED.code());
+
 
     Optional<String> acceptableType = httpHeaders
       .stream()
@@ -121,6 +118,21 @@ public class CreateUpdateOperationHandler implements OperationHandler {
         fhirHttpHeader.name().contentEquals(FhirHttpHeaderNames.PREFER))
       .map(FhirHttpHeader::value)
       .findFirst();
+    Optional<String> location = httpHeaders
+      .stream()
+      .filter(fhirHttpHeader ->
+        fhirHttpHeader.name().contentEquals(HttpHeaderNames.LOCATION))
+      .map(FhirHttpHeader::value)
+      .findFirst();
+
+
+    serverResponse.setStatusCode(HttpResponseStatus.CREATED.code());
+    serverResponse.putHeader(HttpHeaderNames.ETAG, versionId);
+    serverResponse.putHeader(HttpHeaderNames.LAST_MODIFIED, lastModified);
+    serverResponse.putHeader(HttpHeaderNames.LOCATION, FhirUtils.BASE + "/" + FhirUtils.PATIENT_TYPE + "/" + id + "/_history/" + versionId);
+    serverResponse.setStatusCode(HttpResponseStatus.CREATED.code());
+
+
     String prettyDomainResource = JsonObject.mapFrom(domainResource).encodePrettily();
     if (acceptableType.isPresent() && !preferHeader.isPresent()) {
       serverResponse.putHeader(HttpHeaderNames.CONTENT_TYPE, FhirHttpHeaderValues.APPLICATION_JSON);
@@ -160,6 +172,7 @@ public class CreateUpdateOperationHandler implements OperationHandler {
     return this;
   }
 
+
   @Override
   public OperationHandler writeResponseBody() {
 
@@ -174,9 +187,15 @@ public class CreateUpdateOperationHandler implements OperationHandler {
         serverResponse.setStatusCode(HttpResponseStatus.CREATED.code());
         serverResponse.putHeader(HttpHeaderNames.ETAG, versionId);
         serverResponse.putHeader(HttpHeaderNames.LAST_MODIFIED, lastModified);
-        serverResponse.putHeader(HttpHeaderNames.LOCATION, FhirUtils.BASE + "/" + FhirUtils.PATIENT_TYPE + "/" + id + "/_history/" + versionId);
+
         serverResponse.setStatusCode(HttpResponseStatus.CREATED.code());
 
+        Optional<String> locationHeader = httpHeaders
+          .stream()
+          .filter(fhirHttpHeader -> fhirHttpHeader.name().contentEquals(HttpHeaderNames.LOCATION))
+          .map(FhirHttpHeader::value)
+          .findFirst();
+        serverResponse.putHeader(HttpHeaderNames.LOCATION, locationHeader.orElse("/_history/" + versionId));
         Optional<String> acceptableType = httpHeaders
           .stream()
           .filter(fhirHttpHeader ->

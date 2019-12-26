@@ -41,6 +41,6 @@ public interface DatabaseService {
   DatabaseService insertDeletedDomainResources(String collection, JsonArray deletedFhirResources, Handler<AsyncResult<Void>> handler);
 
   @Fluent
-  DatabaseService deleteResourcesFromCollection(String collection, JsonObject query, Handler<AsyncResult<JsonObject>> handler);
+  DatabaseService deleteResourceFromCollection(String collection, JsonObject query, Handler<AsyncResult<JsonObject>> handler);
 
 }

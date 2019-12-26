@@ -8,7 +8,7 @@ import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import model.elements.Metadata;
-import model.exceptions.NotValideFhirResourceException;
+import model.exceptions.NotValidFhirResourceException;
 import utils.FhirHttpHeader;
 import utils.FhirHttpHeaderValues;
 import utils.FhirQueryParameter;
@@ -47,7 +47,7 @@ public class ReadOperationHandler implements OperationHandler {
 
       FhirUtils.validateJsonAgainstSchema(jsonObject);
 
-    } catch (NotValideFhirResourceException e) {
+    } catch (NotValidFhirResourceException e) {
       e.printStackTrace();
       httpServerResponsePromise.fail("Not a valid Fhir Resource");
 
