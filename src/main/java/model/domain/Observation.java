@@ -1,7 +1,6 @@
 package model.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import model.DomainResource;
 import model.backboneelements.ObservationComponent;
@@ -21,7 +20,6 @@ import java.util.List;
  * <p>Code is mandatory</p>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonIgnoreProperties({})
 public class Observation extends DomainResource {
 
   private String resourceType = "Observation";

@@ -12,16 +12,9 @@ import java.util.List;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CodeableConcept extends Element {
-  /**
-   * A reference to a code defined by a terminology system.
-   * <p>Cardinality: 0..*</p>
-   */
+
   private List<Coding> coding;
-  /**
-   * A human language representation of the concept as seen/selected/uttered by the user who entered
-   * the data and/or which represents the intended meaning of the user.
-   * <p>Cardinality: 0..1</p>
-   */
+
   private String text;
   /**
    * Extension for text
@@ -33,6 +26,11 @@ public class CodeableConcept extends Element {
     return coding;
   }
 
+  /**
+   * A human language representation of the concept as seen/selected/uttered by the user who entered
+   * the data and/or which represents the intended meaning of the user.
+   * <p>Cardinality: 0..1</p>
+   */
   public CodeableConcept setText(String text) {
     this.text = text;
     return this;
@@ -46,6 +44,10 @@ public class CodeableConcept extends Element {
     this._text = _text;
   }
 
+  /**
+   * A reference to a code defined by a terminology system.
+   * <p>Cardinality: 0..*</p>
+   */
   public CodeableConcept setCoding(List<Coding> coding) {
     this.coding = coding;
     return this;

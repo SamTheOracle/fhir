@@ -307,7 +307,6 @@ public class Encounter extends DomainResource {
   }
 
 
-
   public List<CodeableConcept> getReasonCode() {
     return reasonCode;
   }
@@ -435,6 +434,14 @@ public class Encounter extends DomainResource {
       statusHistory = new ArrayList<>();
     }
     statusHistory.add(encounterStatusHistory);
+    return this;
+  }
+
+  public Encounter addNewReasonReference(Reference reasonReference) {
+    if (this.reasonReference == null) {
+      this.reasonReference = new ArrayList<>();
+    }
+    this.reasonReference.add(reasonReference);
     return this;
   }
 }

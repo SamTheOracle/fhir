@@ -15,7 +15,7 @@ public class Coding {
   /**
    * The version of the code system which was used when choosing this code.
    * Note that a well-maintained code system does not need the version reported, because the meaning of codes is consistent across
-    * versions. However this cannot consistently be assured, and when the meaning is not guaranteed to be consistent,
+   * versions. However this cannot consistently be assured, and when the meaning is not guaranteed to be consistent,
    * the version SHOULD be exchanged.
    * <p>Cardinality: 0..1</p>
    */
@@ -38,10 +38,23 @@ public class Coding {
    */
   private boolean userSelected;
 
+  /**
+   * The identification of the code system that defines the meaning of the symbol in the code, via uri.
+   * <p>Cardinality: 0..1</p>
+   *
+   * @return A String
+   */
   public String getSystem() {
     return system;
   }
 
+  /**
+   * The identification of the code system that defines the meaning of the symbol in the code, via uri.
+   * <p>Cardinality: 0..1</p>
+   *
+   * @param system The system
+   * @return a reference to this
+   */
   public Coding setSystem(String system) {
     this.system = system;
     return this;
@@ -55,10 +68,22 @@ public class Coding {
     this.version = version;
   }
 
+  /**
+   * A symbol in syntax defined by the system. The symbol may be a predefined code or an expression
+   * in a syntax defined by the coding system (e.g. post-coordination).
+   * <p>See code in http://hl7.org/fhir/datatypes.html#code</p>
+   * <p>Cardinality: 0..1</p>
+   */
   public String getCode() {
     return code;
   }
 
+  /**
+   * A symbol in syntax defined by the system. The symbol may be a predefined code or an expression
+   * in a syntax defined by the coding system (e.g. post-coordination).
+   * <p>See code in http://hl7.org/fhir/datatypes.html#code</p>
+   * <p>Cardinality: 0..1</p>
+   */
   public Coding setCode(String code) {
     this.code = code;
     return this;

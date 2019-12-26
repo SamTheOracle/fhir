@@ -1,6 +1,7 @@
 package model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import model.domain.Patient;
 import model.elements.Extension;
 import model.elements.Metadata;
 
@@ -81,6 +82,7 @@ public abstract class Resource {
     return id;
   }
 
+
   public Resource setId(String id) {
     this.id = id;
     return this;
@@ -90,8 +92,10 @@ public abstract class Resource {
     return meta;
   }
 
-  public void setMeta(Metadata meta) {
+  public Patient setMeta(Metadata meta) {
     this.meta = meta;
+
+    return null;
   }
 
   public String getImplicitRules() {

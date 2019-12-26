@@ -1,7 +1,6 @@
 package com.oracolo.fhir;
 
-import com.oracolo.fhir.database.delete.DeleteDatabaseVerticle;
-import com.oracolo.fhir.database.user.UserDatabaseVerticle;
+import com.oracolo.fhir.database.DatabaseServiceVerticle;
 import com.oracolo.fhir.http.FhirServer;
 import com.oracolo.fhir.http.Gateway;
 import com.oracolo.fhir.http.T4CRestInterface;
@@ -20,8 +19,8 @@ public class ApplicationBootstrap extends AbstractVerticle {
   @Override
   public void start(Promise<Void> startPromise) {
     Promise<String> dbVerticle = Promise.promise();
-    vertx.deployVerticle(new UserDatabaseVerticle(), dbVerticle);
-    vertx.deployVerticle(new DeleteDatabaseVerticle());
+    vertx.deployVerticle(new DatabaseServiceVerticle(), dbVerticle);
+
     dbVerticle.future().compose(deploymentResult -> {
       Promise<String> httpDeployPromise = Promise.promise();
       DeploymentOptions deploymentOptions = new DeploymentOptions()
@@ -30,11 +29,10 @@ public class ApplicationBootstrap extends AbstractVerticle {
       vertx.deployVerticle(new Gateway());
       vertx.deployVerticle(new T4CRestInterface());
       return httpDeployPromise.future();
-    }).setHandler(deploymentResult->{
-      if(deploymentResult.succeeded()){
+    }).setHandler(deploymentResult -> {
+      if (deploymentResult.succeeded()) {
         startPromise.complete();
-      }
-      else {
+      } else {
         startPromise.fail(deploymentResult.cause());
       }
     });

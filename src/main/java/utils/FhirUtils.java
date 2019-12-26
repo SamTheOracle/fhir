@@ -47,22 +47,24 @@ public class FhirUtils {
   public static final String T4CSERVICE = "t4cservice";
   public static final String OBSERVATION_TYPE = "Observation";
   public static final String GATEWAY_ENDPOINT = "http://localhost:8000";
+  public static final String CONDITION_TYPE = "Condition";
+  public static final String OBSERVATIONS_COLLECTION = "observations";
+  public static final String CONDITIONS_COLLECTION = "conditions";
+  public static final String DIAGNOSTICS_SERVICE_ADDRESS = "diagnostics-service";
+  public static final String DELETE_COLLECTION = "deleted_resources";
+  public static final String DATABASE_SERVICE_ADDRESS = "database_service";
 
 
   public static void createPostResponseBasedOnPreferHeader(String preferHeader, JsonObject dbResult,
                                                            HttpServerResponse serverResponse) {
     if (preferHeader == null) {
-      serverResponse.putHeader(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON)
-        .end(dbResult.encodePrettily());
+      serverResponse.end(dbResult.encodePrettily());
     } else if (preferHeader.equalsIgnoreCase(FhirHttpHeaderValues.RETURN_MINIMAL)) {
-      serverResponse.putHeader(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.TEXT_PLAIN)
-        .end();
+      serverResponse.end();
     } else if (preferHeader.equalsIgnoreCase(FhirHttpHeaderValues.RETURN_REPRESENTATION)) {
-      serverResponse.putHeader(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON);
       serverResponse.setStatusCode(HttpResponseStatus.CREATED.code()).
         end(dbResult.encodePrettily());
     } else if (preferHeader.equalsIgnoreCase(FhirHttpHeaderValues.RETURN_OPERATION_OUTCOME)) {
-      serverResponse.putHeader(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON);
       OperationOutcome operationOutcome = new OperationOutcome();
       operationOutcome.setId(UUID.randomUUID().toString());
       OperationOutcomeIssue operationOutcomeIssue = new OperationOutcomeIssue();

@@ -12,17 +12,20 @@ public class ValidationHandler implements ProblemHandler {
    *
    * @param problems the problems found, cannot be {@code null}.
    */
-  private Problem problem;
+  private List<Problem> problems;
+
   @Override
   public void handleProblems(List<Problem> problems) {
-    if(!problems.isEmpty()){
-      this.problem = problems.get(0);
+    if (!problems.isEmpty()) {
+      this.problems = problems;
 
     }
   }
+
   public void checkProblems() throws NotValideFhirResourceException {
-    if(problem!=null){
-      throw new NotValideFhirResourceException(problem.getMessage());
+    if (problems != null && problems.size() > 0) {
+      problems.forEach(System.out::println);
+      throw new NotValideFhirResourceException(problems.get(1).getMessage());
     }
   }
 

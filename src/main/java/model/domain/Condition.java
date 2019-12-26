@@ -214,8 +214,9 @@ public class Condition extends DomainResource {
     return verificationStatus;
   }
 
-  public void setVerificationStatus(CodeableConcept verificationStatus) {
-    this.verificationStatus = verificationStatus;
+  public Condition setVerificationStatus(CodeableConcept verificationStatus) {
+      this.verificationStatus = verificationStatus;
+      return this;
   }
 
   public List<CodeableConcept> getCategory() {

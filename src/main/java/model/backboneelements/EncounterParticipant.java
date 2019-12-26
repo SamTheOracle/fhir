@@ -14,44 +14,71 @@ import java.util.List;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EncounterParticipant extends BackboneElement {
-  /**
-   * Role of participant in encounter.
-   * <p>Cardinality: 0..*</p>
-   */
+
   private List<CodeableConcept> type;
-  /**
-   * The period of time that the specified participant participated in the encounter.
-   * These can overlap or be sub-sets of the overall encounter's period.
-   * <p>Cardinality: 0..1</p>
-   */
+
   private Period period;
-  /**
-   * Persons involved in the encounter other than the patient.
-   * <p>Cardinality: 0..1</p>
-   */
+
   private Reference individual;
 
+  /**
+   * Get the participant type
+   *
+   * @return a CodeableConcept of the type
+   */
   public List<CodeableConcept> getType() {
     return type;
   }
 
+  /**
+   * Set the Role of participant in encounter.
+   * <p>Cardinality: 0..*</p>
+   * <p>Codes http://terminology.hl7.org/CodeSystem/v3-ParticipationType</p>
+   *
+   * @param type A list of CodeableConcept
+   * @return a reference to this
+   */
   public EncounterParticipant setType(List<CodeableConcept> type) {
     this.type = type;
     return this;
   }
 
+  /**
+   * The period of time that the specified participant participated in the encounter.
+   * These can overlap or be sub-sets of the overall encounter's period.
+   * <p>Cardinality: 0..1</p>
+   *
+   * @return a Period Resource
+   */
   public Period getPeriod() {
     return period;
   }
 
-  public void setPeriod(Period period) {
+  /**
+   * The period of time that the specified participant participated in the encounter.
+   * These can overlap or be sub-sets of the overall encounter's period.
+   * <p>Cardinality: 0..1</p>
+   *
+   * @return a reference to this;
+   */
+
+  public EncounterParticipant setPeriod(Period period) {
     this.period = period;
+    return this;
   }
 
+  /**
+   * Persons involved in the encounter other than the patient.
+   * <p>Cardinality: 0..1</p>
+   */
   public Reference getIndividual() {
     return individual;
   }
 
+  /**
+   * Persons involved in the encounter other than the patient.
+   * <p>Cardinality: 0..1</p>
+   */
   public EncounterParticipant setIndividual(Reference individual) {
     this.individual = individual;
     return this;
@@ -63,6 +90,12 @@ public class EncounterParticipant extends BackboneElement {
     return this;
   }
 
+  /**
+   * Utility method to add a new Type
+   *
+   * @param type
+   * @return a reference to this
+   */
   public EncounterParticipant addNewType(CodeableConcept type) {
     if (this.type == null) {
       this.type = new ArrayList<>();

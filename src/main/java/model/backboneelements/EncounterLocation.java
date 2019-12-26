@@ -44,6 +44,10 @@ public class EncounterLocation extends BackboneElement {
     return location;
   }
 
+  /**
+   * The location where the encounter takes place.
+   * <p>Cardinality: 1..1</p>
+   */
   public EncounterLocation setLocation(Reference location) {
     this.location = location;
     return this;
@@ -53,6 +57,13 @@ public class EncounterLocation extends BackboneElement {
     return status;
   }
 
+  /**
+   * The status of the participants' presence at the specified location during the period specified.
+   * If the participant is no longer at the location, then the period will have an end date/time.
+   * <p>Code is required https://www.hl7.org/fhir/valueset-encounter-location-status.html</p>
+   * <p>planned,active,reserved,completed</p>
+   * <p>Cardinality: 0..1</p>
+   */
   public EncounterLocation setStatus(String status) {
     this.status = status;
     return this;
@@ -70,6 +81,10 @@ public class EncounterLocation extends BackboneElement {
     return physicalType;
   }
 
+  /**
+   * This will be used to specify the required levels (bed/ward/room/etc.) desired to be recorded to simplify either messaging or query.
+   * <p>Cardinality: 0..1</p>
+   */
   public EncounterLocation setPhysicalType(CodeableConcept physicalType) {
     this.physicalType = physicalType;
     return this;

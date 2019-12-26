@@ -5,8 +5,10 @@ import model.DomainResource;
 import model.datatypes.*;
 import model.elements.CodeableConcept;
 import model.elements.Extension;
+import model.elements.Metadata;
 import model.elements.Reference;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -42,6 +44,8 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Patient extends DomainResource {
 
+  public static final String SEARCH_PARAM_GIVEN = "_given";
+  public static final String SEARCH_PARAM_FAMILY = "_family";
   /**
    * Resource type is "Patient"
    * <p>Cardinality: 1..1</p>
@@ -194,6 +198,18 @@ public class Patient extends DomainResource {
 
 
   public Patient() {
+  }
+
+  @Override
+  public Patient setId(String id) {
+    this.id = id;
+    return this;
+  }
+
+  @Override
+  public Patient setMeta(Metadata meta) {
+    this.meta = meta;
+    return this;
   }
 
   public List<Identifier> getIdentifier() {
@@ -413,5 +429,13 @@ public class Patient extends DomainResource {
 
   public void setResourceType(String resourceType) {
     this.resourceType = resourceType;
+  }
+
+  public Patient addNewHumanName(HumanName humanName) {
+    if (this.name == null) {
+      this.name = new ArrayList<>();
+    }
+    name.add(humanName);
+    return this;
   }
 }
