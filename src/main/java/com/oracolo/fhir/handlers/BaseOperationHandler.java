@@ -1,13 +1,13 @@
 package com.oracolo.fhir.handlers;
 
+import com.oracolo.fhir.model.exceptions.NotValidFhirResourceException;
+import com.oracolo.fhir.model.exceptions.WrongDomainResourceForMethodException;
+import com.oracolo.fhir.utils.FhirHttpHeader;
+import com.oracolo.fhir.utils.FhirQueryParameter;
 import com.oracolo.fhir.validator.Validator;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
-import model.exceptions.NotValidFhirResourceException;
-import model.exceptions.WrongDomainResourceForMethodException;
-import utils.FhirHttpHeader;
-import utils.FhirQueryParameter;
 
 import java.util.ArrayList;
 import java.util.List;

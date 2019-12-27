@@ -1,11 +1,11 @@
 package com.oracolo.fhir.handlers;
 
+import com.oracolo.fhir.utils.FhirHttpHeader;
+import com.oracolo.fhir.utils.FhirQueryParameter;
 import com.oracolo.fhir.validator.Validator;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
-import utils.FhirHttpHeader;
-import utils.FhirQueryParameter;
 
 import java.util.List;
 

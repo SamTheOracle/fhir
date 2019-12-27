@@ -1,6 +1,7 @@
 package com.oracolo.fhir.http;
 
 import com.oracolo.fhir.BaseRestInterface;
+import com.oracolo.fhir.utils.FhirUtils;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Promise;
@@ -16,7 +17,6 @@ import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.servicediscovery.ServiceDiscovery;
 import io.vertx.servicediscovery.types.HttpEndpoint;
-import utils.FhirUtils;
 
 import java.util.logging.Logger;
 

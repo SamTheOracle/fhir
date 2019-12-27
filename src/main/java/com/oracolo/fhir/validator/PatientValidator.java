@@ -1,9 +1,9 @@
 package com.oracolo.fhir.validator;
 
+import com.oracolo.fhir.model.domain.Patient;
 import io.vertx.core.json.DecodeException;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
-import model.domain.Patient;
 
 public class PatientValidator extends BaseValidator implements Validator {
 

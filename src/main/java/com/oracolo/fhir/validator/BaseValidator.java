@@ -1,11 +1,11 @@
 package com.oracolo.fhir.validator;
 
+import com.oracolo.fhir.model.exceptions.NotValidFhirResourceException;
+import com.oracolo.fhir.utils.FhirUtils;
+import com.oracolo.fhir.utils.ValidationHandler;
 import io.vertx.core.json.JsonObject;
-import model.exceptions.NotValidFhirResourceException;
 import org.leadpony.justify.api.JsonSchema;
 import org.leadpony.justify.api.JsonValidationService;
-import utils.FhirUtils;
-import utils.ValidationHandler;
 
 import javax.json.JsonReader;
 import java.io.*;

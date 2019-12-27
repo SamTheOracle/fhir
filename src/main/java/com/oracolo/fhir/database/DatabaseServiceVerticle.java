@@ -1,10 +1,10 @@
 package com.oracolo.fhir.database;
 
+import com.oracolo.fhir.utils.FhirUtils;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.serviceproxy.ServiceBinder;
-import utils.FhirUtils;
 
 public class DatabaseServiceVerticle extends AbstractVerticle {
 

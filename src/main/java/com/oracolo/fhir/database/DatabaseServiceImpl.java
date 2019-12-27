@@ -1,5 +1,7 @@
 package com.oracolo.fhir.database;
 
+import com.oracolo.fhir.model.elements.Metadata;
+import com.oracolo.fhir.utils.FhirUtils;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
@@ -10,8 +12,6 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.BulkOperation;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.serviceproxy.ServiceException;
-import model.elements.Metadata;
-import utils.FhirUtils;
 
 import java.util.ArrayList;
 import java.util.Comparator;

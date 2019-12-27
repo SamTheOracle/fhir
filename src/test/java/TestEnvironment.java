@@ -1,8 +1,8 @@
+import com.oracolo.fhir.model.datatypes.HumanName;
+import com.oracolo.fhir.model.domain.Patient;
+import com.oracolo.fhir.model.elements.Metadata;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
-import model.datatypes.HumanName;
-import model.domain.Patient;
-import model.elements.Metadata;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

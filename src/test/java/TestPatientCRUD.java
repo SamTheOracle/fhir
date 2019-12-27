@@ -1,4 +1,9 @@
 import com.oracolo.fhir.ApplicationBootstrap;
+import com.oracolo.fhir.model.datatypes.HumanName;
+import com.oracolo.fhir.model.domain.OperationOutcome;
+import com.oracolo.fhir.model.domain.Patient;
+import com.oracolo.fhir.utils.FhirHttpHeaderNames;
+import com.oracolo.fhir.utils.FhirHttpHeaderValues;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.Vertx;
@@ -9,15 +14,10 @@ import io.vertx.ext.web.client.WebClient;
 import io.vertx.junit5.Checkpoint;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
-import model.datatypes.HumanName;
-import model.domain.OperationOutcome;
-import model.domain.Patient;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import utils.FhirHttpHeaderNames;
-import utils.FhirHttpHeaderValues;
 
 @ExtendWith(VertxExtension.class)
 public class TestPatientCRUD {
