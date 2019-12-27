@@ -3,6 +3,7 @@ package model.datatypes;
 import model.Element;
 import model.elements.Extension;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -91,6 +92,7 @@ public class HumanName extends Element {
    * <p>Cardinality: 0..1</p>
    */
   private Period period;
+
   public HumanName() {
 
   }
@@ -199,5 +201,13 @@ public class HumanName extends Element {
 
   public void setPeriod(Period period) {
     this.period = period;
+  }
+
+  public HumanName addNewGiven(String given) {
+    if (this.given == null) {
+      this.given = new ArrayList<>();
+    }
+    this.given.add(given);
+    return this;
   }
 }

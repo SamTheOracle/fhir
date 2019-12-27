@@ -3,6 +3,7 @@ package com.oracolo.fhir.http;
 import com.oracolo.fhir.BaseRestInterface;
 import com.oracolo.fhir.database.DatabaseService;
 import com.oracolo.fhir.handlers.OperationHandler;
+import com.oracolo.fhir.validator.Validator;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -33,6 +34,9 @@ public class FhirServer extends BaseRestInterface {
   private static final Logger LOGGER = Logger.getLogger(FhirServer.class.getName());
 
   private DatabaseService databaseService;
+  private Validator patientValidator;
+  private Validator conditionValidator;
+  private Validator observationValidator;
 
   @Override
   public void start(Promise<Void> startPromise) throws Exception {
@@ -166,6 +170,9 @@ public class FhirServer extends BaseRestInterface {
       }).setHandler(publishSuccessful -> {
       if (publishSuccessful.succeeded()) {
         this.databaseService = DatabaseService.createProxy(vertx, FhirUtils.DATABASE_SERVICE_ADDRESS);
+        this.patientValidator = Validator.createPatientValidator();
+        this.conditionValidator = Validator.createConditionValidator();
+        this.observationValidator = Validator.createObservationValidator();
         startPromise.complete();
       } else {
         startPromise.fail(publishSuccessful.cause());
@@ -196,12 +203,12 @@ public class FhirServer extends BaseRestInterface {
     JsonObject query = new JsonObject()
       .put("id", id);
     //Step 1: find last modified resource
-    Promise<JsonObject> fetchCondition = Promise.promise();
-    databaseService.fetchDomainResourceWithQuery(FhirUtils.CONDITIONS_COLLECTION, query, null, fetchCondition);
+    Promise<JsonObject> fetchConditionPromise = Promise.promise();
+    databaseService.fetchDomainResourceWithQuery(FhirUtils.CONDITIONS_COLLECTION, query, null, fetchConditionPromise);
+    //Step 2: insert all patients in delete collection
+    //Step 3: remove all patients from their collection
 
-    Promise<JsonObject> insertWithTagDeletedPromise = Promise.promise();
-
-    fetchCondition
+    fetchConditionPromise
       .future()
       .onSuccess(jsonObject -> {
         String newVersionId = UUID.randomUUID().toString();
@@ -210,28 +217,33 @@ public class FhirServer extends BaseRestInterface {
           .setVersionId(newVersionId)
           .addNewTag(FhirUtils.DELETED);
         jsonObject.put("meta", JsonObject.mapFrom(meta));
-
+        Promise<JsonObject> insertWithTagDeletedPromise = Promise.promise();
+        databaseService.createOrUpdateDomainResource(FhirUtils.CONDITIONS_COLLECTION, jsonObject, insertWithTagDeletedPromise);
         OperationHandler
           .createDeleteOperationHandler()
           .setResponse(routingContext.response())
-          .executeDatabaseOperation(databaseService, insertWithTagDeletedPromise, (promise, service) ->
-            service.createOrUpdateDomainResource(FhirUtils.CONDITIONS_COLLECTION, jsonObject, promise))
           .withHeader(FhirHttpHeader.of(HttpHeaderNames.ETAG.toString(), newVersionId))
-          .withHeader(FhirHttpHeader.of(HttpHeaderNames.LOCATION.toString(), FhirUtils.BASE + "/" + FhirUtils.CONDITION_TYPE + "/" + id + "/_history/" + newVersionId))
-          .writeResponseBody()
+          .writeResponseBodyAsync(insertWithTagDeletedPromise)
           .releaseAsync()
           .future()
           .onSuccess(HttpServerResponse::end)
           .onFailure(throwable -> {
-            routingContext.put("error", throwable.getMessage());
-            routingContext.put("code", "invariant");
-            routingContext.fail(HttpResponseStatus.BAD_REQUEST.code());
+
+            if (throwable instanceof ServiceException) {
+              routingContext.put("error", throwable.getMessage());
+              routingContext.put("code", "invariant");
+              routingContext.fail(((ServiceException) throwable).failureCode());
+
+            } else {
+              routingContext.put("error", throwable.getMessage());
+              routingContext.put("code", "invariant");
+              routingContext.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
+            }
           });
       });
   }
 
   private void handleConditionUpdate(RoutingContext routingContext) {
-    LOGGER.info("Trying update");
     //The request body SHALL be a Resource with an id element that has an identical value to the [id] in the URL
     //If no id element is provided, or the id disagrees with the id in the URL, the server SHALL respond with an HTTP 400 error code,
     // and SHOULD provide an OperationOutcome identifying the issue.
@@ -257,27 +269,32 @@ public class FhirServer extends BaseRestInterface {
       conditionJson.put("meta", JsonObject.mapFrom(meta));
       //Prefer header, response object depends on its value
       //Db operation using service proxy
-      Promise<JsonObject> jsonObjectPromise = Promise.promise();
+      Promise<JsonObject> conditionPromise = Promise.promise();
+      databaseService.createOrUpdateDomainResource(FhirUtils.CONDITIONS_COLLECTION, conditionJson, conditionPromise);
       OperationHandler
-        .createUpdateCreateOperationHandler()
+        .createUpdateCreateOperationHandler(conditionValidator)
         .validate(conditionJson)
-        .executeDatabaseOperation(databaseService, jsonObjectPromise,
-          (promise, service) -> service.createOrUpdateDomainResource(FhirUtils.PATIENTS_COLLECTION, conditionJson, promise))
+        .validateAgainstClass(conditionJson)
         .setResponse(routingContext.response())
-        .withHeader(FhirHttpHeader.of(HttpHeaderNames.LOCATION.toString(), FhirUtils.BASE + "/" + FhirUtils.CONDITIONS_COLLECTION + "/" + id + "/_history/" + newVersionId))
         .withHeader(FhirHttpHeader.of(FhirHttpHeaderNames.PREFER, preferHeader))
         .withHeader(FhirHttpHeader.of(HttpHeaderNames.ACCEPT.toString(), acceptableType))
-        .writeResponseBody()
+        .writeResponseBodyAsync(conditionPromise)
         .releaseAsync()
         .future()
         .onSuccess(HttpServerResponse::end)
         .onFailure(throwable -> {
-          routingContext.put("error", throwable.getMessage());
-          routingContext.put("code", "invariant");
-          routingContext.fail(HttpResponseStatus.BAD_REQUEST.code());
+
+          if (throwable instanceof ServiceException) {
+            routingContext.put("error", throwable.getMessage());
+            routingContext.put("code", "invariant");
+            routingContext.fail(((ServiceException) throwable).failureCode());
+
+          } else {
+            routingContext.put("error", throwable.getMessage());
+            routingContext.put("code", "invariant");
+            routingContext.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
+          }
         });
-
-
     } else {
       routingContext.put("error", "Incorrect resource: resource's id does not match with path id");
       routingContext.put("code", "business-rule");
@@ -288,6 +305,7 @@ public class FhirServer extends BaseRestInterface {
   private void handleConditionVersionId(RoutingContext routingContext) {
     String id = routingContext.pathParam(FhirUtils.ID);
     String vId = routingContext.pathParam(FhirUtils.PATH_VERSIONID);
+    MultiMap headers = routingContext.request().headers();
     MultiMap queryParams = routingContext.queryParams();
     String format = queryParams.get(FhirUtils.FORMAT);
     String pretty = queryParams.get(FhirUtils.PRETTY);
@@ -296,22 +314,16 @@ public class FhirServer extends BaseRestInterface {
     //still to be supported
 
     //If resource has been deleted, need to respond with http status 410
-    Promise<JsonObject> checkIfDeletedPromise = Promise.promise();
     Promise<JsonObject> conditionPromise = Promise.promise();
     HttpServerResponse serverResponse = routingContext.response();
     JsonObject query = new JsonObject()
       .put("id", id)
-      .put("meta.versionId", vId)
-      .put("resourceType", FhirUtils.CONDITION_TYPE);
-
-
+      .put("meta.versionId", vId);
+    databaseService.fetchDomainResourceWithQuery(FhirUtils.CONDITIONS_COLLECTION, query, null, conditionPromise);
     OperationHandler
       .createReadOperationHandler()
-      .executeDatabaseOperation(databaseService, conditionPromise, (jsonObjectPromise, service) -> service.fetchDomainResourceWithQuery(FhirUtils.CONDITION_TYPE,
-        query, null, jsonObjectPromise))
       .setResponse(serverResponse)
-      .withHeader(FhirHttpHeader.of(HttpHeaderNames.CONTENT_TYPE.toString(), FhirHttpHeaderValues.APPLICATION_JSON))
-      .writeResponseBody()
+      .writeResponseBodyAsync(conditionPromise)
       .releaseAsync()
       .future()
       .onSuccess(HttpServerResponse::end)
@@ -331,7 +343,9 @@ public class FhirServer extends BaseRestInterface {
   }
 
   private void handleConditionRead(RoutingContext routingContext) {
+
     String id = routingContext.pathParam(FhirUtils.ID);
+    MultiMap headers = routingContext.request().headers();
     MultiMap queryParams = routingContext.queryParams();
     String format = queryParams.get(FhirUtils.FORMAT);
     String pretty = queryParams.get(FhirUtils.PRETTY);
@@ -340,19 +354,17 @@ public class FhirServer extends BaseRestInterface {
     //still to be supported
 
     //If resource has been deleted, need to respond with http status 410
-    Promise<JsonObject> checkIfDeletedPromise = Promise.promise();
+
     Promise<JsonObject> conditionPromise = Promise.promise();
     HttpServerResponse serverResponse = routingContext.response();
     JsonObject query = new JsonObject()
       .put("id", id)
-      .put("resourceType", FhirUtils.CONDITION_TYPE);
-
+      .put("resourceType", FhirUtils.PATIENT_TYPE);
+    databaseService.fetchDomainResourceWithQuery(FhirUtils.CONDITIONS_COLLECTION, query, null, conditionPromise);
     OperationHandler
       .createReadOperationHandler()
-      .executeDatabaseOperation(databaseService, conditionPromise, (jsonObjectPromise, service) ->
-        service.fetchDomainResourceWithQuery(FhirUtils.CONDITIONS_COLLECTION, query, null, jsonObjectPromise))
       .setResponse(serverResponse)
-      .writeResponseBody()
+      .writeResponseBodyAsync(conditionPromise)
       .releaseAsync()
       .future()
       .onSuccess(HttpServerResponse::end)
@@ -368,6 +380,10 @@ public class FhirServer extends BaseRestInterface {
           routingContext.put("code", "invariant");
           routingContext.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
         }
+
+        //Check if the documents have been deleted
+
+
       });
 
   }
@@ -379,6 +395,8 @@ public class FhirServer extends BaseRestInterface {
   }
 
   private void handleConditionCreate(RoutingContext routingContext) {
+
+    //still to be supported
 
     MultiMap queryParams = routingContext.queryParams();
     String format = queryParams.get(FhirUtils.FORMAT);
@@ -400,17 +418,16 @@ public class FhirServer extends BaseRestInterface {
     conditionJson.put("meta", JsonObject.mapFrom(meta));
     //Prefer header, response object depends on its value
     //Db operation using service proxy
-    Promise<JsonObject> jsonObjectPromise = Promise.promise();
-
+    Promise<JsonObject> conditionPromise = Promise.promise();
+    databaseService.createOrUpdateDomainResource(FhirUtils.CONDITIONS_COLLECTION, conditionJson, conditionPromise);
     OperationHandler
-      .createUpdateCreateOperationHandler()
+      .createUpdateCreateOperationHandler(conditionValidator)
       .validate(conditionJson)
-      .executeDatabaseOperation(databaseService, jsonObjectPromise, (promise, service) -> service.createOrUpdateDomainResource(FhirUtils.CONDITIONS_COLLECTION, conditionJson, promise))
+      .validateAgainstClass(conditionJson)
       .setResponse(routingContext.response())
-      .withHeader(FhirHttpHeader.of(HttpHeaderNames.LOCATION.toString(), FhirUtils.BASE + "/" + FhirUtils.CONDITION_TYPE + "/" + newId + "/_history/" + newVersionId))
       .withHeader(FhirHttpHeader.of(FhirHttpHeaderNames.PREFER, preferHeader))
       .withHeader(FhirHttpHeader.of(HttpHeaderNames.ACCEPT.toString(), acceptableType))
-      .writeResponseBody()
+      .writeResponseBodyAsync(conditionPromise)
       .releaseAsync()
       .future()
       .setHandler(asyncResult -> {
@@ -436,7 +453,6 @@ public class FhirServer extends BaseRestInterface {
     databaseService.fetchDomainResourceWithQuery(FhirUtils.OBSERVATIONS_COLLECTION, query, null, fetchObservation);
     //Step 2: insert all patients in delete collection
     //Step 3: remove all patients from their collection
-    Promise<JsonObject> insertWithTagDeletedPromise = Promise.promise();
 
     fetchObservation
       .future()
@@ -447,22 +463,27 @@ public class FhirServer extends BaseRestInterface {
           .setVersionId(newVersionId)
           .addNewTag(FhirUtils.DELETED);
         jsonObject.put("meta", JsonObject.mapFrom(meta));
-
+        Promise<JsonObject> insertWithTagDeletedPromise = Promise.promise();
+        databaseService.createOrUpdateDomainResource(FhirUtils.OBSERVATIONS_COLLECTION, jsonObject, insertWithTagDeletedPromise);
         OperationHandler
           .createDeleteOperationHandler()
           .setResponse(routingContext.response())
-          .executeDatabaseOperation(databaseService, insertWithTagDeletedPromise, (promise, service) ->
-            service.createOrUpdateDomainResource(FhirUtils.OBSERVATIONS_COLLECTION, jsonObject, promise))
-          .withHeader(FhirHttpHeader.of(HttpHeaderNames.ETAG.toString(), newVersionId))
-          .withHeader(FhirHttpHeader.of(HttpHeaderNames.LOCATION.toString(), FhirUtils.BASE + "/" + FhirUtils.OBSERVATION_TYPE + "/" + id + "/_history/" + newVersionId))
-          .writeResponseBody()
+          .writeResponseBodyAsync(insertWithTagDeletedPromise)
           .releaseAsync()
           .future()
           .onSuccess(HttpServerResponse::end)
           .onFailure(throwable -> {
-            routingContext.put("error", throwable.getMessage());
-            routingContext.put("code", "invariant");
-            routingContext.fail(HttpResponseStatus.BAD_REQUEST.code());
+
+            if (throwable instanceof ServiceException) {
+              routingContext.put("error", throwable.getMessage());
+              routingContext.put("code", "invariant");
+              routingContext.fail(((ServiceException) throwable).failureCode());
+
+            } else {
+              routingContext.put("error", throwable.getMessage());
+              routingContext.put("code", "invariant");
+              routingContext.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
+            }
           });
       });
   }
@@ -493,24 +514,31 @@ public class FhirServer extends BaseRestInterface {
       observationJson.put("meta", JsonObject.mapFrom(meta));
       //Prefer header, response object depends on its value
       //Db operation using service proxy
-      Promise<JsonObject> jsonObjectPromise = Promise.promise();
+      Promise<JsonObject> observationPromise = Promise.promise();
+      databaseService.createOrUpdateDomainResource(FhirUtils.OBSERVATIONS_COLLECTION, observationJson, observationPromise);
       OperationHandler
-        .createUpdateCreateOperationHandler()
+        .createUpdateCreateOperationHandler(observationValidator)
         .validate(observationJson)
-        .executeDatabaseOperation(databaseService, jsonObjectPromise,
-          (promise, service) -> service.createOrUpdateDomainResource(FhirUtils.OBSERVATIONS_COLLECTION, observationJson, promise))
+        .validateAgainstClass(observationJson)
         .setResponse(routingContext.response())
         .withHeader(FhirHttpHeader.of(FhirHttpHeaderNames.PREFER, preferHeader))
         .withHeader(FhirHttpHeader.of(HttpHeaderNames.ACCEPT.toString(), acceptableType))
-        .withHeader(FhirHttpHeader.of(HttpHeaderNames.LOCATION.toString(), FhirUtils.BASE + "/" + FhirUtils.OBSERVATION_TYPE + "/" + id + "/_history/" + newVersionId))
-        .writeResponseBody()
+        .writeResponseBodyAsync(observationPromise)
         .releaseAsync()
         .future()
         .onSuccess(HttpServerResponse::end)
         .onFailure(throwable -> {
-          routingContext.put("error", throwable.getMessage());
-          routingContext.put("code", "invariant");
-          routingContext.fail(HttpResponseStatus.BAD_REQUEST.code());
+
+          if (throwable instanceof ServiceException) {
+            routingContext.put("error", throwable.getMessage());
+            routingContext.put("code", "invariant");
+            routingContext.fail(((ServiceException) throwable).failureCode());
+
+          } else {
+            routingContext.put("error", throwable.getMessage());
+            routingContext.put("code", "invariant");
+            routingContext.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
+          }
         });
     } else {
       routingContext.put("error", "Incorrect resource: resource's id does not match with path id");
@@ -530,21 +558,17 @@ public class FhirServer extends BaseRestInterface {
     String element = queryParams.get(FhirUtils.ELEMENTS);
     //still to be supported
 
-    //If resource has been deleted, need to respond with http status 410
-    Promise<JsonObject> checkIfDeletedPromise = Promise.promise();
     Promise<JsonObject> observationPromise = Promise.promise();
     HttpServerResponse serverResponse = routingContext.response();
     JsonObject query = new JsonObject()
       .put("id", id)
       .put("meta.versionId", vId)
       .put("resourceType", FhirUtils.OBSERVATION_TYPE);
-
+    databaseService.fetchDomainResourceWithQuery(FhirUtils.OBSERVATIONS_COLLECTION, query, null, observationPromise);
     OperationHandler
       .createReadOperationHandler()
-      .executeDatabaseOperation(databaseService, observationPromise, (jsonObjectPromise, service) -> service.fetchDomainResourceWithQuery(FhirUtils.OBSERVATIONS_COLLECTION,
-        query, null, jsonObjectPromise))
       .setResponse(serverResponse)
-      .writeResponseBody()
+      .writeResponseBodyAsync(observationPromise)
       .releaseAsync()
       .future()
       .onSuccess(HttpServerResponse::end)
@@ -573,27 +597,21 @@ public class FhirServer extends BaseRestInterface {
     //still to be supported
 
     //If resource has been deleted, need to respond with http status 410
-    Promise<JsonObject> checkIfDeletedPromise = Promise.promise();
     Promise<JsonObject> observationPromise = Promise.promise();
     HttpServerResponse serverResponse = routingContext.response();
     JsonObject query = new JsonObject()
       .put("id", id)
       .put("resourceType", FhirUtils.OBSERVATION_TYPE);
-
+    databaseService.fetchDomainResourceWithQuery(FhirUtils.OBSERVATIONS_COLLECTION, query, null, observationPromise);
     OperationHandler
       .createReadOperationHandler()
-      .executeDatabaseOperation(databaseService, observationPromise, (jsonObjectPromise, service) -> service.fetchDomainResourceWithQuery(FhirUtils.OBSERVATIONS_COLLECTION,
-        query, null, jsonObjectPromise))
       .setResponse(serverResponse)
-      .withHeader(FhirHttpHeader.of(HttpHeaderNames.CONTENT_TYPE.toString(), FhirHttpHeaderValues.APPLICATION_JSON))
-      .writeResponseBody()
+      .writeResponseBodyAsync(observationPromise)
       .releaseAsync()
       .future()
       .onSuccess(HttpServerResponse::end)
       .onFailure(throwable -> {
         //Check if the documents have been deleted
-
-
         if (throwable instanceof ServiceException) {
           routingContext.put("error", throwable.getMessage());
           routingContext.put("code", "invariant");
@@ -635,18 +653,16 @@ public class FhirServer extends BaseRestInterface {
     observationJson.put("meta", JsonObject.mapFrom(meta));
     //Prefer header, response object depends on its value
     //Db operation using service proxy
-    Promise<JsonObject> jsonObjectPromise = Promise.promise();
-
+    Promise<JsonObject> observationPromise = Promise.promise();
+    databaseService.createOrUpdateDomainResource(FhirUtils.OBSERVATIONS_COLLECTION, observationJson, observationPromise);
     OperationHandler
-      .createUpdateCreateOperationHandler()
+      .createUpdateCreateOperationHandler(observationValidator)
       .validate(observationJson)
-      .executeDatabaseOperation(databaseService, jsonObjectPromise, (promise, service) ->
-        service.createOrUpdateDomainResource(FhirUtils.OBSERVATIONS_COLLECTION, observationJson, promise))
+      .validateAgainstClass(observationJson)
       .setResponse(routingContext.response())
-      .withHeader(FhirHttpHeader.of(HttpHeaderNames.LOCATION.toString(), FhirUtils.BASE + "/" + FhirUtils.OBSERVATION_TYPE + "/" + newId + "/_history/" + newVersionId))
       .withHeader(FhirHttpHeader.of(FhirHttpHeaderNames.PREFER, preferHeader))
       .withHeader(FhirHttpHeader.of(HttpHeaderNames.ACCEPT.toString(), acceptableType))
-      .writeResponseBody()
+      .writeResponseBodyAsync(observationPromise)
       .releaseAsync()
       .future()
       .setHandler(asyncResult -> {
@@ -679,43 +695,32 @@ public class FhirServer extends BaseRestInterface {
 
     Promise<JsonObject> patientPromise = Promise.promise();
     //If resource has been deleted, need to respond with http status 410
-    Promise<JsonObject> checkIfDeletedPromise = Promise.promise();
     HttpServerResponse serverResponse = routingContext.response();
     JsonObject query = new JsonObject()
       .put("name.family", new JsonObject()
         .put("$regex", _family.orElse(".*")))
       .put("name.given", new JsonObject()
         .put("$regex", _given.orElse(".*")));
-
+    databaseService.fetchDomainResourceWithQuery(FhirUtils.PATIENTS_COLLECTION, query, null, patientPromise);
     OperationHandler
       .createReadOperationHandler()
-      .executeDatabaseOperation(databaseService, patientPromise, (jsonObjectPromise, service) -> service.fetchDomainResourceWithQuery(FhirUtils.PATIENTS_COLLECTION,
-        query, null, jsonObjectPromise))
       .setResponse(serverResponse)
-      .withHeader(FhirHttpHeader.of(HttpHeaderNames.CONTENT_TYPE.toString(), FhirHttpHeaderValues.APPLICATION_JSON))
-      .writeResponseBody()
+      .writeResponseBodyAsync(patientPromise)
       .releaseAsync()
       .future()
       .onSuccess(HttpServerResponse::end)
       .onFailure(throwable -> {
-        //Check if the documents have been deleted
-        if (throwable.getCause() == null) {
-          databaseService
-            .findDeletedDocument(query, checkIfDeletedPromise);
-          checkIfDeletedPromise.future()
-            .onSuccess(jsonObject -> serverResponse.setStatusCode(HttpResponseStatus.GONE.code())
-              .end())
-            .onFailure(deleteThrowable -> {
-              routingContext.put("error", throwable.getMessage());
-              routingContext.put("code", "invariant");
-              routingContext.fail(HttpResponseStatus.BAD_REQUEST.code());
-            });
+
+        if (throwable instanceof ServiceException) {
+          routingContext.put("error", throwable.getMessage());
+          routingContext.put("code", "invariant");
+          routingContext.fail(((ServiceException) throwable).failureCode());
+
         } else {
           routingContext.put("error", throwable.getMessage());
           routingContext.put("code", "invariant");
-          routingContext.fail(HttpResponseStatus.BAD_REQUEST.code());
+          routingContext.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
         }
-
       });
 
 
@@ -730,10 +735,10 @@ public class FhirServer extends BaseRestInterface {
     databaseService.fetchDomainResourceWithQuery(FhirUtils.PATIENTS_COLLECTION, query, null, fetchPatient);
     //Step 2: insert all patients in delete collection
     //Step 3: remove all patients from their collection
-    Promise<JsonObject> insertWithTagDeletedPromise = Promise.promise();
 
     fetchPatient
       .future()
+      //if the last updated patient has tag DELETED in meta, then I
       .onSuccess(jsonObject -> {
         String newVersionId = UUID.randomUUID().toString();
         Metadata meta = Json.decodeValue(jsonObject.getJsonObject("meta").encode(), Metadata.class)
@@ -741,21 +746,26 @@ public class FhirServer extends BaseRestInterface {
           .setVersionId(newVersionId)
           .addNewTag(FhirUtils.DELETED);
         jsonObject.put("meta", JsonObject.mapFrom(meta));
+        Promise<JsonObject> insertWithTagDeletedPromise = Promise.promise();
+        databaseService.createOrUpdateDomainResource(FhirUtils.PATIENTS_COLLECTION, jsonObject, insertWithTagDeletedPromise);
         OperationHandler
           .createDeleteOperationHandler()
           .setResponse(routingContext.response())
-          .executeDatabaseOperation(databaseService, insertWithTagDeletedPromise, (promise, service) ->
-            service.createOrUpdateDomainResource(FhirUtils.PATIENTS_COLLECTION, jsonObject, promise))
-          .withHeader(FhirHttpHeader.of(HttpHeaderNames.ETAG.toString(), newVersionId))
-          .withHeader(FhirHttpHeader.of(HttpHeaderNames.LOCATION.toString(), FhirUtils.BASE + "/" + FhirUtils.PATIENT_TYPE + "/" + id + "/_history/" + newVersionId))
-          .writeResponseBody()
+          .writeResponseBodyAsync(insertWithTagDeletedPromise)
           .releaseAsync()
           .future()
           .onSuccess(HttpServerResponse::end)
           .onFailure(throwable -> {
-            routingContext.put("error", throwable.getMessage());
-            routingContext.put("code", "invariant");
-            routingContext.fail(HttpResponseStatus.BAD_REQUEST.code());
+            if (throwable instanceof ServiceException) {
+              routingContext.put("error", throwable.getMessage());
+              routingContext.put("code", "invariant");
+              routingContext.fail(((ServiceException) throwable).failureCode());
+
+            } else {
+              routingContext.put("error", throwable.getMessage());
+              routingContext.put("code", "invariant");
+              routingContext.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
+            }
           });
       }).onFailure(throwable -> {
       routingContext.put("error", "Unknown Resource");
@@ -767,7 +777,6 @@ public class FhirServer extends BaseRestInterface {
   }
 
   private void handlePatientUpdate(RoutingContext routingContext) {
-    LOGGER.info("Trying update");
     //The request body SHALL be a Resource with an id element that has an identical value to the [id] in the URL
     //If no id element is provided, or the id disagrees with the id in the URL, the server SHALL respond with an HTTP 400 error code,
     // and SHOULD provide an OperationOutcome identifying the issue.
@@ -793,24 +802,31 @@ public class FhirServer extends BaseRestInterface {
       patientJson.put("meta", JsonObject.mapFrom(meta));
       //Prefer header, response object depends on its value
       //Db operation using service proxy
-      Promise<JsonObject> jsonObjectPromise = Promise.promise();
+      Promise<JsonObject> patientPromise = Promise.promise();
+      databaseService.createOrUpdateDomainResource(FhirUtils.PATIENTS_COLLECTION, patientJson, patientPromise);
       OperationHandler
-        .createUpdateCreateOperationHandler()
+        .createUpdateCreateOperationHandler(patientValidator)
         .validate(patientJson)
-        .executeDatabaseOperation(databaseService, jsonObjectPromise,
-          (promise, service) -> service.createOrUpdateDomainResource(FhirUtils.PATIENTS_COLLECTION, patientJson, promise))
+        .validateAgainstClass(patientJson)
         .setResponse(routingContext.response())
-        .withHeader(FhirHttpHeader.of(HttpHeaderNames.LOCATION.toString(), FhirUtils.BASE + "/" + FhirUtils.PATIENT_TYPE + "/" + id + "/_history/" + newVersionId))
         .withHeader(FhirHttpHeader.of(FhirHttpHeaderNames.PREFER, preferHeader))
         .withHeader(FhirHttpHeader.of(HttpHeaderNames.ACCEPT.toString(), acceptableType))
-        .writeResponseBody()
+        .writeResponseBodyAsync(patientPromise)
         .releaseAsync()
         .future()
         .onSuccess(HttpServerResponse::end)
         .onFailure(throwable -> {
-          routingContext.put("error", throwable.getMessage());
-          routingContext.put("code", "invariant");
-          routingContext.fail(HttpResponseStatus.BAD_REQUEST.code());
+
+          if (throwable instanceof ServiceException) {
+            routingContext.put("error", throwable.getMessage());
+            routingContext.put("code", "invariant");
+            routingContext.fail(((ServiceException) throwable).failureCode());
+
+          } else {
+            routingContext.put("error", throwable.getMessage());
+            routingContext.put("code", "invariant");
+            routingContext.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
+          }
         });
 
 
@@ -847,27 +863,30 @@ public class FhirServer extends BaseRestInterface {
     patientJson.put("meta", JsonObject.mapFrom(meta));
     //Prefer header, response object depends on its value
     //Db operation using service proxy
-    Promise<JsonObject> jsonObjectPromise = Promise.promise();
-
+    Promise<JsonObject> patientPromise = Promise.promise();
+    databaseService.createOrUpdateDomainResource(FhirUtils.PATIENTS_COLLECTION, patientJson, patientPromise);
     OperationHandler
-      .createUpdateCreateOperationHandler()
+      .createUpdateCreateOperationHandler(patientValidator)
       .validate(patientJson)
-      .executeDatabaseOperation(databaseService, jsonObjectPromise, (promise, service) -> service.createOrUpdateDomainResource(FhirUtils.PATIENTS_COLLECTION, patientJson, promise))
+      .validateAgainstClass(patientJson)
       .setResponse(routingContext.response())
-      .withHeader(FhirHttpHeader.of(HttpHeaderNames.LOCATION.toString(), FhirUtils.BASE + "/" + FhirUtils.PATIENT_TYPE + "/" + newId + "/_history/" + newVersionId))
       .withHeader(FhirHttpHeader.of(FhirHttpHeaderNames.PREFER, preferHeader))
       .withHeader(FhirHttpHeader.of(HttpHeaderNames.ACCEPT.toString(), acceptableType))
-      .writeResponseBody()
+      .writeResponseBodyAsync(patientPromise)
       .releaseAsync()
       .future()
-      .setHandler(asyncResult -> {
-        if (asyncResult.succeeded()) {
-          HttpServerResponse serverResponse = asyncResult.result();
-          serverResponse.end();
-        } else {
-          routingContext.put("error", asyncResult.cause().getMessage());
+      .onSuccess(HttpServerResponse::end)
+      .onFailure(throwable -> {
+
+        if (throwable instanceof ServiceException) {
+          routingContext.put("error", throwable.getMessage());
           routingContext.put("code", "invariant");
-          routingContext.fail(HttpResponseStatus.BAD_REQUEST.code());
+          routingContext.fail(((ServiceException) throwable).failureCode());
+
+        } else {
+          routingContext.put("error", throwable.getMessage());
+          routingContext.put("code", "invariant");
+          routingContext.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
         }
       });
 
@@ -886,20 +905,16 @@ public class FhirServer extends BaseRestInterface {
     //still to be supported
 
     //If resource has been deleted, need to respond with http status 410
-    Promise<JsonObject> checkIfDeletedPromise = Promise.promise();
     Promise<JsonObject> patientPromise = Promise.promise();
     HttpServerResponse serverResponse = routingContext.response();
     JsonObject query = new JsonObject()
       .put("id", id)
       .put("meta.versionId", vId);
-
+    databaseService.fetchDomainResourceWithQuery(FhirUtils.PATIENTS_COLLECTION, query, null, patientPromise);
     OperationHandler
       .createReadOperationHandler()
-      .executeDatabaseOperation(databaseService, patientPromise, (jsonObjectPromise, service) -> service.fetchDomainResourceWithQuery(FhirUtils.PATIENTS_COLLECTION,
-        query, null, jsonObjectPromise))
       .setResponse(serverResponse)
-      .withHeader(FhirHttpHeader.of(HttpHeaderNames.CONTENT_TYPE.toString(), FhirHttpHeaderValues.APPLICATION_JSON))
-      .writeResponseBody()
+      .writeResponseBodyAsync(patientPromise)
       .releaseAsync()
       .future()
       .onSuccess(HttpServerResponse::end)
@@ -936,14 +951,11 @@ public class FhirServer extends BaseRestInterface {
     JsonObject query = new JsonObject()
       .put("id", id)
       .put("resourceType", FhirUtils.PATIENT_TYPE);
-
+    databaseService.fetchDomainResourceWithQuery(FhirUtils.PATIENTS_COLLECTION, query, null, patientPromise);
     OperationHandler
       .createReadOperationHandler()
-      .executeDatabaseOperation(databaseService, patientPromise, (jsonObjectPromise, service) -> service.fetchDomainResourceWithQuery(FhirUtils.PATIENTS_COLLECTION,
-        query, null, jsonObjectPromise))
       .setResponse(serverResponse)
-      .withHeader(FhirHttpHeader.of(HttpHeaderNames.CONTENT_TYPE.toString(), FhirHttpHeaderValues.APPLICATION_JSON))
-      .writeResponseBody()
+      .writeResponseBodyAsync(patientPromise)
       .releaseAsync()
       .future()
       .onSuccess(HttpServerResponse::end)
