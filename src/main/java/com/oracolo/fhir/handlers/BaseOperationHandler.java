@@ -97,5 +97,6 @@ public abstract class BaseOperationHandler implements OperationHandler {
     serverResponse = null;
     httpHeaders = new ArrayList<>();
     queryParameters = new ArrayList<>();
+    httpServerResponsePromise = Promise.promise();
   }
 }
