@@ -1,6 +1,8 @@
 package com.oracolo.fhir.database;
 
+import com.oracolo.fhir.model.backboneelements.BundleEntry;
 import com.oracolo.fhir.model.elements.Metadata;
+import com.oracolo.fhir.model.resources.Bundle;
 import com.oracolo.fhir.utils.FhirUtils;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.AsyncResult;
@@ -13,6 +15,7 @@ import io.vertx.ext.mongo.BulkOperation;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.serviceproxy.ServiceException;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -42,9 +45,9 @@ public class DatabaseServiceImpl implements DatabaseService {
   @SuppressWarnings("OptionalGetWithoutIsPresent")
   @Override
   public DatabaseService fetchDomainResourceWithQuery(String collection, JsonObject query, JsonObject fields, Handler<AsyncResult<JsonObject>> handler) {
-    this.mongoClient.find(collection, query, res -> {
-      if (res.succeeded() && res.result() != null && res.result().size() > 0) {
-        JsonObject jsonObjectResult = res.result()
+    this.mongoClient.find(collection, query, result -> {
+      if (result.succeeded() && result.result() != null && result.result().size() > 0) {
+        JsonObject jsonObjectResult = result.result()
           .stream()
           .peek(json -> json.remove("_id"))
           .max(Comparator.comparing(jsonObject -> Json.decodeValue(jsonObject.getJsonObject("meta").encode(), Metadata.class)
@@ -57,39 +60,16 @@ public class DatabaseServiceImpl implements DatabaseService {
           handler.handle(Future.succeededFuture(jsonObjectResult));
 
         }
-      } else if (res.succeeded() && res.result() != null && res.result().size() == 0) {
+      } else if (result.succeeded() && result.result() != null && result.result().size() == 0) {
         handler.handle(ServiceException.fail(HttpResponseStatus.NOT_FOUND.code(), "No resource found"));
 
       } else {
-        handler.handle(ServiceException.fail(FhirUtils.MONGODB_CONNECTION_FAIL, res.cause().getMessage()));
+        handler.handle(ServiceException.fail(FhirUtils.MONGODB_CONNECTION_FAIL, result.cause().getMessage()));
       }
     });
     return this;
   }
 
-  /**
-   * Find a document in delete collections
-   *
-   * @param query
-   * @param handler
-   * @return
-   */
-  @Override
-  public DatabaseService findDeletedDocument(JsonObject query, Handler<AsyncResult<JsonObject>> handler) {
-    this.mongoClient.findOne(FhirUtils.DELETE_COLLECTION, query, null, res -> {
-      if (res.succeeded() && res.result() != null) {
-        JsonObject resource = res.result();
-        resource.remove("_id");
-        handler.handle(Future.succeededFuture(resource));
-      }
-      if (res.succeeded()) {
-        handler.handle(Future.failedFuture("Resource not found"));
-      } else {
-        handler.handle(Future.failedFuture(res.cause()));
-      }
-    });
-    return this;
-  }
 
   @Override
   public DatabaseService insertDeletedDomainResources(String collection, JsonArray deletedFhirResources, Handler<AsyncResult<Void>> handler) {
@@ -98,11 +78,11 @@ public class DatabaseServiceImpl implements DatabaseService {
       BulkOperation bulkOperation = BulkOperation.createInsert((JsonObject) resourceToDelete);
       bulkOperations.add(bulkOperation);
     });
-    this.mongoClient.bulkWrite(FhirUtils.DELETE_COLLECTION, bulkOperations, res -> {
-      if (res.succeeded()) {
+    this.mongoClient.bulkWrite(FhirUtils.DELETE_COLLECTION, bulkOperations, result -> {
+      if (result.succeeded()) {
         handler.handle(Future.succeededFuture());
       } else {
-        handler.handle(Future.failedFuture(res.cause()));
+        handler.handle(Future.failedFuture(result.cause()));
       }
     });
 
@@ -111,16 +91,44 @@ public class DatabaseServiceImpl implements DatabaseService {
 
   @Override
   public DatabaseService deleteResourceFromCollection(String collection, JsonObject query, Handler<AsyncResult<JsonObject>> handler) {
-    this.mongoClient.removeDocuments(collection, query, res -> {
-      if (res.succeeded()) {
+    this.mongoClient.removeDocuments(collection, query, result -> {
+      if (result.succeeded()) {
 
         handler.handle(Future.succeededFuture());
       } else {
-        handler.handle(Future.failedFuture(res.cause()));
+        handler.handle(Future.failedFuture(result.cause()));
       }
     });
     return this;
   }
 
+  @Override
+  public DatabaseService fetchDomainResourcesWithQuery(String collection, JsonObject query, Handler<AsyncResult<JsonObject>> handler) {
+    mongoClient.find(collection, query, result -> {
+      if (result.succeeded() && result.result() != null && result.result().size() > 0) {
+
+        Bundle bundle = new Bundle()
+          .setTimestamp(Instant.now())
+          .setType("searchset")
+          .setTotal(result.result().size());
+
+        result.result()
+          .stream()
+          .peek(jsonObject -> jsonObject.remove("_id"))
+          .map(jsonObject -> Json.decodeValue(jsonObject.encodePrettily()))
+          .forEach(object -> bundle.addNewEntry(new BundleEntry()
+            .setResource(object)));
+        handler.handle(Future.succeededFuture(JsonObject.mapFrom(bundle)));
+
+      } else if (result.succeeded() && result.result() != null && result.result().size() == 0) {
+        handler.handle(ServiceException.fail(HttpResponseStatus.NOT_FOUND.code(), "No resource found"));
+
+      } else {
+        handler.handle(ServiceException.fail(FhirUtils.MONGODB_CONNECTION_FAIL, result.cause().getMessage()));
+      }
+
+    });
+    return this;
+  }
 
 }

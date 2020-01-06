@@ -1,16 +1,15 @@
-package com.oracolo.fhir.validator;
+package com.oracolo.fhir.handlers.validator;
 
-import com.oracolo.fhir.model.domain.Patient;
 import io.vertx.core.json.DecodeException;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 
-public class PatientValidator extends BaseValidator implements Validator {
+public class ObservationValidator extends BaseValidator implements ValidationHandler {
 
   @Override
   public boolean validateAgainstClass(JsonObject jsonObject) {
     try {
-      Json.decodeValue(jsonObject.encode(), Patient.class);
+      Json.decodeValue(jsonObject.encode(), ObservationValidator.class);
     } catch (DecodeException e) {
       return false;
     }

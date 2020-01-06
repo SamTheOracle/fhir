@@ -50,6 +50,14 @@ public class Reference extends Element {
     return reference;
   }
 
+  /**
+   * A reference to a location at which the other resource is found. The reference may be a relative reference,
+   * in which case it is relative to the patients.service base URL, or an absolute URL that resolves to the location where the resource is found.
+   * The reference may be version specific or not. If the reference is not to a FHIR RESTful patients.server,
+   * then it should be assumed to be version specific.
+   * Internal fragment references (start with '#') refer to contained resources.
+   * <p>Cardinality: 0..1</p>
+   */
   public Reference setReference(String reference) {
     this.reference = reference;
     return this;

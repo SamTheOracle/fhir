@@ -390,8 +390,9 @@ public class Observation extends DomainResource {
     return subject;
   }
 
-  public void setSubject(Reference subject) {
+  public Observation setSubject(Reference subject) {
     this.subject = subject;
+    return this;
   }
 
   public Reference getEncounter() {

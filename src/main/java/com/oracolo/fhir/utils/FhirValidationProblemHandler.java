@@ -6,26 +6,26 @@ import org.leadpony.justify.api.ProblemHandler;
 
 import java.util.List;
 
-public class ValidationHandler implements ProblemHandler {
+public class FhirValidationProblemHandler implements ProblemHandler {
   /**
    * Handles the problems found while validating a JSON document.
    *
    * @param problems the problems found, cannot be {@code null}.
    */
-  private List<Problem> problems;
+  private int size;
 
   @Override
   public void handleProblems(List<Problem> problems) {
     if (!problems.isEmpty()) {
-      this.problems = problems;
+      this.size = problems.size();
 
     }
   }
 
   public void checkProblems() throws NotValidFhirResourceException {
-    if (problems != null && problems.size() > 0) {
-      problems.forEach(System.out::println);
-      throw new NotValidFhirResourceException(problems.get(1).getMessage());
+
+    if (size > 0) {
+      throw new NotValidFhirResourceException("Not valid resource");
     }
   }
 

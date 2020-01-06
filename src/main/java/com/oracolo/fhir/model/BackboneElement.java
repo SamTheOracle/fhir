@@ -21,4 +21,12 @@ public abstract class BackboneElement extends Element {
    * <p>Cardinality: 0..*</p>
    */
   private List<Extension> modifierExtension;
+
+  public List<Extension> getModifierExtension() {
+    return modifierExtension;
+  }
+
+  public void setModifierExtension(List<Extension> modifierExtension) {
+    this.modifierExtension = modifierExtension;
+  }
 }

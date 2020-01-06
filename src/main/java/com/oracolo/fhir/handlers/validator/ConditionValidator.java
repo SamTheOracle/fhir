@@ -1,10 +1,10 @@
-package com.oracolo.fhir.validator;
+package com.oracolo.fhir.handlers.validator;
 
 import io.vertx.core.json.DecodeException;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 
-public class ObservationValidator extends BaseValidator implements Validator {
+public class ConditionValidator extends BaseValidator implements ValidationHandler {
 
   @Override
   public boolean validateAgainstClass(JsonObject jsonObject) {

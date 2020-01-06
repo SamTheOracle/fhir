@@ -2,8 +2,6 @@ package com.oracolo.fhir.model.datatypes;
 
 import com.oracolo.fhir.model.Element;
 
-import java.util.Date;
-
 /**
  * This type is for containing or referencing attachments - additional data content defined in other formats.
  * The most common use of this type is to include images or reports in some report format such as PDF. However, it can be used for any data that has a MIME type.
@@ -49,30 +47,33 @@ public class Attachment extends Element {
    * The date that the attachment was first created.
    * <p>Cardinality: 0..1</p>
    */
-  private Date creation;
+  private String creation;
 
   public String getContentType() {
     return contentType;
   }
 
-  public void setContentType(String contentType) {
+  public Attachment setContentType(String contentType) {
     this.contentType = contentType;
+    return this;
   }
 
   public String getLanguage() {
     return language;
   }
 
-  public void setLanguage(String language) {
+  public Attachment setLanguage(String language) {
     this.language = language;
+    return this;
   }
 
   public String getData() {
     return data;
   }
 
-  public void setData(String data) {
+  public Attachment setData(String data) {
     this.data = data;
+    return this;
   }
 
   public String getUrl() {
@@ -103,15 +104,17 @@ public class Attachment extends Element {
     return title;
   }
 
-  public void setTitle(String title) {
+  public Attachment setTitle(String title) {
     this.title = title;
+    return this;
   }
 
-  public Date getCreation() {
+  public String getCreation() {
     return creation;
   }
 
-  public void setCreation(Date creation) {
+  public Attachment setCreation(String creation) {
     this.creation = creation;
+    return this;
   }
 }

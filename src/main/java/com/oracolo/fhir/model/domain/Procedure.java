@@ -8,6 +8,7 @@ import com.oracolo.fhir.model.datatypes.Identifier;
 import com.oracolo.fhir.model.datatypes.Period;
 import com.oracolo.fhir.model.elements.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -446,8 +447,9 @@ public class Procedure extends DomainResource {
     return subject;
   }
 
-  public void setSubject(Reference subject) {
+  public Procedure setSubject(Reference subject) {
     this.subject = subject;
+    return this;
   }
 
   public Reference getEncounter() {
@@ -547,4 +549,11 @@ public class Procedure extends DomainResource {
     return this;
   }
 
+  public Procedure addNewReport(Reference report) {
+    if (this.report == null) {
+      this.report = new ArrayList<>();
+    }
+    this.report.add(report);
+    return this;
+  }
 }

@@ -2,15 +2,16 @@ package com.oracolo.fhir.http;
 
 import com.oracolo.fhir.BaseRestInterface;
 import com.oracolo.fhir.database.DatabaseService;
+import com.oracolo.fhir.model.ResourceType;
 import com.oracolo.fhir.model.backboneelements.*;
+import com.oracolo.fhir.model.datatypes.Attachment;
 import com.oracolo.fhir.model.datatypes.Coding;
 import com.oracolo.fhir.model.datatypes.HumanName;
 import com.oracolo.fhir.model.datatypes.Period;
 import com.oracolo.fhir.model.domain.*;
 import com.oracolo.fhir.model.elements.CodeableConcept;
 import com.oracolo.fhir.model.elements.Reference;
-import com.oracolo.fhir.utils.FhirHttpHeaderNames;
-import com.oracolo.fhir.utils.FhirHttpHeaderValues;
+import com.oracolo.fhir.utils.FhirHttpHeader;
 import com.oracolo.fhir.utils.FhirUtils;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaderValues;
@@ -126,28 +127,144 @@ public class T4CRestInterface extends BaseRestInterface {
 
 
     //preh
-    EncounterHospitalization encounterHospitalization = new EncounterHospitalization();
 
-//    JsonObject preh = reportJson.getJsonObject("preh");
-//    String territorialArea = preh.getString("territorialArea");
-//    boolean isCarAccident = preh.getBoolean("isCarAccident");
-//    boolean bPleuralDecompression = preh.getBoolean("bPleuralDecompression");
-//    boolean cBloodProtocol = preh.getBoolean("cBloodProtocol");
-//    boolean cTpod = preh.getBoolean("cTpod");
-//    int dGcsTotal = preh.getInteger("dGcsTotal");
-//    boolean dAnisocoria = preh.getBoolean("dAnisocoria");
-//    boolean dMidriasi = preh.getBoolean("dMidriasi");
-//    boolean eMotility = preh.getBoolean("eMotility");
-//    double worstBloodPressure = preh.getDouble("worstBloodPressure");
-//    double worstRespiratoryRate = preh.getDouble("worstRespiratoryRate");
+    JsonObject preh = reportJson.getJsonObject("preh");
+    String territorialArea = preh.getString("territorialArea");
+    String isCarAccident = preh.getString("isCarAccident");
+    String bPleuralDecompression = preh.getString("bPleuralDecompression");
+    String cBloodProtocol = preh.getString("cBloodProtocol");
+    String cTpod = preh.getString("cTpod");
+    int dGcsTotal = preh.getInteger("dGcsTotal");
+    String dAnisocoria = preh.getString("dAnisocoria");
+    String dMidriasi = preh.getString("dMidriasi");
+    String eMotility = preh.getString("eMotility");
+    double worstBloodPressure = preh.getDouble("worstBloodPressure");
+    double worstRespiratoryRate = preh.getDouble("worstRespiratoryRate");
+
+    if (territorialArea != null) {
+      encounterEmergency.addNewLocation(new EncounterLocation()
+        .setLocation(new Reference()
+          .setDisplay(territorialArea)));
+    }
+    if (Boolean.parseBoolean(isCarAccident)) {
+      Condition carAccidentCondition = new Condition()
+        .setId(UUID.randomUUID().toString())
+        .addNewCategory(new CodeableConcept()
+          .addNewCoding(new Coding()
+            .setCode("encounter-diagnosis")
+            .setDisplay("Encounter Diagnosis")))
+        .setCode(new CodeableConcept()
+          .setText("Car accident"));
+      //create put request
+      encounterEmergency.addNewReasonReference(new Reference()
+        .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + ResourceType.Condition + "/" + carAccidentCondition.getId()));
+    }
+    if (Boolean.parseBoolean(bPleuralDecompression)) {
+      Procedure procedure = new Procedure();
+      procedure.setStatus("completed")
+        .setId(UUID.randomUUID().toString())
+        .setCode(new CodeableConcept()
+          .addNewCoding(new Coding()
+            .setCode("281613004")
+            .setDisplay("Decompression action")
+            .setSystem("https://browser.ihtsdotools.org/?perspective=full&conceptId1=281613004&edition=MAIN/2019-07-31&release=&languages=en"))
+          .setText("PleuralDecompression"))
+        .setEncounter(new Reference()
+          .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterEmergency.getId()))
+        .setSubject(new Reference()
+          .setReference(encounterEmergency.getPatient().getReference()));
+      //create put request
+    }
+    if (Boolean.parseBoolean(cBloodProtocol)) {
+      //create blood protocol procedure and link to encounterPreh
+      Procedure procedure = new Procedure();
+      procedure.setStatus("completed")
+        .setId(UUID.randomUUID().toString())
+        .setCode(new CodeableConcept()
+          .addNewCoding(new Coding()
+            .setCode("5447007")
+            .setDisplay("Transfusion")
+            .setSystem("http://browser.ihtsdotools.org/?perspective=full&conceptId1=5447007"))
+          .setText("BloodProtocol"))
+        .setEncounter(new Reference()
+          .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterEmergency.getId()))
+        .setSubject(encounterEmergency.getPatient());
+    }
+    if (Boolean.parseBoolean(cTpod)) {
+      Procedure procedure = new Procedure();
+      procedure.setStatus("completed")
+        .setId(UUID.randomUUID().toString())
+        .setCode(new CodeableConcept()
+          .addNewCoding(new Coding()
+            .setCode("771392003")
+            .setDisplay("Stability of joint structure of pelvic girdle")
+            .setSystem("http://browser.ihtsdotools.org/?perspective=full&conceptId1=5447007"))
+          .setText("TpodResponder"))
+        .setEncounter(new Reference()
+          .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterEmergency.getId()))
+        .setSubject(encounterEmergency.getPatient());
+    }
+    if (Boolean.parseBoolean(dAnisocoria)) {
+      Observation observationAnisocoria = new Observation();
+      observationAnisocoria
+        .setId(UUID.randomUUID().toString())
+        .setCode(new CodeableConcept()
+          .setText("Anisocoria"))
+        .setStatus("final")
+        .setValueBoolean(true)
+        .setEncounter(new Reference()
+          .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterEmergency.getId()))
+        .setSubject(encounterEmergency.getPatient());
+    }
+    if (Boolean.parseBoolean(dMidriasi)) {
+      Observation observationAnisocoria = new Observation();
+      observationAnisocoria
+        .setId(UUID.randomUUID().toString())
+        .setCode(new CodeableConcept()
+          .setText("Midriasi"))
+        .setStatus("final")
+        .setValueBoolean(true)
+        .setEncounter(new Reference()
+          .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterEmergency.getId()))
+        .setSubject(encounterEmergency.getPatient());
+    }
+    if (Boolean.parseBoolean(eMotility)) {
+      Observation observationAnisocoria = new Observation();
+      observationAnisocoria
+        .setId(UUID.randomUUID().toString())
+        .setCode(new CodeableConcept()
+          .setText("Motility"))
+        .setStatus("final")
+        .setValueBoolean(true)
+        .setEncounter(new Reference()
+          .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterEmergency.getId()))
+        .setSubject(encounterEmergency.getPatient());
+    }
+    //GCS Total obvservation
+    Observation dGcs = new Observation()
+      .setId(UUID.randomUUID().toString())
+      .setStatus("final")
+      .setValueInteger(dGcsTotal)
+      .setCode(new CodeableConcept()
+        .addNewCoding(new Coding()
+          .setDisplay("Glasgow Coma Scale")
+          .setCode("35088-4")
+          .setSystem("https://fhir.loinc.org/CodeSystem/$lookup?system=http://loinc.org&code=35088-4"))
+        .setText("Gcs"))
+      .setEncounter(new Reference()
+        .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterEmergency.getId()))
+      .setSubject(encounterEmergency.getPatient());
+
+    Observation worstBloodPressureObservation = new Observation();
+
+
 //    if (isCarAccident) {
 //      encounterEmergency.addNewReasonCode(new CodeableConcept()
 //        .addNewCoding(new Coding()
 //          .setDisplay("Car accident")));
 //    }
-//    encounterEmergency.addNewLocation(new EncounterLocation()
-//      .setLocation(new Reference()
-//        .setReference(territorialArea)));
+
+
 //    //major truama criteria diventa un'osservazione
 //    JsonObject majorTraumaCriteria = reportJson.getJsonObject("majorTraumaCriteria");
 //    majorTraumaCriteria.forEach(entryTraumaCriteria -> {
@@ -164,61 +281,9 @@ public class T4CRestInterface extends BaseRestInterface {
 //    });
 //
 //
-//    if (cBloodProtocol) {
-//      //create blood protocol procedure and link to encounterPreh
-//      Procedure procedure = new Procedure();
-//      procedure.setStatus("completed")
-//        .setId(UUID.randomUUID().toString())
-//        .setCode(new CodeableConcept()
-//          .addNewCoding(new Coding()
-//            .setCode("5447007")
-//            .setDisplay("Transfusion")
-//            .setSystem("http://browser.ihtsdotools.org/?perspective=full&conceptId1=5447007"))
-//          .setText("BloodProtocol"))
-//        .setEncounter(new Reference()
-//          .setType("Encounter"))
-//        .setSubject(new Reference()
-//          .setReference("Patient bello"));
-//    }
-//    if (bPleuralDecompression) {
-//      Procedure procedure = new Procedure();
-//      procedure.setStatus("completed")
-//        .setId(UUID.randomUUID().toString())
-//        .setCode(new CodeableConcept()
-//          .addNewCoding(new Coding()
-//            .setCode("281613004")
-//            .setDisplay("Decompression action")
-//            .setSystem("https://browser.ihtsdotools.org/?perspective=full&conceptId1=281613004&edition=MAIN/2019-07-31&release=&languages=en"))
-//          .setText("PleuralDecompression"))
-//        .setEncounter(new Reference()
-//          .setType("Encounter"))
-//        .setSubject(new Reference()
-//          .setReference("Patient bello"));
-//    }
-//    if (cTpod) {
-//      Procedure procedure = new Procedure();
-//      procedure.setStatus("completed")
-//        .setId(UUID.randomUUID().toString())
-//        .setCode(new CodeableConcept()
-//          .addNewCoding(new Coding()
-//            .setCode("771392003")
-//            .setDisplay("Stability of joint structure of pelvic girdle")
-//            .setSystem("http://browser.ihtsdotools.org/?perspective=full&conceptId1=5447007"))
-//          .setText("TpodResponder"))
-//        .setEncounter(new Reference()
-//          .setType("Encounter"))
-//        .setSubject(new Reference()
-//          .setReference("Patient bello"));
-//    }
-//    Observation observationAnisocoria = new Observation();
-//    observationAnisocoria
-//      .setId(UUID.randomUUID().toString())
-//      .setCode(new CodeableConcept()
-//        .setText("Anisocoria"))
-//      .setStatus("final")
-//      .setValueBoolean(dAnisocoria)
-//      .setEncounter(new Reference()
-//        .setType("Encounter"));
+
+
+//
 //    Observation dGcs = new Observation();
 //    dGcs
 //      .setId(UUID.randomUUID().toString())
@@ -282,12 +347,61 @@ public class T4CRestInterface extends BaseRestInterface {
     String antiplatelets = anamnesisJsonObject.getString("antiplatelets");
     String anticoagulants = anamnesisJsonObject.getString("anticoagulant");
     String nao = anamnesisJsonObject.getString("nao");
-    Procedure anamnesisProcedure = new Procedure();
+    Procedure anamnesisProcedure = new Procedure()
+      .setId(UUID.randomUUID().toString())
+      .setSubject(encounter.getPatient());
     DocumentReference documentReference = new DocumentReference();
     if (Boolean.parseBoolean(antiplatelets)) {
 
-    } else {
+      String documentReferenceUUid = UUID.randomUUID().toString();
+      documentReference
+        .addNewDocumentContent(new DocumentReferenceContent()
+          .setAttachment(new Attachment()
+            .setContentType("text/plain")
+            .setLanguage("it")
+            .setData("Antiplatelets being used")
+            .setTitle("Anamnesis")
+            .setCreation(LocalDate.now().toString())));
 
+      //Web client creating resources
+      anamnesisProcedure
+        .addNewReport(new Reference()
+          .setDisplay("Anamnesis report")
+          .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.DOCUMENTREFERENCE_TYPE + "/" + documentReferenceUUid));
+    }
+    if (Boolean.parseBoolean(anticoagulants)) {
+      String documentReferenceUUid = UUID.randomUUID().toString();
+      documentReference
+        .addNewDocumentContent(new DocumentReferenceContent()
+          .setAttachment(new Attachment()
+            .setContentType("text/plain")
+            .setLanguage("it")
+            .setData("Anticoagulants being used")
+            .setTitle("Anamnesis")
+            .setCreation(LocalDate.now().toString())));
+
+      //Web client creating resources
+      anamnesisProcedure
+        .addNewReport(new Reference()
+          .setDisplay("Anamnesis report")
+          .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.DOCUMENTREFERENCE_TYPE + "/" + documentReferenceUUid));
+    }
+    if (Boolean.parseBoolean(nao)) {
+      String documentReferenceUUid = UUID.randomUUID().toString();
+      documentReference
+        .addNewDocumentContent(new DocumentReferenceContent()
+          .setAttachment(new Attachment()
+            .setContentType("text/plain")
+            .setLanguage("it")
+            .setData("Nao being used")
+            .setTitle("Anamnesis")
+            .setCreation(LocalDate.now().toString())));
+
+      //Web client creating resources
+      anamnesisProcedure
+        .addNewReport(new Reference()
+          .setDisplay("Anamnesis report")
+          .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.DOCUMENTREFERENCE_TYPE + "/" + documentReferenceUUid));
     }
   }
 
@@ -421,17 +535,15 @@ public class T4CRestInterface extends BaseRestInterface {
               .setValueInteger((Integer) entryGroup.getValue())
               //set body site name
               .setBodySite(new CodeableConcept()
-                .setText(entryGroup.getKey()));
-            //add a reference to the encounter
-//              .setEncounter(new Reference()
-//                .setType("Encounter"));
+                .setText(entryGroup.getKey())).setEncounter(new Reference()
+              .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounter.getId()));
             WebClient client = WebClient.create(vertx);
 
             String absUri = FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.BASE + "/" + FhirUtils.OBSERVATION_TYPE;
             HttpRequest<Buffer> request = client
-              .postAbs(absUri);
-            request.putHeader(HttpHeaderNames.CONTENT_TYPE.toString(), FhirHttpHeaderValues.APPLICATION_JSON);
-            request.putHeader(FhirHttpHeaderNames.PREFER, FhirHttpHeaderValues.RETURN_REPRESENTATION);
+              .postAbs(absUri)
+              .putHeader(FhirHttpHeader.APPLICATION_JSON.name(), FhirHttpHeader.APPLICATION_JSON.value())
+              .putHeader(FhirHttpHeader.PREFER_REPRESENTATION.name(), FhirHttpHeader.PREFER_REPRESENTATION.value());
             JsonObject observationJsonObject = JsonObject.mapFrom(observation);
             Buffer observationBuffer = Buffer.buffer(observationJsonObject.encode());
             request.sendBuffer(observationBuffer, httpResponseAsyncResult -> {
@@ -464,6 +576,7 @@ public class T4CRestInterface extends BaseRestInterface {
 
 
     conditionIssAssessment
+      .setId(UUID.randomUUID().toString())
       .setStage(conditionStages)
       .setClinicalStatus(new CodeableConcept()
         .addNewCoding(new Coding()
@@ -483,8 +596,8 @@ public class T4CRestInterface extends BaseRestInterface {
 
     HttpRequest<Buffer> conditionPostRequest = client
       .postAbs(absUri)
-      .putHeader(HttpHeaderNames.CONTENT_TYPE.toString(), FhirHttpHeaderValues.APPLICATION_JSON)
-      .putHeader(FhirHttpHeaderNames.PREFER, FhirHttpHeaderValues.RETURN_REPRESENTATION);
+      .putHeader(FhirHttpHeader.APPLICATION_JSON.name(), FhirHttpHeader.APPLICATION_JSON.value())
+      .putHeader(FhirHttpHeader.PREFER_REPRESENTATION.name(), FhirHttpHeader.PREFER_REPRESENTATION.value());
     conditionPostRequest.sendBuffer(Buffer.buffer(JsonObject.mapFrom(conditionIssAssessment).encode()), httpResponseAsyncResult -> {
       if (httpResponseAsyncResult.succeeded()) {
 //        HttpResponse<Buffer> response = httpResponseAsyncResult.result();
@@ -581,8 +694,8 @@ public class T4CRestInterface extends BaseRestInterface {
     Buffer patientJson = Buffer.buffer(JsonObject.mapFrom(patient).encode());
 
     WebClient.create(vertx).postAbs(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.BASE + "/" + FhirUtils.PATIENT_TYPE)
-      .putHeader(HttpHeaderNames.CONTENT_TYPE.toString(), FhirHttpHeaderValues.APPLICATION_JSON)
-      .putHeader(FhirHttpHeaderNames.PREFER, FhirHttpHeaderValues.RETURN_REPRESENTATION)
+      .putHeader(FhirHttpHeader.APPLICATION_JSON.name(), FhirHttpHeader.APPLICATION_JSON.value())
+      .putHeader(FhirHttpHeader.PREFER_REPRESENTATION.name(), FhirHttpHeader.PREFER_REPRESENTATION.value())
       .sendBuffer(patientJson, res -> {
         if (res.succeeded()) {
           Patient p = Json.decodeValue(res.result().bodyAsBuffer(), Patient.class);

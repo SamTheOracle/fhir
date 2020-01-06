@@ -2,8 +2,7 @@ import com.oracolo.fhir.ApplicationBootstrap;
 import com.oracolo.fhir.model.datatypes.HumanName;
 import com.oracolo.fhir.model.domain.OperationOutcome;
 import com.oracolo.fhir.model.domain.Patient;
-import com.oracolo.fhir.utils.FhirHttpHeaderNames;
-import com.oracolo.fhir.utils.FhirHttpHeaderValues;
+import com.oracolo.fhir.utils.FhirHttpHeader;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.Vertx;
@@ -45,8 +44,8 @@ public class TestPatientCRUD {
 
     WebClient.create(vertx)
       .putAbs(BASE_URL + "/" + PATIENTID)
-      .putHeader(HttpHeaderNames.CONTENT_TYPE.toString(), FhirHttpHeaderValues.APPLICATION_JSON_VERSION_4)
-      .putHeader(FhirHttpHeaderNames.PREFER, FhirHttpHeaderValues.RETURN_REPRESENTATION)
+      .putHeader(HttpHeaderNames.CONTENT_TYPE.toString(), FhirHttpHeader.APPLICATION_JSON.value())
+      .putHeader(FhirHttpHeader.PREFER_REPRESENTATION.name(), FhirHttpHeader.PREFER_REPRESENTATION.value())
       .sendBuffer(Buffer.buffer(JsonObject.mapFrom(patient).encode()), testContext.succeeding(bufferHttpResponse ->
         testContext.verify(() -> {
           Assertions.assertDoesNotThrow(() -> Json.decodeValue(bufferHttpResponse.bodyAsBuffer(), Patient.class));
@@ -89,8 +88,8 @@ public class TestPatientCRUD {
 
     WebClient.create(vertx)
       .postAbs(BASE_URL)
-      .putHeader(HttpHeaderNames.CONTENT_TYPE.toString(), FhirHttpHeaderValues.APPLICATION_JSON_VERSION_4)
-      .putHeader(FhirHttpHeaderNames.PREFER, FhirHttpHeaderValues.RETURN_REPRESENTATION)
+      .putHeader(HttpHeaderNames.CONTENT_TYPE.toString(), FhirHttpHeader.APPLICATION_JSON.value())
+      .putHeader(FhirHttpHeader.PREFER_REPRESENTATION.name(), FhirHttpHeader.PREFER_REPRESENTATION.value())
       .sendBuffer(Buffer.buffer(JsonObject.mapFrom(patient).encode()), testContext.succeeding(bufferHttpResponse ->
         testContext.verify(() -> {
           Assertions.assertDoesNotThrow(() -> Json.decodeValue(bufferHttpResponse.bodyAsBuffer(), Patient.class));
@@ -121,8 +120,8 @@ public class TestPatientCRUD {
 
     WebClient.create(vertx)
       .putAbs(BASE_URL + "/" + PATIENTID)
-      .putHeader(HttpHeaderNames.CONTENT_TYPE.toString(), FhirHttpHeaderValues.APPLICATION_JSON_VERSION_4)
-      .putHeader(FhirHttpHeaderNames.PREFER, FhirHttpHeaderValues.RETURN_REPRESENTATION)
+      .putHeader(HttpHeaderNames.CONTENT_TYPE.toString(), FhirHttpHeader.APPLICATION_JSON.value())
+      .putHeader(FhirHttpHeader.PREFER_REPRESENTATION.name(), FhirHttpHeader.PREFER_REPRESENTATION.value())
       .sendBuffer(Buffer.buffer(JsonObject.mapFrom(patient).encode()), testContext.succeeding(bufferHttpResponse ->
         testContext.verify(() -> {
           Assertions.assertDoesNotThrow(() -> Json.decodeValue(bufferHttpResponse.bodyAsBuffer(), Patient.class));
@@ -149,8 +148,8 @@ public class TestPatientCRUD {
                       checkpoint.flag();
                       WebClient.create(vertx)
                         .putAbs(BASE_URL + "/" + PATIENTID)
-                        .putHeader(HttpHeaderNames.CONTENT_TYPE.toString(), FhirHttpHeaderValues.APPLICATION_JSON_VERSION_4)
-                        .putHeader(FhirHttpHeaderNames.PREFER, FhirHttpHeaderValues.RETURN_REPRESENTATION)
+                        .putHeader(HttpHeaderNames.CONTENT_TYPE.toString(), FhirHttpHeader.APPLICATION_JSON.value())
+                        .putHeader(FhirHttpHeader.PREFER_REPRESENTATION.name(), FhirHttpHeader.PREFER_REPRESENTATION.value())
                         .sendBuffer(Buffer.buffer(JsonObject.mapFrom(patient).encode()), testContext.completing());
                       checkpoint.flag();
                       testContext.completeNow();

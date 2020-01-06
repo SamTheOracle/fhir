@@ -1,5 +1,6 @@
 package com.oracolo.fhir.model.backboneelements;
 
+import com.oracolo.fhir.model.BackboneElement;
 import com.oracolo.fhir.model.elements.CodeableConcept;
 import com.oracolo.fhir.model.elements.Extension;
 import com.oracolo.fhir.model.elements.Quantity;
@@ -11,7 +12,7 @@ import java.util.List;
  * Guidance on how to interpret the value by comparison to a normal or recommended range.
  * Multiple reference ranges are interpreted as an "OR". In other words, to represent two distinct target populations, two referenceRange elements would be used.
  */
-public class ObservationReferenceRange {
+public class ObservationReferenceRange extends BackboneElement {
   /**
    * The value of the low bound of the reference range. The low bound of the
    * reference range endpoint is inclusive of the value (e.g. reference range is >=5 - <=9). If the low bound is omitted,

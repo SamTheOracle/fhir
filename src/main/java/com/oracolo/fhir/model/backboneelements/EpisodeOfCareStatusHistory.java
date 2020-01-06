@@ -1,12 +1,13 @@
 package com.oracolo.fhir.model.backboneelements;
 
+import com.oracolo.fhir.model.BackboneElement;
 import com.oracolo.fhir.model.datatypes.Period;
 import com.oracolo.fhir.model.elements.Extension;
 
 /**
  * The history of statuses that the EpisodeOfCare has been through (without requiring processing the history of the resource).
  */
-public class EpisodeOfCareStatusHistory {
+public class EpisodeOfCareStatusHistory extends BackboneElement {
 
   /**
    * planned | waitlist | active | onhold | finished | cancelled.

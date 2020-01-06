@@ -1,5 +1,6 @@
 package com.oracolo.fhir.model.backboneelements;
 
+import com.oracolo.fhir.model.BackboneElement;
 import com.oracolo.fhir.model.elements.CodeableConcept;
 import com.oracolo.fhir.model.elements.Extension;
 import com.oracolo.fhir.model.elements.RepeatTiming;
@@ -13,7 +14,7 @@ import java.util.List;
  * or ongoing event. For simplicity, the definitions of Timing components are expressed as 'future' events, but such components
  * can also be used to describe historic or ongoing events.
  */
-public class Timing {
+public class Timing extends BackboneElement {
   /**
    * Identifies specific times when the event occurs.
    * <p>Cardinality: 0..*</p>
