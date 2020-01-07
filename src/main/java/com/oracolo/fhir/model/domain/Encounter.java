@@ -165,6 +165,13 @@ public class Encounter extends DomainResource {
    */
   private Reference partOf;
 
+  /**
+   * The subject this encounter refers to
+   * <p>Cardinality 0..1</p>
+   */
+  private Reference subject;
+
+
   public Encounter addNewParticipant(EncounterParticipant encounterParticipant) {
     if (participant == null) {
       participant = new ArrayList<>();
@@ -188,6 +195,15 @@ public class Encounter extends DomainResource {
 
   public Encounter setStatus(String status) {
     this.status = status;
+    return this;
+  }
+
+  public Reference getSubject() {
+    return subject;
+  }
+
+  public Encounter setSubject(Reference subject) {
+    this.subject = subject;
     return this;
   }
 

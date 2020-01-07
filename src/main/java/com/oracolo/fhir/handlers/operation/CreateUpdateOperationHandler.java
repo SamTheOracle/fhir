@@ -1,7 +1,6 @@
 package com.oracolo.fhir.handlers.operation;
 
 import com.oracolo.fhir.database.DatabaseService;
-import com.oracolo.fhir.handlers.validator.ValidationHandler;
 import com.oracolo.fhir.model.elements.Metadata;
 import com.oracolo.fhir.utils.FhirHttpHeader;
 import com.oracolo.fhir.utils.FhirUtils;
@@ -9,6 +8,7 @@ import com.oracolo.fhir.utils.ResponseFormat;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.Promise;
+import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 
@@ -17,10 +17,6 @@ import java.util.function.BiConsumer;
 
 public class CreateUpdateOperationHandler extends BaseOperationHandler implements OperationHandler {
 
-
-  public CreateUpdateOperationHandler(ValidationHandler validator) {
-    super(validator);
-  }
 
   public CreateUpdateOperationHandler() {
   }
@@ -33,7 +29,7 @@ public class CreateUpdateOperationHandler extends BaseOperationHandler implement
    * @return
    */
   @Override
-  public OperationHandler writeResponseBody(JsonObject domainResource) {
+  public OperationHandler createResponse(HttpServerResponse serverResponse, JsonObject domainResource) {
 
     Metadata metadata = Json.decodeValue(domainResource.getJsonObject("meta").encode(), Metadata.class);
     String versionId = metadata.getVersionId();
@@ -61,7 +57,7 @@ public class CreateUpdateOperationHandler extends BaseOperationHandler implement
 
 
   @Override
-  public OperationHandler writeResponseBodyAsync(BiConsumer<DatabaseService, Promise<JsonObject>> databaseServiceConsumer) {
+  public OperationHandler createResponse(HttpServerResponse serverResponse, BiConsumer<DatabaseService, Promise<JsonObject>> databaseServiceConsumer) {
 
     Promise<JsonObject> jsonObjectPromise = Promise.promise();
     databaseServiceConsumer.accept(service, jsonObjectPromise);
@@ -87,7 +83,6 @@ public class CreateUpdateOperationHandler extends BaseOperationHandler implement
         httpServerResponsePromise.complete(serverResponse);
 
       }).onFailure(throwable -> httpServerResponsePromise.fail(throwable));
-
     return this;
   }
 

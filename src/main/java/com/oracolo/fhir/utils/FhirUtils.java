@@ -37,6 +37,12 @@ public class FhirUtils {
   public static final String ENCOUNTER_COLLECTION = "encounters";
   public static final String PROCEDURE_COLLECTION = "procedures";
   public static final String BUNDLE_COLLECTION = "bundles";
+  public static final String DIAGNOSTICREPORTS_COLLECTION = "diagnosticreports";
+  public static final String MEDICATIONADMINISTRATIONS_COLLECTIONS = "medicationadministrations";
+  public static final String MEDICATIONS_COLLECTION = "medications";
+  public static final String PRACTITIONERS_COLLECTION = "practitioners";
+  public static final String LOCATIONS_COLLECTIONS = "locations";
+  public static final String ORGANIZATIONS_COLLECTION = "organizations";
 
 
   public static MongoClient createFhirMongoDbConnection(Vertx vertx) {

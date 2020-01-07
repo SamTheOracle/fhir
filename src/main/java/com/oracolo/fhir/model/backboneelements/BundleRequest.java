@@ -79,8 +79,9 @@ public class BundleRequest extends BackboneElement {
     return method;
   }
 
-  public void setMethod(String method) {
+  public BundleRequest setMethod(String method) {
     this.method = method;
+    return this;
   }
 
   public Extension get_method() {
@@ -95,8 +96,9 @@ public class BundleRequest extends BackboneElement {
     return url;
   }
 
-  public void setUrl(String url) {
+  public BundleRequest setUrl(String url) {
     this.url = url;
+    return this;
   }
 
   public Extension get_url() {

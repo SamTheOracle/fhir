@@ -109,7 +109,6 @@ public class DatabaseServiceImpl implements DatabaseService {
 
         Bundle bundle = new Bundle()
           .setTimestamp(Instant.now())
-          .setType("searchset")
           .setTotal(result.result().size());
 
         result.result()

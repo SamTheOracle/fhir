@@ -177,7 +177,7 @@ class PatientTest {
 
 
     Patient correctPatient = Json.decodeValue(correctPatientJsonString, Patient.class);
-   // Assertions.assertDoesNotThrow(() -> FhirUtils.validateJsonAgainstSchema(JsonObject.mapFrom(correctPatient)));
+//    Assertions.
 
   }
 

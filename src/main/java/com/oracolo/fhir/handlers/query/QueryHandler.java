@@ -15,11 +15,11 @@ public interface QueryHandler {
   static QueryHandler fromResourceType(String resourceType) {
     ResourceType rT = ResourceType.valueOf(resourceType.toUpperCase());
     switch (rT) {
-      case Patient:
+      case PATIENT:
         return new PatientQueryHandler();
-      case Condition:
+      case CONDITION:
         return new ConditionQueryHandler();
-      case Observation:
+      case OBSERVATION:
         return new ObservationQueryHandler();
       default:
         return new BaseQueryHandler();

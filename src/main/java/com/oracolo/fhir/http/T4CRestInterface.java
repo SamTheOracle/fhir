@@ -157,7 +157,7 @@ public class T4CRestInterface extends BaseRestInterface {
           .setText("Car accident"));
       //create put request
       encounterEmergency.addNewReasonReference(new Reference()
-        .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + ResourceType.Condition + "/" + carAccidentCondition.getId()));
+        .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + ResourceType.CONDITION + "/" + carAccidentCondition.getId()));
     }
     if (Boolean.parseBoolean(bPleuralDecompression)) {
       Procedure procedure = new Procedure();

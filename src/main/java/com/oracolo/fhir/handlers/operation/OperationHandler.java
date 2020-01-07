@@ -1,7 +1,6 @@
 package com.oracolo.fhir.handlers.operation;
 
 import com.oracolo.fhir.database.DatabaseService;
-import com.oracolo.fhir.handlers.validator.ValidationHandler;
 import com.oracolo.fhir.utils.ResponseFormat;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpServerResponse;
@@ -12,25 +11,15 @@ import java.util.function.BiConsumer;
 public interface OperationHandler {
 
 
-  static OperationHandler createUpdateCreateOperationHandler(ValidationHandler validator) {
-    return new CreateUpdateOperationHandler(validator);
-  }
-
   static OperationHandler createUpdateCreateOperationHandler() {
     return new CreateUpdateOperationHandler();
   }
 
-  static OperationHandler createReadOperationHandler(ValidationHandler validator) {
-    return new ReadOperationHandler(validator);
-  }
 
   static OperationHandler createReadOperationHandler() {
     return new ReadOperationHandler();
   }
 
-  static OperationHandler createDeleteOperationHandler(ValidationHandler validator) {
-    return new DeleteOperationHandler(validator);
-  }
 
   static OperationHandler createDeleteOperationHandler() {
     return new DeleteOperationHandler();
@@ -40,19 +29,10 @@ public interface OperationHandler {
     return new SearchOperationHandler();
   }
 
-  OperationHandler setValidationHandler(ValidationHandler validationHandler);
-
-  OperationHandler setResponse(HttpServerResponse response);
-
-  OperationHandler validate(JsonObject jsonObject);
 
   OperationHandler withResponseFormat(ResponseFormat responseFormat);
 
-  OperationHandler writeResponseBody(JsonObject domainResourceJsonObject);
-
-  OperationHandler validateAgainstClass(JsonObject jsonObject);
-
-  OperationHandler setService(DatabaseService service);
+  OperationHandler createResponse(HttpServerResponse response, JsonObject domainResourceJsonObject);
 
   /**
    * Executes the database service commands and write response body
@@ -60,12 +40,15 @@ public interface OperationHandler {
    * @param databaseServiceConsumer
    * @return
    */
-  OperationHandler writeResponseBodyAsync(BiConsumer<DatabaseService, Promise<JsonObject>> databaseServiceConsumer);
+  OperationHandler createResponse(HttpServerResponse response, BiConsumer<DatabaseService, Promise<JsonObject>> databaseServiceConsumer);
+
+
+  OperationHandler setService(DatabaseService service);
+
 
   void reset();
 
   Promise<HttpServerResponse> releaseAsync();
 
-  HttpServerResponse release();
 
 }

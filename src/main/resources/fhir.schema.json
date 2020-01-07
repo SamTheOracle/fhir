@@ -8949,7 +8949,8 @@
       },
       "additionalProperties": false,
       "required": [
-        "resourceType"
+        "resourceType",
+        "type"
       ]
     },
     "Bundle_Link": {
@@ -23082,6 +23083,7 @@
       "additionalProperties": false,
       "required": [
         "class",
+        "status",
         "resourceType"
       ]
     },

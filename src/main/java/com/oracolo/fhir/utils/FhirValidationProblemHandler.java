@@ -20,6 +20,7 @@ public class FhirValidationProblemHandler implements ProblemHandler {
       this.size = problems.size();
 
     }
+    problems.forEach(System.out::println);
   }
 
   public void checkProblems() throws NotValidFhirResourceException {

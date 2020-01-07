@@ -1,5 +1,6 @@
 package com.oracolo.fhir.model.resources;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.oracolo.fhir.model.Resource;
 import com.oracolo.fhir.model.backboneelements.BundleEntry;
 import com.oracolo.fhir.model.backboneelements.BundleLink;
@@ -20,7 +21,9 @@ import java.util.List;
  * Creating/updating/deleting a set of resources on a server as a single operation (including doing so as a single atomic transaction) (see Transactions)
  * Storing a collection of resources
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Bundle extends Resource {
+
 
   public final String resourceType = "Bundle";
   /**
@@ -182,5 +185,32 @@ public class Bundle extends Resource {
     }
     entry.add(bundleEntry);
     return this;
+  }
+
+  public enum BundleTypeCodes {
+    DOCUMENT("document", "Document"),
+    MESSAGE("message", "Message"),
+    TRANSACTION("transaction", "Transaction"),
+    TRANSACTIONRESPONSE("transaction-response", "Transaction Response"),
+    BATCH("batch", "Batch"),
+    BATCHRESPONSE("batch-response", "Batch Response"),
+    HISTORY("history", "History List"),
+    SEARCHSET("searchset", "Search Results"),
+    COLLECTION("collection", "Collection");
+    private final String code;
+    private final String display;
+
+    BundleTypeCodes(String code, String display) {
+      this.code = code;
+      this.display = display;
+    }
+
+    public String display() {
+      return display;
+    }
+
+    public String code() {
+      return code;
+    }
   }
 }

@@ -6,9 +6,11 @@ import com.oracolo.fhir.handlers.operation.OperationHandler;
 import com.oracolo.fhir.handlers.query.QueryHandler;
 import com.oracolo.fhir.handlers.validator.ValidationHandler;
 import com.oracolo.fhir.model.ResourceType;
+import com.oracolo.fhir.model.backboneelements.BundleRequest;
 import com.oracolo.fhir.model.domain.OperationOutcome;
 import com.oracolo.fhir.model.domain.OperationOutcomeIssue;
 import com.oracolo.fhir.model.elements.Metadata;
+import com.oracolo.fhir.model.resources.Bundle;
 import com.oracolo.fhir.utils.ErrorFormat;
 import com.oracolo.fhir.utils.FhirHttpHeader;
 import com.oracolo.fhir.utils.FhirUtils;
@@ -44,6 +46,17 @@ public class FhirServer extends BaseRestInterface {
 
     loadRoutes(restApi);
 
+    restApi.post("/" + FhirUtils.BASE)
+      .consumes(FhirHttpHeader.APPLICATION_JSON.value())
+      .consumes(FhirHttpHeader.APPLICATION_JSON_VERSION.value())
+      .produces(HttpHeaderValues.APPLICATION_JSON.toString())
+      .produces(FhirHttpHeader.APPLICATION_JSON.value())
+      .produces(FhirHttpHeader.APPLICATION_JSON.value())
+      .produces("*/json")
+      .produces("*/xml")
+      .handler(this::handleBatchOperations)
+      .failureHandler(this::errorHandler);
+
     createAPIServer(0, restApi)
       .compose(httpServer -> {
         int port = httpServer.actualPort();
@@ -60,10 +73,11 @@ public class FhirServer extends BaseRestInterface {
     });
   }
 
+
   private void loadRoutes(Router restApi) {
     for (ResourceType type : ResourceType.values()) {
       //delete
-      restApi.delete("/" + FhirUtils.BASE + "/" + type.toString() + "/:" + FhirUtils.ID)
+      restApi.delete("/" + FhirUtils.BASE + "/" + type.typeName() + "/:" + FhirUtils.ID)
         .produces(HttpHeaderValues.APPLICATION_JSON.toString())
         .produces(FhirHttpHeader.APPLICATION_JSON.value())
         .produces(FhirHttpHeader.APPLICATION_JSON.value())
@@ -73,8 +87,9 @@ public class FhirServer extends BaseRestInterface {
         .handler(routingContext -> handleResourceDelete(routingContext, type))
         .failureHandler(this::errorHandler);
       //create
-      restApi.post("/" + FhirUtils.BASE + "/" + type.toString())
+      restApi.post("/" + FhirUtils.BASE + "/" + type.typeName())
         .consumes(FhirHttpHeader.APPLICATION_JSON.value())
+        .consumes(FhirHttpHeader.APPLICATION_JSON_VERSION.value())
         .produces(HttpHeaderValues.APPLICATION_JSON.toString())
         .produces(FhirHttpHeader.APPLICATION_JSON.value())
         .produces(FhirHttpHeader.APPLICATION_JSON.value())
@@ -83,7 +98,7 @@ public class FhirServer extends BaseRestInterface {
         .handler(routingContext -> handleResourceCreate(routingContext, type))
         .failureHandler(this::errorHandler);
       //search
-      restApi.get("/" + FhirUtils.BASE + "/" + type.toString())
+      restApi.get("/" + FhirUtils.BASE + "/" + type.typeName())
         .produces(HttpHeaderValues.APPLICATION_JSON.toString())
         .produces(FhirHttpHeader.APPLICATION_JSON.value())
         .produces(FhirHttpHeader.APPLICATION_JSON.value())
@@ -92,7 +107,7 @@ public class FhirServer extends BaseRestInterface {
         .handler(routingContext -> handleResourceSearch(routingContext, type))
         .failureHandler(this::errorHandler);
       //read
-      restApi.get("/" + FhirUtils.BASE + "/" + type.toString() + "/:" + FhirUtils.ID)
+      restApi.get("/" + FhirUtils.BASE + "/" + type.typeName() + "/:" + FhirUtils.ID)
         .produces(HttpHeaderValues.APPLICATION_JSON.toString())
         .produces(FhirHttpHeader.APPLICATION_JSON.value())
         .produces(FhirHttpHeader.APPLICATION_JSON.value())
@@ -101,7 +116,7 @@ public class FhirServer extends BaseRestInterface {
         .handler(routingContext -> handleResourceRead(routingContext, type))
         .failureHandler(this::errorHandler);
       //vread
-      restApi.get("/" + FhirUtils.BASE + "/" + type.toString() + "/:" + FhirUtils.ID + "/" + FhirUtils.HISTORY + "/:" + FhirUtils.PATH_VERSIONID)
+      restApi.get("/" + FhirUtils.BASE + "/" + type.typeName() + "/:" + FhirUtils.ID + "/" + FhirUtils.HISTORY + "/:" + FhirUtils.PATH_VERSIONID)
         .produces(HttpHeaderValues.APPLICATION_JSON.toString())
         .produces(FhirHttpHeader.APPLICATION_JSON.value())
         .produces(FhirHttpHeader.APPLICATION_JSON.value())
@@ -110,8 +125,9 @@ public class FhirServer extends BaseRestInterface {
         .handler(routingContext -> handleResourceVersionRead(routingContext, type))
         .failureHandler(this::errorHandler);
       //update as create
-      restApi.put("/" + FhirUtils.BASE + "/" + type.toString() + "/:" + FhirUtils.ID)
+      restApi.put("/" + FhirUtils.BASE + "/" + type.typeName() + "/:" + FhirUtils.ID)
         .consumes(FhirHttpHeader.APPLICATION_JSON.value())
+        .consumes(FhirHttpHeader.APPLICATION_JSON_VERSION.value())
         .produces(FhirHttpHeader.APPLICATION_JSON.value())
         .produces(FhirHttpHeader.APPLICATION_JSON.value())
         .produces("*/json")
@@ -160,11 +176,10 @@ public class FhirServer extends BaseRestInterface {
     String collection = type.getCollection();
     OperationHandler
       .createReadOperationHandler()
-      .setResponse(serverResponse)
       .setService(databaseService)
       .withResponseFormat(new ResponseFormat()
         .withAcceptHeader(accept))
-      .writeResponseBodyAsync((service, promise) ->
+      .createResponse(serverResponse, (service, promise) ->
         service.fetchDomainResourceWithQuery(collection, query, null, promise))
       .releaseAsync()
       .future()
@@ -211,14 +226,14 @@ public class FhirServer extends BaseRestInterface {
     FhirHttpHeader accept = FhirHttpHeader.of(FhirHttpHeader.ACCEPT, acceptableType);
     HttpServerResponse serverResponse = routingContext.response();
     JsonObject query = new JsonObject()
-      .put("id", id);
+      .put("id", id)
+      .put("meta.versionId", vId);
     OperationHandler
       .createReadOperationHandler()
-      .setResponse(serverResponse)
       .setService(databaseService)
       .withResponseFormat(new ResponseFormat()
         .withAcceptHeader(accept))
-      .writeResponseBodyAsync((service, promise) ->
+      .createResponse(serverResponse, (service, promise) ->
         service.fetchDomainResourceWithQuery(collection, query, null, promise))
       .releaseAsync()
       .future()
@@ -251,52 +266,62 @@ public class FhirServer extends BaseRestInterface {
     String pretty = queryParams.get(FhirUtils.PRETTY);
     String summary = queryParams.get(FhirUtils.SUMMARY);
     String element = queryParams.get(FhirUtils.ELEMENTS);
-    JsonObject patientJson = routingContext.getBodyAsJson();
+    JsonObject resourceJson = routingContext.getBodyAsJson();
 
     String newId = UUID.randomUUID().toString();
     String newVersionId = UUID.randomUUID().toString();
 
-    patientJson.put("id", newId);
+    resourceJson.put("id", newId);
     Metadata meta = new Metadata()
       .setVersionId(newVersionId)
       .setLastUpdated(Instant.now());
-    patientJson.put("meta", JsonObject.mapFrom(meta));
+    resourceJson.put("meta", JsonObject.mapFrom(meta));
     String collection = type.getCollection();
     String acceptableType = routingContext.getAcceptableContentType();
     if (acceptableType == null) {
       acceptableType = FhirHttpHeader.APPLICATION_JSON.value();
     }
-    FhirHttpHeader accept = FhirHttpHeader.of(FhirHttpHeader.ACCEPT, acceptableType);
-    String preferHeader = routingContext.request().headers().get(FhirHttpHeader.PREFER);
-    FhirHttpHeader prefer = FhirHttpHeader.fromPreferString(preferHeader);
-    OperationHandler
-      .createUpdateCreateOperationHandler(ValidationHandler.from(type))
-      .validate(patientJson)
-      .validateAgainstClass(patientJson)
-      .setResponse(routingContext.response())
-      .setService(databaseService)
-      .withResponseFormat(new ResponseFormat()
-        .withAcceptHeader(accept)
-        .withPreferHeader(prefer))
-      .writeResponseBodyAsync((service, promise) -> service.createOrUpdateDomainResource(collection, patientJson, promise))
-      .releaseAsync()
-      .future()
-      .onSuccess(HttpServerResponse::end)
-      .onFailure(throwable -> {
-        if (throwable instanceof ServiceException) {
-          int code = ((ServiceException) throwable).failureCode();
-          String message = throwable.getMessage();
-          ErrorFormat errorFormat = ErrorFormat.createFormat(code);
-          routingContext.put("error", message);
-          routingContext.put("code", errorFormat.getFhirErrorCode());
-          routingContext.fail(code);
+    //validation
+    ValidationHandler validationHandler = ValidationHandler.createValidator();
+    boolean isValidFhirResource = validationHandler.validateAgainstJsonSchema(resourceJson);
+    boolean isValidFhirClass = validationHandler.validateAgainstClass(resourceJson, type.getResourceClass());
+    //if is not valid
+    HttpServerResponse serverResponse = routingContext.response();
+    if (!isValidFhirClass || !isValidFhirResource) {
+      routingContext.put("error", "Not valid resource");
+      routingContext.put("code", "invariant");
+      routingContext.fail(HttpResponseStatus.BAD_REQUEST.code());
+    } else {
+      FhirHttpHeader accept = FhirHttpHeader.of(FhirHttpHeader.ACCEPT, acceptableType);
+      String preferHeader = routingContext.request().headers().get(FhirHttpHeader.PREFER);
+      FhirHttpHeader prefer = FhirHttpHeader.fromPreferString(preferHeader);
+      OperationHandler
+        .createUpdateCreateOperationHandler()
+        .setService(databaseService)
+        .withResponseFormat(new ResponseFormat()
+          .withAcceptHeader(accept)
+          .withPreferHeader(prefer))
+        .createResponse(serverResponse, (service, promise) -> service.createOrUpdateDomainResource(collection, resourceJson, promise))
+        .releaseAsync()
+        .future()
+        .onSuccess(HttpServerResponse::end)
+        .onFailure(throwable -> {
+          if (throwable instanceof ServiceException) {
+            int code = ((ServiceException) throwable).failureCode();
+            String message = throwable.getMessage();
+            ErrorFormat errorFormat = ErrorFormat.createFormat(code);
+            routingContext.put("error", message);
+            routingContext.put("code", errorFormat.getFhirErrorCode());
+            routingContext.fail(code);
 
-        } else {
-          routingContext.put("error", throwable.getMessage());
-          routingContext.put("code", "invariant");
-          routingContext.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
-        }
-      });
+          } else {
+            routingContext.put("error", throwable.getMessage());
+            routingContext.put("code", "exception");
+            routingContext.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
+          }
+        });
+    }
+
 
   }
 
@@ -304,8 +329,8 @@ public class FhirServer extends BaseRestInterface {
     //The request body SHALL be a Resource with an id element that has an identical value to the [id] in the URL
     //If no id element is provided, or the id disagrees with the id in the URL, the server SHALL respond with an HTTP 400 error code,
     // and SHOULD provide an OperationOutcome identifying the issue.
-    JsonObject bodyAsJson = routingContext.getBodyAsJson();
-    String id = bodyAsJson.getString(FhirUtils.ID);
+    JsonObject resourceJson = routingContext.getBodyAsJson();
+    String id = resourceJson.getString(FhirUtils.ID);
     String pathId = routingContext.pathParam(FhirUtils.ID);
     if (id != null && id.equals(pathId)) {
 
@@ -320,48 +345,54 @@ public class FhirServer extends BaseRestInterface {
       Metadata meta = new Metadata()
         .setVersionId(newVersionId)
         .setLastUpdated(Instant.now());
-      bodyAsJson.put("meta", JsonObject.mapFrom(meta));
+      resourceJson.put("meta", JsonObject.mapFrom(meta));
       //Prefer header, response object depends on its value
       //Db operation using service proxy
       String acceptableType = routingContext.getAcceptableContentType();
       if (acceptableType == null) {
         acceptableType = FhirHttpHeader.APPLICATION_JSON.value();
       }
-      FhirHttpHeader accept = FhirHttpHeader.of(FhirHttpHeader.ACCEPT, acceptableType);
-      String preferHeader = routingContext.request().headers().get(FhirHttpHeader.PREFER);
-      FhirHttpHeader prefer = FhirHttpHeader.fromPreferString(preferHeader);
-      OperationHandler
-        .createUpdateCreateOperationHandler(ValidationHandler.from(type))
-        .validate(bodyAsJson)
-        .validateAgainstClass(bodyAsJson)
-        .setResponse(routingContext.response())
-        .setService(databaseService)
-        .withResponseFormat(new ResponseFormat()
-          .withAcceptHeader(accept)
-          .withPreferHeader(prefer))
-        .writeResponseBodyAsync((service, promise)
-          -> service.createOrUpdateDomainResource(collection, bodyAsJson, promise))
-        .releaseAsync()
-        .future()
-        .onSuccess(HttpServerResponse::end)
-        .onFailure(throwable -> {
+      ValidationHandler validationHandler = ValidationHandler.createValidator();
+      boolean isValidFhirResource = validationHandler.validateAgainstJsonSchema(resourceJson);
+      boolean isValidFhirClass = validationHandler.validateAgainstClass(resourceJson, type.getResourceClass());
+      HttpServerResponse serverResponse = routingContext.response();
+      //if is not valid
+      if (!isValidFhirClass || !isValidFhirResource) {
+        routingContext.put("error", "Not valid resource");
+        routingContext.put("code", "invariant");
+        routingContext.fail(HttpResponseStatus.BAD_REQUEST.code());
+      } else {
+        FhirHttpHeader accept = FhirHttpHeader.of(FhirHttpHeader.ACCEPT, acceptableType);
+        String preferHeader = routingContext.request().headers().get(FhirHttpHeader.PREFER);
+        FhirHttpHeader prefer = FhirHttpHeader.fromPreferString(preferHeader);
+        OperationHandler
+          .createUpdateCreateOperationHandler()
+          .setService(databaseService)
+          .withResponseFormat(new ResponseFormat()
+            .withAcceptHeader(accept)
+            .withPreferHeader(prefer))
+          .createResponse(serverResponse, (service, promise)
+            -> service.createOrUpdateDomainResource(collection, resourceJson, promise))
+          .releaseAsync()
+          .future()
+          .onSuccess(HttpServerResponse::end)
+          .onFailure(throwable -> {
 
-          if (throwable instanceof ServiceException) {
-            int code = ((ServiceException) throwable).failureCode();
-            String message = throwable.getMessage();
-            ErrorFormat errorFormat = ErrorFormat.createFormat(code);
-            routingContext.put("error", message);
-            routingContext.put("code", errorFormat.getFhirErrorCode());
-            routingContext.fail(code);
+            if (throwable instanceof ServiceException) {
+              int code = ((ServiceException) throwable).failureCode();
+              String message = throwable.getMessage();
+              ErrorFormat errorFormat = ErrorFormat.createFormat(code);
+              routingContext.put("error", message);
+              routingContext.put("code", errorFormat.getFhirErrorCode());
+              routingContext.fail(code);
 
-          } else {
-            routingContext.put("error", throwable.getMessage());
-            routingContext.put("code", "invariant");
-            routingContext.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
-          }
-        });
-
-
+            } else {
+              routingContext.put("error", throwable.getMessage());
+              routingContext.put("code", "invariant");
+              routingContext.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
+            }
+          });
+      }
     } else {
       routingContext.put("error", "Incorrect resource: resource's id does not match with path id");
       routingContext.put("code", "business-rule");
@@ -379,7 +410,7 @@ public class FhirServer extends BaseRestInterface {
     databaseService.fetchDomainResourceWithQuery(collection, query, null, fetchResource);
     //Step 2: insert all patients in delete collection
     //Step 3: remove all patients from their collection
-
+    HttpServerResponse serverResponse = routingContext.response();
     fetchResource
       .future()
       //if the last updated patient has tag DELETED in meta, it still succedes
@@ -392,9 +423,8 @@ public class FhirServer extends BaseRestInterface {
         jsonObject.put("meta", JsonObject.mapFrom(meta));
         OperationHandler
           .createDeleteOperationHandler()
-          .setResponse(routingContext.response())
           .setService(databaseService)
-          .writeResponseBodyAsync((service, promise) ->
+          .createResponse(serverResponse, (service, promise) ->
             service.createOrUpdateDomainResource(collection, jsonObject, promise))
           .releaseAsync()
           .future()
@@ -416,8 +446,13 @@ public class FhirServer extends BaseRestInterface {
           });
       }).onFailure(throwable -> {
       if (throwable instanceof ServiceException) {
-        routingContext.response().end();
 
+        int code = ((ServiceException) throwable).failureCode();
+        String message = throwable.getMessage();
+        ErrorFormat errorFormat = ErrorFormat.createFormat(code);
+        routingContext.put("error", message);
+        routingContext.put("code", errorFormat.getFhirErrorCode());
+        routingContext.fail(code);
       } else {
         routingContext.put("error", throwable.getMessage());
         routingContext.put("code", "invariant");
@@ -440,17 +475,16 @@ public class FhirServer extends BaseRestInterface {
     FhirHttpHeader accept = FhirHttpHeader.of(FhirHttpHeader.ACCEPT, acceptableType);
 
     JsonObject query = QueryHandler
-      .fromResourceType(type.toString())
+      .fromResourceType(type.typeName())
       .query(queryParams)
       .createMongoDbQuery();
-
+    HttpServerResponse serverResponse = routingContext.response();
     OperationHandler
       .createSearchOperationHandler()
       .setService(databaseService)
-      .setResponse(routingContext.response())
       .withResponseFormat(new ResponseFormat()
         .withAcceptHeader(accept))
-      .writeResponseBodyAsync((service, promise)
+      .createResponse(serverResponse, (service, promise)
         -> service.fetchDomainResourcesWithQuery(collection, query, promise))
       .releaseAsync()
       .future()
@@ -471,5 +505,40 @@ public class FhirServer extends BaseRestInterface {
           routingContext.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
         }
       });
+  }
+
+  private void handleBatchOperations(RoutingContext routingContext) {
+
+    JsonObject bundleJsonObject = routingContext.getBodyAsJson();
+    ValidationHandler validationHandler = ValidationHandler.createValidator();
+    boolean isValidFhirResource = validationHandler.validateAgainstJsonSchema(bundleJsonObject);
+    boolean isValidFhirClass = validationHandler.validateAgainstClass(bundleJsonObject, Bundle.class);
+    if (!isValidFhirClass || !isValidFhirResource) {
+      routingContext.put("error", "Not valid resource");
+      routingContext.put("code", "invariant");
+      routingContext.fail(HttpResponseStatus.BAD_REQUEST.code());
+    }
+    String acceptableType = routingContext.getAcceptableContentType();
+    if (acceptableType == null) {
+      acceptableType = FhirHttpHeader.APPLICATION_JSON.value();
+    }
+    FhirHttpHeader accept = FhirHttpHeader.of(FhirHttpHeader.ACCEPT, acceptableType);
+    String preferHeader = routingContext.request().headers().get(FhirHttpHeader.PREFER);
+    FhirHttpHeader prefer = FhirHttpHeader.fromPreferString(preferHeader);
+
+    Bundle bundle = Json.decodeValue(bundleJsonObject.encodePrettily(), Bundle.class);
+
+    bundle.getEntry()
+      .forEach(bundleEntry -> {
+        BundleRequest bundleRequest = bundleEntry.getRequest();
+        String method = bundleRequest.getMethod();
+        switch (method) {
+          case "GET":
+            String url = bundleRequest.getUrl();
+            String resourceType = url.split("/")[1];
+
+        }
+      });
+
   }
 }

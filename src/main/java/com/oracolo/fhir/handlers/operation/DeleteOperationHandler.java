@@ -1,12 +1,13 @@
 package com.oracolo.fhir.handlers.operation;
 
 import com.oracolo.fhir.database.DatabaseService;
-import com.oracolo.fhir.handlers.validator.ValidationHandler;
 import com.oracolo.fhir.model.elements.Metadata;
 import com.oracolo.fhir.utils.FhirUtils;
 import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.Promise;
+import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 
@@ -16,16 +17,12 @@ import java.util.function.BiConsumer;
 public class DeleteOperationHandler extends BaseOperationHandler implements OperationHandler {
 
 
-  public DeleteOperationHandler(ValidationHandler validator) {
-    super(validator);
-  }
-
   public DeleteOperationHandler() {
 
   }
 
   @Override
-  public OperationHandler writeResponseBody(JsonObject domainResource) {
+  public OperationHandler createResponse(HttpServerResponse serverResponse, JsonObject domainResource) {
 
     Metadata metadata = Json.decodeValue(domainResource.getJsonObject("meta").encode(), Metadata.class);
     String id = domainResource.getString("id");
@@ -41,7 +38,7 @@ public class DeleteOperationHandler extends BaseOperationHandler implements Oper
 
 
   @Override
-  public OperationHandler writeResponseBodyAsync(BiConsumer<DatabaseService, Promise<JsonObject>> databaseServiceConsumer) {
+  public OperationHandler createResponse(HttpServerResponse serverResponse, BiConsumer<DatabaseService, Promise<JsonObject>> databaseServiceConsumer) {
 
     Promise<JsonObject> jsonObjectPromise = Promise.promise();
     databaseServiceConsumer.accept(service, jsonObjectPromise);
@@ -55,7 +52,10 @@ public class DeleteOperationHandler extends BaseOperationHandler implements Oper
         String resourceType = jsonObject.getString("resourceType");
         String length = String.valueOf("".getBytes(Charset.defaultCharset()).length);
 
-        serverResponse.putHeader(HttpHeaderNames.LOCATION, FhirUtils.BASE + "/" + resourceType + "/" + id + "/_history/" + versionId)
+
+        serverResponse
+          .putHeader(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.TEXT_PLAIN)
+          .putHeader(HttpHeaderNames.LOCATION, FhirUtils.BASE + "/" + resourceType + "/" + id + "/_history/" + versionId)
           .putHeader(HttpHeaderNames.ETAG, versionId)
           .putHeader(HttpHeaderNames.LAST_MODIFIED, lastModified)
           .setStatusCode(HttpResponseStatus.NO_CONTENT.code())

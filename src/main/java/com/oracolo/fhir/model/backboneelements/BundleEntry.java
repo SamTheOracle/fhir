@@ -76,16 +76,18 @@ public class BundleEntry extends BackboneElement {
     return request;
   }
 
-  public void setRequest(BundleRequest request) {
+  public BundleEntry setRequest(BundleRequest request) {
     this.request = request;
+    return this;
   }
 
   public BundleResponse getResponse() {
     return response;
   }
 
-  public void setResponse(BundleResponse response) {
+  public BundleEntry setResponse(BundleResponse response) {
     this.response = response;
+    return this;
   }
 
   public List<BundleLink> getLink() {

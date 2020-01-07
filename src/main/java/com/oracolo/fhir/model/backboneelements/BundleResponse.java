@@ -65,8 +65,9 @@ public class BundleResponse extends BackboneElement {
     return status;
   }
 
-  public void setStatus(String status) {
+  public BundleResponse setStatus(String status) {
     this.status = status;
+    return this;
   }
 
   public Extension get_status() {
@@ -81,8 +82,9 @@ public class BundleResponse extends BackboneElement {
     return etag;
   }
 
-  public void setEtag(String etag) {
+  public BundleResponse setEtag(String etag) {
     this.etag = etag;
+    return this;
   }
 
   public Extension get_etag() {
@@ -97,8 +99,9 @@ public class BundleResponse extends BackboneElement {
     return lastModified;
   }
 
-  public void setLastModified(String lastModified) {
+  public BundleResponse setLastModified(String lastModified) {
     this.lastModified = lastModified;
+    return this;
   }
 
   public Extension get_lastModified() {
@@ -113,8 +116,9 @@ public class BundleResponse extends BackboneElement {
     return location;
   }
 
-  public void setLocation(String location) {
+  public BundleResponse setLocation(String location) {
     this.location = location;
+    return this;
   }
 
   public Extension get_location() {
@@ -129,8 +133,9 @@ public class BundleResponse extends BackboneElement {
     return outcome;
   }
 
-  public void setOutcome(Resource outcome) {
+  public BundleResponse setOutcome(Resource outcome) {
     this.outcome = outcome;
+    return this;
   }
 
 
