@@ -187,4 +187,4 @@ nbdist/
 ### Test Coverage ###
 src/main/coverage/*
 ### Resource Models ###
-/src/main/resourcemodel/
+/src/main/resourcemodel/*
