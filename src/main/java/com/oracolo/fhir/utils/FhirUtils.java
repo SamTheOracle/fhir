@@ -43,6 +43,7 @@ public class FhirUtils {
   public static final String PRACTITIONERS_COLLECTION = "practitioners";
   public static final String LOCATIONS_COLLECTIONS = "locations";
   public static final String ORGANIZATIONS_COLLECTION = "organizations";
+  public static final int RESOURCE_ALREADY_EXIST_CODE = 1;
 
 
   public static MongoClient createFhirMongoDbConnection(Vertx vertx) {

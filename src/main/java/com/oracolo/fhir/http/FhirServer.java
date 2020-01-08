@@ -301,7 +301,7 @@ public class FhirServer extends BaseRestInterface {
         .withResponseFormat(new ResponseFormat()
           .withAcceptHeader(accept)
           .withPreferHeader(prefer))
-        .createResponse(serverResponse, (service, promise) -> service.createOrUpdateDomainResource(collection, resourceJson, promise))
+        .createResponse(serverResponse, (service, promise) -> service.createUpdateResourceIfNotPresentOrDeleted(collection, resourceJson, promise))
         .releaseAsync()
         .future()
         .onSuccess(HttpServerResponse::end)
@@ -372,7 +372,7 @@ public class FhirServer extends BaseRestInterface {
             .withAcceptHeader(accept)
             .withPreferHeader(prefer))
           .createResponse(serverResponse, (service, promise)
-            -> service.createOrUpdateDomainResource(collection, resourceJson, promise))
+            -> service.createUpdateResourceIfNotPresentOrDeleted(collection, resourceJson, promise))
           .releaseAsync()
           .future()
           .onSuccess(HttpServerResponse::end)
@@ -405,61 +405,59 @@ public class FhirServer extends BaseRestInterface {
     String collection = type.getCollection();
     JsonObject query = new JsonObject()
       .put("id", id);
-    //Step 1: find last modified resource
-    Promise<JsonObject> fetchResource = Promise.promise();
-    databaseService.fetchDomainResourceWithQuery(collection, query, null, fetchResource);
-    //Step 2: insert all patients in delete collection
-    //Step 3: remove all patients from their collection
+
     HttpServerResponse serverResponse = routingContext.response();
-    fetchResource
+    OperationHandler
+      .createDeleteOperationHandler()
+      .setService(databaseService)
+      .createResponse(serverResponse, (service, promise) ->
+        service.createDeletedResource(collection, query, promise))
+      .releaseAsync()
       .future()
-      //if the last updated patient has tag DELETED in meta, it still succedes
-      .onSuccess(jsonObject -> {
-        String newVersionId = UUID.randomUUID().toString();
-        Metadata meta = Json.decodeValue(jsonObject.getJsonObject("meta").encode(), Metadata.class)
-          .setLastUpdated(Instant.now())
-          .setVersionId(newVersionId)
-          .addNewTag(FhirUtils.DELETED);
-        jsonObject.put("meta", JsonObject.mapFrom(meta));
-        OperationHandler
-          .createDeleteOperationHandler()
-          .setService(databaseService)
-          .createResponse(serverResponse, (service, promise) ->
-            service.createOrUpdateDomainResource(collection, jsonObject, promise))
-          .releaseAsync()
-          .future()
-          .onSuccess(HttpServerResponse::end)
-          .onFailure(throwable -> {
-            if (throwable instanceof ServiceException) {
-              int code = ((ServiceException) throwable).failureCode();
-              String message = throwable.getMessage();
-              ErrorFormat errorFormat = ErrorFormat.createFormat(code);
-              routingContext.put("error", message);
-              routingContext.put("code", errorFormat.getFhirErrorCode());
-              routingContext.fail(code);
+      .onSuccess(HttpServerResponse::end)
+      .onFailure(throwable -> {
+        if (throwable instanceof ServiceException) {
+          int code = ((ServiceException) throwable).failureCode();
+          String message = throwable.getMessage();
+          ErrorFormat errorFormat = ErrorFormat.createFormat(code);
+          routingContext.put("error", message);
+          routingContext.put("code", errorFormat.getFhirErrorCode());
+          routingContext.fail(code);
 
-            } else {
-              routingContext.put("error", throwable.getMessage());
-              routingContext.put("code", "invariant");
-              routingContext.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
-            }
-          });
-      }).onFailure(throwable -> {
-      if (throwable instanceof ServiceException) {
+        } else {
+          routingContext.put("error", throwable.getMessage());
+          routingContext.put("code", "invariant");
+          routingContext.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
+        }
+      });
 
-        int code = ((ServiceException) throwable).failureCode();
-        String message = throwable.getMessage();
-        ErrorFormat errorFormat = ErrorFormat.createFormat(code);
-        routingContext.put("error", message);
-        routingContext.put("code", errorFormat.getFhirErrorCode());
-        routingContext.fail(code);
-      } else {
-        routingContext.put("error", throwable.getMessage());
-        routingContext.put("code", "invariant");
-        routingContext.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
-      }
-
-    });
+//    fetchResource
+//      .future()
+//      //if the last updated patient has tag DELETED in meta, it still succedes
+//      .onSuccess(jsonObject -> {
+//        String newVersionId = UUID.randomUUID().toString();
+//        Metadata meta = Json.decodeValue(jsonObject.getJsonObject("meta").encode(), Metadata.class)
+//          .setLastUpdated(Instant.now())
+//          .setVersionId(newVersionId)
+//          .addNewTag(FhirUtils.DELETED);
+//        jsonObject.put("meta", JsonObject.mapFrom(meta));
+//
+//      }).onFailure(throwable -> {
+//      if (throwable instanceof ServiceException) {
+//
+//        int code = ((ServiceException) throwable).failureCode();
+//        String message = throwable.getMessage();
+//        ErrorFormat errorFormat = ErrorFormat.createFormat(code);
+//        routingContext.put("error", message);
+//        routingContext.put("code", errorFormat.getFhirErrorCode());
+//        routingContext.fail(code);
+//      } else {
+//        routingContext.put("error", throwable.getMessage());
+//        routingContext.put("code", "invariant");
+//        routingContext.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
+//      }
+//
+//    });
 
   }
 

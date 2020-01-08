@@ -1,0 +1,41 @@
+{
+  "participant": [
+    {
+      "type": [
+        {
+          "coding": [
+            {
+              "system": "CodeSystem/v3-ParticipationType",
+              "code": "PPRF",
+              "display": "primary performer",
+              "userSelected": false
+            }
+          ],
+          "text": "Trauma Leader"
+        }
+      ],
+      "individual": {
+        "reference": "/Practioner/vanni.angioletti",
+        "display": "Vanni Agnoletti"
+      }
+    },
+    {
+      "type": [
+        {
+          "coding": [
+            {
+              "system": "CodeSystem/v3-ParticipationType",
+              "code": "SPRF",
+              "display": "secondary performer",
+              "userSelected": false
+            }
+          ]
+        }
+      ],
+      "individual": {
+        "reference": "PractitionerRole/27841a1e-b060-4401-ad8f-0e12e266b0f4",
+        "display": "anestesista"
+      }
+    }
+  ]
+}

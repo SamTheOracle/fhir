@@ -1,0 +1,179 @@
+{
+  "resourceType": "Encounter",
+  "identifier": [
+    {
+      Identifier
+    }
+  ],
+  "status": "<code>",
+  "statusHistory": [
+    {
+      "status": "<code>",
+      "period": {
+        Period
+      }
+    }
+  ],
+  "class": {
+    Coding
+  },
+  "classHistory": [
+    {
+      "class": {
+        Coding
+      },
+      "period": {
+        Period
+      }
+    }
+  ],
+  "type": [
+    {
+      CodeableConcept
+    }
+  ],
+  "serviceType": {
+    CodeableConcept
+  },
+  "priority": {
+    CodeableConcept
+  },
+  "subject": {
+    Reference(Patient
+    |
+    Group)
+  },
+  "episodeOfCare": [
+    {
+      Reference(EpisodeOfCare)
+    }
+  ],
+  "basedOn": [
+    {
+      Reference(ServiceRequest)
+    }
+  ],
+  "participant": [
+    {
+      "type": [
+        {
+          CodeableConcept
+        }
+      ],
+      "period": {
+        Period
+      },
+      "individual": {
+        Reference(Practitioner
+        |
+        PractitionerRole
+        |
+        RelatedPerson)
+      }
+    }
+  ],
+  "appointment": [
+    {
+      Reference(Appointment)
+    }
+  ],
+  "period": {
+    Period
+  },
+  "length": {
+    Duration
+  },
+  "reasonCode": [
+    {
+      CodeableConcept
+    }
+  ],
+  "reasonReference": [
+    {
+      Reference(Condition
+      |
+      Procedure
+      |
+      Observation
+      |
+      ImmunizationRecommendation)
+    }
+  ],
+  "diagnosis": [
+    {
+      "condition": {
+        Reference(Condition
+        |
+        Procedure)
+      },
+      "use": {
+        CodeableConcept
+      },
+      "rank": "<positiveInt>"
+    }
+  ],
+  "account": [
+    {
+      Reference(Account)
+    }
+  ],
+  "hospitalization": {
+    "preAdmissionIdentifier": {
+      Identifier
+    },
+    "origin": {
+      Reference(Location
+      |
+      Organization)
+    },
+    "admitSource": {
+      CodeableConcept
+    },
+    "reAdmission": {
+      CodeableConcept
+    },
+    "dietPreference": [
+      {
+        CodeableConcept
+      }
+    ],
+    "specialCourtesy": [
+      {
+        CodeableConcept
+      }
+    ],
+    "specialArrangement": [
+      {
+        CodeableConcept
+      }
+    ],
+    "destination": {
+      Reference(Location
+      |
+      Organization)
+    },
+    "dischargeDisposition": {
+      CodeableConcept
+    }
+  },
+  "location": [
+    {
+      "location": {
+        Reference(Location)
+      },
+      "status": "<code>",
+      "physicalType": {
+        CodeableConcept
+      },
+      "period": {
+        Period
+      }
+    }
+  ],
+  "serviceProvider": {
+    Reference(Organization)
+  },
+  "partOf": {
+    Reference(Encounter)
+  }
+}

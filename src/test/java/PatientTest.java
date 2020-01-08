@@ -1,7 +1,10 @@
+import com.oracolo.fhir.handlers.validator.ValidationHandler;
+import com.oracolo.fhir.model.datatypes.HumanName;
 import com.oracolo.fhir.model.datatypes.Identifier;
 import com.oracolo.fhir.model.datatypes.Period;
 import com.oracolo.fhir.model.domain.Patient;
 import io.vertx.core.json.Json;
+import io.vertx.core.json.JsonObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class PatientTest {
 
   private Patient fhirPatient;
-  private String correctPatientJsonString="{\n" +
+  private String correctPatientJsonString = "{\n" +
     "  \"resourceType\": \"Patient\",\n" +
     "  \"id\": \"example\",\n" +
     "  \"text\": {\n" +
@@ -175,9 +178,16 @@ class PatientTest {
   @Test
   public void testDecode() {
 
+    Patient patient = new Patient();
 
-    Patient correctPatient = Json.decodeValue(correctPatientJsonString, Patient.class);
-//    Assertions.
+    patient.addNewHumanName(new HumanName()
+      .setFamily("zanotti")
+      .addNewGiven("giacomo"))
+      .setBirthDate("")
+      .setDeceasedBoolean(false);
+    ValidationHandler
+      .createValidator()
+      .validateAgainstJsonSchema(JsonObject.mapFrom(patient));
 
   }
 

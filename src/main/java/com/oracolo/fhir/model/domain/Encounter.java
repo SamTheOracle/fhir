@@ -460,4 +460,12 @@ public class Encounter extends DomainResource {
     this.reasonReference.add(reasonReference);
     return this;
   }
+
+  public Encounter addNewEncounterParticipant(EncounterParticipant encounterParticipant) {
+    if (participant == null) {
+      participant = new ArrayList<>();
+    }
+    participant.add(encounterParticipant);
+    return this;
+  }
 }

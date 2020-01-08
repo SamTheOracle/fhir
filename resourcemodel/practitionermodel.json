@@ -1,0 +1,67 @@
+{
+  "resourceType": "PractitionerRole",
+  "identifier": [
+    {
+      Identifier
+    }
+  ],
+  "active": <boolean>,
+  "period": {
+    Period
+  },
+  "practitioner": {
+    Reference(Practitioner)
+  },
+  "organization": {
+    Reference(Organization)
+  },
+  "code": [
+    {
+      CodeableConcept
+    }
+  ],
+  "specialty": [
+    {
+      CodeableConcept
+    }
+  ],
+  "location": [
+    {
+      Reference(Location)
+    }
+  ],
+  "healthcareService": [
+    {
+      Reference(HealthcareService)
+    }
+  ],
+  "telecom": [
+    {
+      ContactPoint
+    }
+  ],
+  "availableTime": [
+    {
+      "daysOfWeek": [
+        "<code>"
+      ],
+      "allDay": <boolean>,
+      "availableStartTime": "<time>",
+      "availableEndTime": "<time>"
+    }
+  ],
+  "notAvailable": [
+    {
+      "description": "<string>",
+      "during": {
+        Period
+      }
+    }
+  ],
+  "availabilityExceptions": "<string>",
+  "endpoint": [
+    {
+      Reference(Endpoint)
+    }
+  ]
+}

@@ -206,8 +206,9 @@ public class Condition extends DomainResource {
     return clinicalStatus;
   }
 
-  public void setClinicalStatus(CodeableConcept clinicalStatus) {
+  public Condition setClinicalStatus(CodeableConcept clinicalStatus) {
     this.clinicalStatus = clinicalStatus;
+    return this;
   }
 
   public CodeableConcept getVerificationStatus() {
@@ -256,8 +257,9 @@ public class Condition extends DomainResource {
     return subject;
   }
 
-  public void setSubject(Reference subject) {
+  public Condition setSubject(Reference subject) {
     this.subject = subject;
+    return this;
   }
 
   public Reference getEncounter() {

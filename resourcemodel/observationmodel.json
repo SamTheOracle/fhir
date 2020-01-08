@@ -1,0 +1,186 @@
+{
+  "resourceType": "Observation",
+  "identifier": [
+    {
+      Identifier
+    }
+  ],
+  "basedOn": [
+    {
+      Reference(CarePlan
+      |
+      DeviceRequest
+      |
+      ImmunizationRecommendation
+      |
+      MedicationRequest
+      |
+      NutritionOrder
+      |
+      ServiceRequest)
+    }
+  ],
+  "partOf": [
+    {
+      Reference(MedicationAdministration
+      |
+      MedicationDispense
+      |
+      MedicationStatement
+      |
+      Procedure
+      |
+      Immunization
+      |
+      ImagingStudy)
+    }
+  ],
+  "status": "<code>",
+  "category": [
+    {
+      CodeableConcept
+    }
+  ],
+  "code": {
+    CodeableConcept
+  },
+  "subject": {
+    Reference(Patient
+    |
+    Group
+    |
+    Device
+    |
+    Location)
+  },
+  "focus": [
+    {
+      Reference(Any)
+    }
+  ],
+  "encounter": {
+    Reference(Encounter)
+  },
+  "effectiveDateTime": "<dateTime>",
+  "effectivePeriod": {
+    Period
+  },
+  "effectiveTiming": {
+    Timing
+  },
+  "effectiveInstant": "<instant>",
+  "issued": "<instant>",
+  "performer": [
+    {
+      Reference(Practitioner
+      |
+      PractitionerRole
+      |
+      Organization
+      |
+      CareTeam
+      |
+      Patient
+      |
+      RelatedPerson)
+    }
+  ],
+  "value[x]",
+  "dataAbsentReason": {
+    CodeableConcept
+  },
+  "interpretation": [
+    {
+      CodeableConcept
+    }
+  ],
+  "note": [
+    {
+      Annotation
+    }
+  ],
+  "bodySite": {
+    CodeableConcept
+  },
+  "method": {
+    CodeableConcept
+  },
+  "specimen": {
+    Reference(Specimen)
+  },
+  "device": {
+    Reference(Device
+    |
+    DeviceMetric)
+  },
+  "referenceRange": [
+    {
+      "low": {
+        Quantity(SimpleQuantity)
+      },
+      "high": {
+        Quantity(SimpleQuantity)
+      },
+      "type": {
+        CodeableConcept
+      },
+      "appliesTo": [
+        {
+          CodeableConcept
+        }
+      ],
+      "age": {
+        Range
+      },
+      "text": "<string>"
+    }
+  ],
+  "hasMember": [
+    {
+      Reference(Observation
+      |
+      QuestionnaireResponse
+      |
+      MolecularSequence)
+    }
+  ],
+  "derivedFrom": [
+    {
+      Reference(DocumentReference
+      |
+      ImagingStudy
+      |
+      Media
+      |
+      QuestionnaireResponse
+      |
+      Observation
+      |
+      MolecularSequence)
+    }
+  ],
+  "component": [
+    {
+      "code": {
+        CodeableConcept
+      },
+      "value[x]",
+      "dataAbsentReason": {
+        CodeableConcept
+      }
+      "interpretation": [
+        {
+          CodeableConcept
+        }
+      ],
+      "referenceRange": [
+        {
+          Content
+          as
+          for
+          Observation.referenceRange
+        }
+      ]
+    }
+  ]
+}

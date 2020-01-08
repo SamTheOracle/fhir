@@ -1,0 +1,95 @@
+{
+  "$id": "https://example.com/person.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Iss",
+  "type": "object",
+  "properties": {
+    "totalIss": {
+      "type": "number"
+    },
+    "headGroup": {
+      "type": "object",
+      "properties": {
+        "groupTotalIss": {
+          "type": "number"
+        },
+        "headNeckAis": {
+          "type": "number"
+        },
+        "brainAis": {
+          "type": "number"
+        },
+        "cervicalSpineAis": {
+          "type": "number"
+        }
+      }
+    },
+    "faceGroup": {
+      "type": "object",
+      "properties": {
+        "groupTotalIss": {
+          "type": "number"
+        },
+        "faceAis": {
+          "type": "number"
+        }
+      }
+    },
+    "toraxGroup": {
+      "type": "object",
+      "properties": {
+        "groupTotalIss": {
+          "type": "number"
+        },
+        "toraxAis": {
+          "type": "number"
+        },
+        "spineAis": {
+          "type": "number"
+        }
+      }
+    },
+    "abdomenGroup": {
+      "type": "object",
+      "properties": {
+        "groupTotalIss": {
+          "type": "number"
+        },
+        "abdomenAis": {
+          "type": "number"
+        },
+        "lumbarSpineAis": {
+          "type": "number"
+        }
+      }
+    },
+    "extremitiesGroup": {
+      "type": "object",
+      "properties": {
+        "groupTotalIss": {
+          "type": "number"
+        },
+        "upperExtremitiesAis": {
+          "type": "number"
+        },
+        "lowerExtremitiesAis": {
+          "type": "number"
+        },
+        "pelvicGirdleAis": {
+          "type": "number"
+        }
+      }
+    },
+    "externaGroup": {
+      "type": "object",
+      "properties": {
+        "groupTotalIss": {
+          "type": "number"
+        },
+        "externaAis": {
+          "type": "number"
+        }
+      }
+    }
+  }
+}

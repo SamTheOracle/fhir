@@ -23,8 +23,6 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
-import io.vertx.ext.web.client.HttpRequest;
-import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.handler.BodyHandler;
 
@@ -33,8 +31,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -87,9 +84,9 @@ public class T4CRestInterface extends BaseRestInterface {
         .setDisplay("Emergency"))
       .setStatus("finished")
       .setServiceProvider(new Reference()
-        .setReference("Ospedale Bufalini"));
+        .setDisplay("Ospedale Bufalini"));
 
-    addParticipant(reportJson);
+    addParticipant(reportJson, encounterEmergency);
 
     String startDate = reportJson.getString("startDate");
     String startTime = reportJson.getString("startTime");
@@ -127,6 +124,7 @@ public class T4CRestInterface extends BaseRestInterface {
 
 
     //preh
+    JsonObject j = JsonObject.mapFrom(encounterEmergency);
 
     JsonObject preh = reportJson.getJsonObject("preh");
     String territorialArea = preh.getString("territorialArea");
@@ -428,8 +426,9 @@ public class T4CRestInterface extends BaseRestInterface {
         .setText("Major Trauma Criteria - Anatomical"))
         .setValueBoolean(true);
     } else {
-      majorTraumaCriteriaAnatomicalObservation.setCode(new CodeableConcept()
-        .setText("Major Trauma Criteria - Dynamic"))
+      majorTraumaCriteriaAnatomicalObservation
+        .setCode(new CodeableConcept()
+          .setText("Major Trauma Criteria - Dynamic"))
         .setValueBoolean(false);
     }
     if (Boolean.parseBoolean(physiological)) {
@@ -443,15 +442,24 @@ public class T4CRestInterface extends BaseRestInterface {
     }
 
     Condition majorTraumaCriteriaCondition = new Condition()
+      .setId(UUID.randomUUID().toString())
       .setCode(new CodeableConcept()
         .setText("Major Trauma Criteria"))
       .addNewConditionStage(new ConditionStage()
         .addNewAssessment(new Reference()
-          .setReference(""))
+          .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + ResourceType.OBSERVATION.typeName() + "/" + majorTraumaCriteriaAnatomicalObservation.setId(UUID.randomUUID().toString()).getId()))
         .addNewAssessment(new Reference()
-          .setReference(""))
+          .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + ResourceType.OBSERVATION.typeName() + "/" + majorTraumaCriteriaDynamicObservation.setId(UUID.randomUUID().toString()).getId()))
         .addNewAssessment(new Reference()
-          .setReference("")));
+          .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + ResourceType.OBSERVATION.typeName() + "/" + majorTraumaCriteriaPhysiologicalObservation.setId(UUID.randomUUID().toString()).getId())));
+    encounter.addNewDiagnosis(new EncounterDiagnosis()
+      .setCondition(new Reference()
+        .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + ResourceType.CONDITION.typeName() + "/" + majorTraumaCriteriaCondition.getId()))
+      .setUse(new CodeableConcept()
+        .addNewCoding(new Coding()
+          .setCode("AD")
+          .setSystem("https://www.hl7.org/fhir/codesystem-diagnosis-role.html")
+          .setDisplay("Admission Diagnosis"))));
     encounter.addNewReasonReference(new Reference()
       .setType("Condition")
       .setReference("" + majorTraumaCriteriaCondition.getId()));
@@ -474,11 +482,11 @@ public class T4CRestInterface extends BaseRestInterface {
       .setEnd(FhirUtils.fullDateTime.format(finalZonedEndDateTime)));
   }
 
-  private void addParticipant(JsonObject reportJson) {
-    EncounterParticipant encounterParticipant = new EncounterParticipant();
+  private void addParticipant(JsonObject reportJson, Encounter encounter) {
 
     String startOperatorId = reportJson.getString("startOperatorId");
     if (startOperatorId != null) {
+      EncounterParticipant encounterParticipant = new EncounterParticipant();
       String startOperatorDescription = reportJson.getString("startOperatorDescription");
       encounterParticipant.addNewType(new CodeableConcept()
         .addNewCoding(new Coding()
@@ -489,12 +497,14 @@ public class T4CRestInterface extends BaseRestInterface {
         .setIndividual(new Reference()
           //need to create a fhir resource
           .setDisplay(startOperatorDescription));
+      encounter.addNewEncounterParticipant(encounterParticipant);
     }
 
     JsonArray traumaTeamMembers = reportJson.getJsonArray("traumaTeamMembers");
     if (traumaTeamMembers != null && !traumaTeamMembers.isEmpty()) {
       traumaTeamMembers.stream().map(traumaMemberObject -> (String) traumaMemberObject)
         .forEach(traumaMemberString -> {
+          EncounterParticipant encounterParticipant = new EncounterParticipant();
           encounterParticipant.addNewType(new CodeableConcept()
             .addNewCoding(new Coding()
               .setSystem("http://terminology.hl7.org/CodeSystem/v3-ParticipationType")
@@ -502,15 +512,16 @@ public class T4CRestInterface extends BaseRestInterface {
               .setDisplay("secondary performer")))
             .setIndividual(new Reference()
               .setDisplay(traumaMemberString));
+          encounter.addNewEncounterParticipant(encounterParticipant);
         });
+
     }
+    JsonObject enc = JsonObject.mapFrom(encounter);
   }
 
   private void addIssToEncounter(JsonObject iss, Encounter encounter) {
     //Condition for iss, referenced in encounter resource
     Condition conditionIssAssessment = new Condition();
-    //Stage of a condition
-    List<ConditionStage> conditionStages = new ArrayList<>();
 
     iss.forEach(entry -> {
       String key = entry.getKey();
@@ -526,8 +537,8 @@ public class T4CRestInterface extends BaseRestInterface {
             observation.setStatus("final")
               .setCode(new CodeableConcept()
                 .addNewCoding(new Coding()
-                  .setDisplay("Physical findings of General status Narrative")
-                  .setCode("10210-3")
+                  .setDisplay("Injury severity score Calculated")
+                  .setCode("74471-4")
                   .setUserSelected(true))
                 .setText("Physical observation for injury severity score"))
               .setId(uuid)
@@ -535,56 +546,54 @@ public class T4CRestInterface extends BaseRestInterface {
               .setValueInteger((Integer) entryGroup.getValue())
               //set body site name
               .setBodySite(new CodeableConcept()
-                .setText(entryGroup.getKey())).setEncounter(new Reference()
-              .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounter.getId()));
+                .setText(entryGroup.getKey()))
+              .setEncounter(new Reference()
+                .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounter.getId()));
+            conditionIssAssessment
+              .addNewConditionEvidence(new ConditionEvidence()
+                .addNewCode(new CodeableConcept()
+                  .addNewCoding(new Coding()
+                    .setUserSelected(true)
+                    .setDisplay("AIS - Abbreviated injury scale")
+                    .setCode("273255001")
+                  ))
+                .addNewDetail(new Reference()
+                  .setType(observation.getResourceType())
+                  .setDisplay("Iss Observation")
+                  .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + ResourceType.OBSERVATION.typeName() + "/" + observation.getId())));
+//            conditionStages.add(new ConditionStage()
+//              .setType(new CodeableConcept()
+//                .addNewCoding(new Coding()
+//                  .setUserSelected(true)
+//                  .setDisplay("AIS - Abbreviated injury scale")
+//                  .setCode("273255001")))
+//              .addNewAssessment(new Reference()
+//                .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.BASE + "/" + FhirUtils.OBSERVATION_TYPE + "/" + observation.getId())));
             WebClient client = WebClient.create(vertx);
-
-            String absUri = FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.BASE + "/" + FhirUtils.OBSERVATION_TYPE;
-            HttpRequest<Buffer> request = client
-              .postAbs(absUri)
-              .putHeader(FhirHttpHeader.APPLICATION_JSON.name(), FhirHttpHeader.APPLICATION_JSON.value())
-              .putHeader(FhirHttpHeader.PREFER_REPRESENTATION.name(), FhirHttpHeader.PREFER_REPRESENTATION.value());
-            JsonObject observationJsonObject = JsonObject.mapFrom(observation);
-            Buffer observationBuffer = Buffer.buffer(observationJsonObject.encode());
-            request.sendBuffer(observationBuffer, httpResponseAsyncResult -> {
-              if (httpResponseAsyncResult.succeeded()) {
-                HttpResponse<Buffer> httpResponse = httpResponseAsyncResult.result();
-                Buffer responseBody = httpResponse.body();
-                Observation observationFromServer = Json.decodeValue(responseBody, Observation.class);
-                String observationId = observationFromServer.getId();
-                //add the observation as a reference to the condition stage
-                conditionStages.add(new ConditionStage()
-                  .setType(new CodeableConcept()
-                    .addNewCoding(new Coding()
-                      .setUserSelected(true)
-                      .setDisplay("AIS")
-                      .setCode("273255001")))
-                  .addNewAssessment(new Reference()
-                    .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.BASE + "/" + FhirUtils.OBSERVATION_TYPE + "/" + observationId)));
-              } else {
-                //handle
-              }
-
-            });
-
           }
         });
       }
     });
-    WebClient client = WebClient.create(vertx);
-    String absUri = FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.BASE + "/" + FhirUtils.CONDITION_TYPE;
-
-
     conditionIssAssessment
-      .setId(UUID.randomUUID().toString())
-      .setStage(conditionStages)
+      .setCode(new CodeableConcept()
+        .addNewCoding(new Coding()
+          .setCode("118222006")
+          .setSystem("https://www.hl7.org/fhir/codesystem-snomedct.html")
+          .setDisplay("General finding of observation of patient (finding)")))
+      .addNewCategory(new CodeableConcept()
+        .addNewCoding(new Coding()
+          .setDisplay("Encounter Diagnosis")
+          .setSystem("https://www.hl7.org/fhir/codesystem-condition-category.html")
+          .setCode("encounter-diagnosis")))
       .setClinicalStatus(new CodeableConcept()
         .addNewCoding(new Coding()
           .setCode("active")
           .setDisplay("Active")
-          .setSystem("http://terminology.hl7.org/CodeSystem/condition-clinicalversion4.0.1")));
-    List<EncounterDiagnosis> diagnoses = new ArrayList<>();
-    diagnoses.add(new EncounterDiagnosis()
+          .setSystem("http://terminology.hl7.org/CodeSystem/condition-clinicalversion4.0.1")))
+      .setSubject(encounter.getPatient());
+
+
+    encounter.addNewDiagnosis(new EncounterDiagnosis()
       .setUse(new CodeableConcept()
         .addNewCoding(new Coding()
           .setDisplay("post-op diagnosis")
@@ -592,25 +601,6 @@ public class T4CRestInterface extends BaseRestInterface {
       .setCondition(new Reference()
         .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.BASE + "/" + FhirUtils.CONDITION_TYPE + "/"
           + conditionIssAssessment.getId())));
-    encounter.setDiagnosis(diagnoses);
-
-    HttpRequest<Buffer> conditionPostRequest = client
-      .postAbs(absUri)
-      .putHeader(FhirHttpHeader.APPLICATION_JSON.name(), FhirHttpHeader.APPLICATION_JSON.value())
-      .putHeader(FhirHttpHeader.PREFER_REPRESENTATION.name(), FhirHttpHeader.PREFER_REPRESENTATION.value());
-    conditionPostRequest.sendBuffer(Buffer.buffer(JsonObject.mapFrom(conditionIssAssessment).encode()), httpResponseAsyncResult -> {
-      if (httpResponseAsyncResult.succeeded()) {
-//        HttpResponse<Buffer> response = httpResponseAsyncResult.result();
-//        //Condition conditionIssAssessmentFromServer = Json.decodeValue(response.body(), Condition.class);
-//        List<EncounterDiagnosis> diagnoses = new ArrayList<>();
-//        diagnoses.add(new EncounterDiagnosis()
-//          .setCondition(new Reference()
-//            .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.BASE + "/" + FhirUtils.CONDITION_TYPE + "/"
-//              + "id")));
-      } else {
-        //handle...
-      }
-    });
 
 
   }
@@ -677,22 +667,35 @@ public class T4CRestInterface extends BaseRestInterface {
   }
 
   private void createPatient(String name, String surname, String gender, int age, String dob, String erDeceased, Encounter encounter) {
-    Patient patient = new Patient();
-    List<HumanName> humanNames = new ArrayList<>();
-    List<String> givens = new ArrayList<>();
-    givens.add(name);
-    humanNames.add(new HumanName()
-      .setFamily(surname)
-      .setGiven(givens));
 
-    patient.setBirthDate(dob)
-      .setName(humanNames)
-      .setGender(gender);
+
+    Patient patient = new Patient()
+      .setId(UUID.randomUUID().toString())
+      .addNewHumanName(
+        new HumanName()
+          .setFamily(surname)
+          .addNewGiven(name)
+      );
+    if (dob != null) {
+      DateTimeFormatter dateTimeFormatter = new DateTimeFormatterBuilder()
+        .appendPattern("dd/MM/yy")
+        //.appendValueReduced(ChronoField.YEAR,2,2,1930)
+        .toFormatter();
+      LocalDate date = LocalDate.parse(dob, dateTimeFormatter);
+      LocalDate fhirDob = LocalDate.of(date.getYear(), date.getMonth(), date.getDayOfMonth());
+      String d = fhirDob.toString();
+      patient.setBirthDate(fhirDob.toString());
+
+    }
+
     if (erDeceased != null) {
       patient.setDeceasedBoolean(Boolean.parseBoolean(erDeceased));
     }
+    encounter.setPatient(new Reference()
+      .setType("http://hl7.org/fhir/StructureDefinition/Patient")
+      .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.BASE + "/" + FhirUtils.PATIENT_TYPE + "/" + patient.getId()));
     Buffer patientJson = Buffer.buffer(JsonObject.mapFrom(patient).encode());
-
+//
     WebClient.create(vertx).postAbs(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.BASE + "/" + FhirUtils.PATIENT_TYPE)
       .putHeader(FhirHttpHeader.APPLICATION_JSON.name(), FhirHttpHeader.APPLICATION_JSON.value())
       .putHeader(FhirHttpHeader.PREFER_REPRESENTATION.name(), FhirHttpHeader.PREFER_REPRESENTATION.value())

@@ -11,14 +11,11 @@ import io.vertx.core.Handler;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.mongo.BulkOperation;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.serviceproxy.ServiceException;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 
 public class DatabaseServiceImpl implements DatabaseService {
 
@@ -28,15 +25,58 @@ public class DatabaseServiceImpl implements DatabaseService {
     this.mongoClient = mongoClient;
   }
 
+
   @Override
-  public DatabaseService createOrUpdateDomainResource(String collection, JsonObject requestBody, Handler<AsyncResult<JsonObject>> handler) {
-    this.mongoClient.insert(collection, requestBody, res -> {
-      if (res.succeeded()) {
-        //vertx mongo client insert _id, when saving, need to get it out
-        requestBody.remove("_id");
-        handler.handle(Future.succeededFuture(requestBody));
+  public DatabaseService createDeletedResource(String collection, JsonObject query, Handler<AsyncResult<JsonObject>> handler) {
+    fetchDomainResourceWithQuery(collection, query, null, res -> {
+      //if it is successfull, the resource is not deleted
+      if (res.succeeded() && res.result() != null) {
+        JsonObject resultFromFetch = res.result();
+
+        resultFromFetch.getJsonObject("meta")
+          .put("tag", new JsonArray().add(FhirUtils.DELETED))
+          .put("lastUpdated", Instant.now());
+        this.mongoClient.insert(collection, resultFromFetch, insertRes -> {
+          if (insertRes.succeeded()) {
+
+            //vertx mongo client insert _id, when saving, need to get it out
+            resultFromFetch.remove("_id");
+            handler.handle(Future.succeededFuture(resultFromFetch));
+          } else {
+            handler.handle(ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), insertRes.cause().getMessage()));
+          }
+        });
       } else {
-        handler.handle(ServiceException.fail(FhirUtils.MONGODB_CONNECTION_FAIL, res.cause().getMessage()));
+        handler.handle(ServiceException.fail(HttpResponseStatus.GONE.code(), "Resource already deleted"));
+      }
+    });
+    return this;
+  }
+
+  @Override
+  public DatabaseService createUpdateResourceIfNotPresentOrDeleted(String collection, JsonObject body, Handler<AsyncResult<JsonObject>> handler) {
+    JsonObject copy = body.copy();
+    copy.remove("id");
+    copy.remove("meta");
+    JsonObject query = new JsonObject()
+      .put("$or", new JsonArray()
+        .add(new JsonObject()
+          .put("id", body.getString("id")))
+        .add(copy));
+    fetchDomainResourceWithQuery(collection, query, null, checkIfDeletedHandler -> {
+      if (checkIfDeletedHandler.succeeded() && checkJsonObjects(checkIfDeletedHandler.result(), body.copy())) {
+        handler.handle(ServiceException.fail(HttpResponseStatus.BAD_REQUEST.code(), "Resource already exists"));
+
+      } else {
+        this.mongoClient.insert(collection, body, insertRes -> {
+          if (insertRes.succeeded()) {
+            //vertx mongo client insert _id, when saving, need to get it out
+            body.remove("_id");
+            handler.handle(Future.succeededFuture(body));
+          } else {
+            handler.handle(ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), insertRes.cause().getMessage()));
+          }
+        });
       }
     });
     return this;
@@ -53,6 +93,7 @@ public class DatabaseServiceImpl implements DatabaseService {
           .max(Comparator.comparing(jsonObject -> Json.decodeValue(jsonObject.getJsonObject("meta").encode(), Metadata.class)
             .getLastUpdated()))
           .get();
+
         Metadata metadata = Json.decodeValue(jsonObjectResult.getJsonObject("meta").encode(), Metadata.class);
         if (metadata.getTag() != null && metadata.getTag().contains(FhirUtils.DELETED)) {
           handler.handle(ServiceException.fail(HttpResponseStatus.GONE.code(), "Resource already deleted"));
@@ -64,43 +105,12 @@ public class DatabaseServiceImpl implements DatabaseService {
         handler.handle(ServiceException.fail(HttpResponseStatus.NOT_FOUND.code(), "No resource found"));
 
       } else {
-        handler.handle(ServiceException.fail(FhirUtils.MONGODB_CONNECTION_FAIL, result.cause().getMessage()));
+        handler.handle(ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), result.cause().getMessage()));
       }
     });
     return this;
   }
 
-
-  @Override
-  public DatabaseService insertDeletedDomainResources(String collection, JsonArray deletedFhirResources, Handler<AsyncResult<Void>> handler) {
-    List<BulkOperation> bulkOperations = new ArrayList<>();
-    deletedFhirResources.forEach(resourceToDelete -> {
-      BulkOperation bulkOperation = BulkOperation.createInsert((JsonObject) resourceToDelete);
-      bulkOperations.add(bulkOperation);
-    });
-    this.mongoClient.bulkWrite(FhirUtils.DELETE_COLLECTION, bulkOperations, result -> {
-      if (result.succeeded()) {
-        handler.handle(Future.succeededFuture());
-      } else {
-        handler.handle(Future.failedFuture(result.cause()));
-      }
-    });
-
-    return this;
-  }
-
-  @Override
-  public DatabaseService deleteResourceFromCollection(String collection, JsonObject query, Handler<AsyncResult<JsonObject>> handler) {
-    this.mongoClient.removeDocuments(collection, query, result -> {
-      if (result.succeeded()) {
-
-        handler.handle(Future.succeededFuture());
-      } else {
-        handler.handle(Future.failedFuture(result.cause()));
-      }
-    });
-    return this;
-  }
 
   @Override
   public DatabaseService fetchDomainResourcesWithQuery(String collection, JsonObject query, Handler<AsyncResult<JsonObject>> handler) {
@@ -130,4 +140,11 @@ public class DatabaseServiceImpl implements DatabaseService {
     return this;
   }
 
+  private boolean checkJsonObjects(JsonObject j1, JsonObject j2) {
+    j1.remove("meta");
+    j1.remove("id");
+    j2.remove("id");
+    j2.remove("meta");
+    return j1.encode().equals(j2.encode());
+  }
 }

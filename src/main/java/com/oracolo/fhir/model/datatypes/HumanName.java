@@ -1,5 +1,6 @@
 package com.oracolo.fhir.model.datatypes;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.oracolo.fhir.model.Element;
 import com.oracolo.fhir.model.elements.Extension;
 
@@ -15,6 +16,7 @@ import java.util.List;
  * various cultures associate different importance with the name parts and the degree to which systems SHALL care about name parts around the world varies widely.
  * </p>
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class HumanName extends Element {
 
   /**
