@@ -21,24 +21,9 @@ public class DeleteOperationHandler extends BaseOperationHandler implements Oper
 
   }
 
-  @Override
-  public OperationHandler createResponse(HttpServerResponse serverResponse, JsonObject domainResource) {
-
-    Metadata metadata = Json.decodeValue(domainResource.getJsonObject("meta").encode(), Metadata.class);
-    String id = domainResource.getString("id");
-    String versionId = metadata.getVersionId();
-    String lastUpdated = metadata.getLastUpdated().toString();
-    String resourceType = domainResource.getString("resourceType");
-    serverResponse.putHeader(HttpHeaderNames.LOCATION, FhirUtils.BASE + "/" + resourceType + "/" + id + "/_history/" + versionId)
-      .putHeader(HttpHeaderNames.ETAG, metadata.getVersionId())
-      .putHeader(HttpHeaderNames.LAST_MODIFIED, lastUpdated)
-      .setStatusCode(HttpResponseStatus.NO_CONTENT.code());
-    return this;
-  }
-
 
   @Override
-  public OperationHandler createResponse(HttpServerResponse serverResponse, BiConsumer<DatabaseService, Promise<JsonObject>> databaseServiceConsumer) {
+  public OperationHandler createResponseAsync(HttpServerResponse serverResponse, BiConsumer<DatabaseService, Promise<JsonObject>> databaseServiceConsumer) {
 
     Promise<JsonObject> jsonObjectPromise = Promise.promise();
     databaseServiceConsumer.accept(service, jsonObjectPromise);

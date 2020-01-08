@@ -14,6 +14,7 @@ public abstract class BaseOperationHandler implements OperationHandler {
   public BaseOperationHandler() {
   }
 
+
   @Override
   public OperationHandler setService(DatabaseService service) {
     this.service = service;

@@ -179,7 +179,7 @@ public class FhirServer extends BaseRestInterface {
       .setService(databaseService)
       .withResponseFormat(new ResponseFormat()
         .withAcceptHeader(accept))
-      .createResponse(serverResponse, (service, promise) ->
+      .createResponseAsync(serverResponse, (service, promise) ->
         service.fetchDomainResourceWithQuery(collection, query, null, promise))
       .releaseAsync()
       .future()
@@ -233,7 +233,7 @@ public class FhirServer extends BaseRestInterface {
       .setService(databaseService)
       .withResponseFormat(new ResponseFormat()
         .withAcceptHeader(accept))
-      .createResponse(serverResponse, (service, promise) ->
+      .createResponseAsync(serverResponse, (service, promise) ->
         service.fetchDomainResourceWithQuery(collection, query, null, promise))
       .releaseAsync()
       .future()
@@ -261,6 +261,7 @@ public class FhirServer extends BaseRestInterface {
 
     //still to be supported
 
+    MultiMap headers = routingContext.request().headers();
     MultiMap queryParams = routingContext.queryParams();
     String format = queryParams.get(FhirUtils.FORMAT);
     String pretty = queryParams.get(FhirUtils.PRETTY);
@@ -301,7 +302,7 @@ public class FhirServer extends BaseRestInterface {
         .withResponseFormat(new ResponseFormat()
           .withAcceptHeader(accept)
           .withPreferHeader(prefer))
-        .createResponse(serverResponse, (service, promise) -> service.createUpdateResourceIfNotPresentOrDeleted(collection, resourceJson, promise))
+        .createResponseAsync(serverResponse, (service, promise) -> service.createUpdateResource(collection, resourceJson, promise))
         .releaseAsync()
         .future()
         .onSuccess(HttpServerResponse::end)
@@ -371,8 +372,8 @@ public class FhirServer extends BaseRestInterface {
           .withResponseFormat(new ResponseFormat()
             .withAcceptHeader(accept)
             .withPreferHeader(prefer))
-          .createResponse(serverResponse, (service, promise)
-            -> service.createUpdateResourceIfNotPresentOrDeleted(collection, resourceJson, promise))
+          .createResponseAsync(serverResponse, (service, promise)
+            -> service.createUpdateResource(collection, resourceJson, promise))
           .releaseAsync()
           .future()
           .onSuccess(HttpServerResponse::end)
@@ -410,7 +411,7 @@ public class FhirServer extends BaseRestInterface {
     OperationHandler
       .createDeleteOperationHandler()
       .setService(databaseService)
-      .createResponse(serverResponse, (service, promise) ->
+      .createResponseAsync(serverResponse, (service, promise) ->
         service.createDeletedResource(collection, query, promise))
       .releaseAsync()
       .future()
@@ -473,7 +474,7 @@ public class FhirServer extends BaseRestInterface {
     FhirHttpHeader accept = FhirHttpHeader.of(FhirHttpHeader.ACCEPT, acceptableType);
 
     JsonObject query = QueryHandler
-      .fromResourceType(type.typeName())
+      .fromResourceType(type)
       .query(queryParams)
       .createMongoDbQuery();
     HttpServerResponse serverResponse = routingContext.response();
@@ -482,7 +483,7 @@ public class FhirServer extends BaseRestInterface {
       .setService(databaseService)
       .withResponseFormat(new ResponseFormat()
         .withAcceptHeader(accept))
-      .createResponse(serverResponse, (service, promise)
+      .createResponseAsync(serverResponse, (service, promise)
         -> service.fetchDomainResourcesWithQuery(collection, query, promise))
       .releaseAsync()
       .future()

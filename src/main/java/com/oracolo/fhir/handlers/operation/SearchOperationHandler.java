@@ -21,18 +21,6 @@ public class SearchOperationHandler extends BaseOperationHandler implements Oper
   }
 
 
-  /**
-   * Create a HttpServerResponse with the headers previously added (Location,Prefer and Accept)
-   *
-   * @param domainResource the domainResource to write
-   * @return
-   */
-  @Override
-  public OperationHandler createResponse(HttpServerResponse serverResponse, JsonObject domainResource) {
-
-
-    return this;
-  }
 
   /**
    * Executes the database service commands and write response body
@@ -41,7 +29,7 @@ public class SearchOperationHandler extends BaseOperationHandler implements Oper
    * @return
    */
   @Override
-  public OperationHandler createResponse(HttpServerResponse serverResponse, BiConsumer<DatabaseService, Promise<JsonObject>> databaseServiceConsumer) {
+  public OperationHandler createResponseAsync(HttpServerResponse serverResponse, BiConsumer<DatabaseService, Promise<JsonObject>> databaseServiceConsumer) {
     Promise<JsonObject> promise = Promise.promise();
     databaseServiceConsumer.accept(service, promise);
     promise

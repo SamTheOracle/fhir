@@ -22,42 +22,8 @@ public class CreateUpdateOperationHandler extends BaseOperationHandler implement
   }
 
 
-  /**
-   * Create a HttpServerResponse with the headers previously added (Location,Prefer and Accept)
-   *
-   * @param domainResource the domainResource to write
-   * @return
-   */
   @Override
-  public OperationHandler createResponse(HttpServerResponse serverResponse, JsonObject domainResource) {
-
-    Metadata metadata = Json.decodeValue(domainResource.getJsonObject("meta").encode(), Metadata.class);
-    String versionId = metadata.getVersionId();
-    String lastModified = metadata.getLastUpdated().toString();
-    String id = domainResource.getString("id");
-    //general parameter to be supported
-
-
-    serverResponse.setStatusCode(HttpResponseStatus.CREATED.code())
-      .putHeader(HttpHeaderNames.ETAG, versionId)
-      .putHeader(HttpHeaderNames.LAST_MODIFIED, lastModified)
-      .putHeader(HttpHeaderNames.LOCATION, FhirUtils.BASE + "/" + FhirUtils.PATIENT_TYPE + "/" + id + "/_history/" + versionId)
-      .setStatusCode(HttpResponseStatus.CREATED.code());
-
-    ResponseFormat responseFormat = super.responseFormat.format(domainResource);
-    String length = String.valueOf(responseFormat.response().getBytes(Charset.defaultCharset()).length);
-    FhirHttpHeader fhirHttpHeader = responseFormat.contentType();
-    serverResponse.putHeader(HttpHeaderNames.CONTENT_LENGTH, length)
-      .putHeader(fhirHttpHeader.name(), fhirHttpHeader.value())
-      .write(responseFormat.response());
-
-
-    return this;
-  }
-
-
-  @Override
-  public OperationHandler createResponse(HttpServerResponse serverResponse, BiConsumer<DatabaseService, Promise<JsonObject>> databaseServiceConsumer) {
+  public OperationHandler createResponseAsync(HttpServerResponse serverResponse, BiConsumer<DatabaseService, Promise<JsonObject>> databaseServiceConsumer) {
 
     Promise<JsonObject> jsonObjectPromise = Promise.promise();
     databaseServiceConsumer.accept(service, jsonObjectPromise);

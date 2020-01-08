@@ -32,7 +32,6 @@ public interface OperationHandler {
 
   OperationHandler withResponseFormat(ResponseFormat responseFormat);
 
-  OperationHandler createResponse(HttpServerResponse response, JsonObject domainResourceJsonObject);
 
   /**
    * Executes the database service commands and write response body
@@ -40,7 +39,7 @@ public interface OperationHandler {
    * @param databaseServiceConsumer
    * @return
    */
-  OperationHandler createResponse(HttpServerResponse response, BiConsumer<DatabaseService, Promise<JsonObject>> databaseServiceConsumer);
+  OperationHandler createResponseAsync(HttpServerResponse response, BiConsumer<DatabaseService, Promise<JsonObject>> databaseServiceConsumer);
 
 
   OperationHandler setService(DatabaseService service);
@@ -49,6 +48,9 @@ public interface OperationHandler {
   void reset();
 
   Promise<HttpServerResponse> releaseAsync();
+
+
+
 
 
 }

@@ -11,11 +11,14 @@ import io.vertx.core.Handler;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.mongo.BulkOperation;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.serviceproxy.ServiceException;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 public class DatabaseServiceImpl implements DatabaseService {
 
@@ -54,15 +57,30 @@ public class DatabaseServiceImpl implements DatabaseService {
   }
 
   @Override
-  public DatabaseService createUpdateResourceIfNotPresentOrDeleted(String collection, JsonObject body, Handler<AsyncResult<JsonObject>> handler) {
-    JsonObject copy = body.copy();
-    copy.remove("id");
-    copy.remove("meta");
-    JsonObject query = new JsonObject()
-      .put("$or", new JsonArray()
-        .add(new JsonObject()
-          .put("id", body.getString("id")))
-        .add(copy));
+  public DatabaseService createUpdateResource(String collection, JsonObject body, Handler<AsyncResult<JsonObject>> handler) {
+    this.mongoClient.insert(collection, body, insertRes -> {
+      if (insertRes.succeeded()) {
+        //vertx mongo client insert _id, when saving, need to get it out
+        body.remove("_id");
+        handler.handle(Future.succeededFuture(body));
+      } else {
+        handler.handle(ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), insertRes.cause().getMessage()));
+      }
+    });
+    return this;
+  }
+
+
+  @Override
+  public DatabaseService conditionalCreateUpdate(String collection, JsonObject body, JsonObject query, Handler<AsyncResult<JsonObject>> handler) {
+//    JsonObject copy = body.copy();
+//    copy.remove("id");
+//    copy.remove("meta");
+//    JsonObject query = new JsonObject()
+//      .put("$or", new JsonArray()
+//        .add(new JsonObject()
+//          .put("id", body.getString("id")))
+//        .add(copy));
     fetchDomainResourceWithQuery(collection, query, null, checkIfDeletedHandler -> {
       if (checkIfDeletedHandler.succeeded() && checkJsonObjects(checkIfDeletedHandler.result(), body.copy())) {
         handler.handle(ServiceException.fail(HttpResponseStatus.BAD_REQUEST.code(), "Resource already exists"));
@@ -136,6 +154,20 @@ public class DatabaseServiceImpl implements DatabaseService {
         handler.handle(ServiceException.fail(FhirUtils.MONGODB_CONNECTION_FAIL, result.cause().getMessage()));
       }
 
+    });
+    return this;
+  }
+
+  @Override
+  public DatabaseService executeWriteBulkOperations(String collection, List<JsonObject> resources, Handler<AsyncResult<JsonObject>> handler) {
+    List<BulkOperation> operations = new ArrayList<>();
+    resources.forEach(domainResource -> operations.add(BulkOperation.createInsert(domainResource)));
+    mongoClient.bulkWrite(collection, operations, res -> {
+      if (res.succeeded() && res.result() != null) {
+        handler.handle(Future.succeededFuture(new JsonObject()));
+      } else {
+        handler.handle(ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), "Error"));
+      }
     });
     return this;
   }

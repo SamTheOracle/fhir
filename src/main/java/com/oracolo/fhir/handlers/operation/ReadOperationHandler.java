@@ -24,29 +24,7 @@ public class ReadOperationHandler extends BaseOperationHandler implements Operat
 
 
   @Override
-  public OperationHandler createResponse(HttpServerResponse serverResponse, JsonObject domainResource) {
-    Metadata metadata = Json.decodeValue(domainResource.getJsonObject("meta").encode(), Metadata.class);
-    String lastModified = metadata.getLastUpdated().toString();
-    String versionId = metadata.getVersionId();
-    String id = domainResource.getString("id");
-    String resourceType = domainResource.getString("resourceType");
-    serverResponse.putHeader(HttpHeaderNames.LOCATION, FhirUtils.BASE + "/" + resourceType + "/" + id + "/_history/" + versionId)
-      .putHeader(HttpHeaderNames.ETAG, versionId)
-      .putHeader(HttpHeaderNames.LAST_MODIFIED, lastModified)
-      .setStatusCode(HttpResponseStatus.CREATED.code());
-
-    ResponseFormat responseFormat = super.responseFormat.format(domainResource);
-    String length = String.valueOf(responseFormat.response().getBytes(Charset.defaultCharset()).length);
-    FhirHttpHeader contentType = responseFormat.contentType();
-    serverResponse.putHeader(HttpHeaderNames.CONTENT_LENGTH, length)
-      .putHeader(contentType.name(), contentType.value())
-      .write(responseFormat.response());
-
-    return this;
-  }
-
-  @Override
-  public OperationHandler createResponse(HttpServerResponse serverResponse, BiConsumer<DatabaseService, Promise<JsonObject>> databaseServiceConsumer) {
+  public OperationHandler createResponseAsync(HttpServerResponse serverResponse, BiConsumer<DatabaseService, Promise<JsonObject>> databaseServiceConsumer) {
 
     Promise<JsonObject> jsonObjectPromise = Promise.promise();
     databaseServiceConsumer.accept(service, jsonObjectPromise);
