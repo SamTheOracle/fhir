@@ -1,7 +1,0 @@
-{
-  "serviceProvider": {
-    "reference": "/Organization/5744a951-9ec1-4444-acb2-c580e0c13edb",
-    "type": "Organization",
-    "display": "Ospedale Bufalini"
-  }
-}
