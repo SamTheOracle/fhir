@@ -7,6 +7,7 @@ import com.oracolo.fhir.model.backboneelements.BundleRequest;
 import com.oracolo.fhir.model.domain.Patient;
 import com.oracolo.fhir.model.resources.Bundle;
 import com.oracolo.fhir.utils.FhirUtils;
+import com.oracolo.fhir.utils.ResponseFormat;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
@@ -139,6 +140,9 @@ class BundleTest {
             break;
           case "POST":
             JsonObject domainResource = JsonObject.mapFrom(bundleEntry.getResource());
+            ResponseFormat format = new ResponseFormat().format(domainResource);
+
+
             //resolve references??????
             rs.add(domainResource);
             break;

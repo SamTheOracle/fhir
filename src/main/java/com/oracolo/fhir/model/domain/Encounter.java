@@ -385,8 +385,9 @@ public class Encounter extends DomainResource {
     return partOf;
   }
 
-  public void setPartOf(Reference partOf) {
+  public Encounter setPartOf(Reference partOf) {
     this.partOf = partOf;
+    return this;
   }
 
 

@@ -1,5 +1,6 @@
 package com.oracolo.fhir.handlers.query;
 
+import com.oracolo.fhir.model.ResourceType;
 import com.oracolo.fhir.model.domain.Patient;
 import com.oracolo.fhir.utils.FhirUtils;
 import io.vertx.core.MultiMap;
@@ -50,7 +51,7 @@ class QueryHandlerTest {
         MultiMap queryParams = httpServerRequest.params();
 
         JsonObject query = QueryHandler
-          .fromResourceType("Patient")
+          .fromResourceType(ResourceType.PATIENT)
           .query(queryParams)
           .createMongoDbQuery();
         Assertions.assertNotNull(query);

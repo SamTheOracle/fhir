@@ -237,8 +237,9 @@ public class Procedure extends DomainResource {
     return outcome;
   }
 
-  public void setOutcome(CodeableConcept outcome) {
+  public Procedure setOutcome(CodeableConcept outcome) {
     this.outcome = outcome;
+    return this;
   }
 
   public String getResourceType() {
@@ -554,6 +555,14 @@ public class Procedure extends DomainResource {
       this.report = new ArrayList<>();
     }
     this.report.add(report);
+    return this;
+  }
+
+  public Procedure addNewContained(DomainResource dom) {
+    if (contained == null) {
+      contained = new ArrayList<>();
+    }
+    contained.add(dom);
     return this;
   }
 }

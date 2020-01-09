@@ -489,8 +489,9 @@ public class Observation extends DomainResource {
     return valueString;
   }
 
-  public void setValueString(String valueString) {
+  public Observation setValueString(String valueString) {
     this.valueString = valueString;
+    return this;
   }
 
   public Extension get_valueString() {
@@ -651,10 +652,11 @@ public class Observation extends DomainResource {
     return this;
   }
 
-  public Observation addNewPartOfReference(Reference encounter) {
+  public Observation addNewPartOfReference(Reference reference) {
     if (partOf == null) {
       partOf = new ArrayList<>();
     }
+    partOf.add(reference);
     return this;
   }
 }

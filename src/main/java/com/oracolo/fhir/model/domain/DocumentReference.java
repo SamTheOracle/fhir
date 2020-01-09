@@ -301,4 +301,10 @@ public class DocumentReference extends DomainResource {
     content.add(documentReferenceContent);
     return this;
   }
+
+  @Override
+  public DocumentReference setId(String id) {
+    this.id = id;
+    return this;
+  }
 }

@@ -62,8 +62,9 @@ public class EncounterHospitalization extends BackboneElement {
     return preAdmissionIdentifier;
   }
 
-  public void setPreAdmissionIdentifier(Identifier preAdmissionIdentifier) {
+  public EncounterHospitalization setPreAdmissionIdentifier(Identifier preAdmissionIdentifier) {
     this.preAdmissionIdentifier = preAdmissionIdentifier;
+    return this;
   }
 
   public Reference getOrigin() {
