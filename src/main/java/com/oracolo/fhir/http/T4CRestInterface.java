@@ -175,11 +175,26 @@ public class T4CRestInterface extends BaseRestInterface {
 
     if (vitalSigns != null) {
 
+      String temp = vitalSigns.getString("temp");
+
+      if (temp != null) {
+
+      }
     }
     if (clinicalPicture != null) {
       Integer gcsTotal = clinicalPicture.getInteger("gcsTotal");
+//      Procedure clinicalPictureProcedure = new Procedure()
+//        .setId(UUID.randomUUID().toString())
+//        .setStatus("completed")
+//        .setSubject(encounterPreh.getPatient())
+//        .setCode(new CodeableConcept()
+//          .setText("Clinical Picture"))
+//        .setEncounter(new Reference()
+//          .setType(ResourceType.ENCOUNTER.typeName())
+//          .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()));
+//      domainResources.add(clinicalPictureProcedure);
       if (gcsTotal != null) {
-        Observation dGcs = new Observation()
+        Observation observation = new Observation()
           .setId(UUID.randomUUID().toString())
           .setStatus("final")
           .setValueInteger(gcsTotal)
@@ -189,26 +204,32 @@ public class T4CRestInterface extends BaseRestInterface {
               .setCode("35088-4")
               .setSystem("https://fhir.loinc.org/CodeSystem/$lookup?system=http://loinc.org&code=35088-4"))
             .setText("Glasgow Coma Scale Totale"))
+//          .addNewPartOfReference(new Reference()
+//            .setType(ResourceType.PROCEDURE.typeName())
+//            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + clinicalPictureProcedure.getId()))
           .setEncounter(new Reference()
             .setType(ResourceType.ENCOUNTER.typeName())
             .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()))
+
           .setSubject(encounterPreh.getPatient());
         traumaCondition
           .addNewConditionEvidence(new ConditionEvidence()
             .addNewCode(new CodeableConcept()
-              .setText("Glasgow Coma Scale Totale"))
+              .setText("Glasgow Coma Scale Total"))
             .addNewDetail(new Reference()
               .setType(ResourceType.OBSERVATION.typeName())
-              .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + dGcs.getId())));
-
-        domainResources.add(dGcs);
+              .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + observation.getId())));
+        domainResources.add(observation);
       }
       String gcsMotor = clinicalPicture.getString("gcsMotor");
       if (gcsMotor != null) {
-        Observation dGcs = new Observation()
+        Observation observation = new Observation()
           .setId(UUID.randomUUID().toString())
           .setStatus("final")
           .setValueString(gcsMotor)
+//          .addNewPartOfReference(new Reference()
+//            .setType(ResourceType.PROCEDURE.typeName())
+//            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + clinicalPictureProcedure.getId()))
           .setCode(new CodeableConcept()
             .addNewCoding(new Coding()
               .setDisplay("Glasgow Coma Scale")
@@ -219,22 +240,25 @@ public class T4CRestInterface extends BaseRestInterface {
             .setType(ResourceType.ENCOUNTER.typeName())
             .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()))
           .setSubject(encounterPreh.getPatient());
+
         traumaCondition
           .addNewConditionEvidence(new ConditionEvidence()
             .addNewCode(new CodeableConcept()
               .setText("Glasgow Coma Scale Motor"))
             .addNewDetail(new Reference()
               .setType(ResourceType.OBSERVATION.typeName())
-              .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + dGcs.getId())));
-
-        domainResources.add(dGcs);
+              .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + observation.getId())));
+        domainResources.add(observation);
       }
       String gcsVerbal = clinicalPicture.getString("gcsVerbal");
       if (gcsVerbal != null) {
-        Observation dGcs = new Observation()
+        Observation observation = new Observation()
           .setId(UUID.randomUUID().toString())
           .setStatus("final")
           .setValueString(gcsVerbal)
+//          .addNewPartOfReference(new Reference()
+//            .setType(ResourceType.PROCEDURE.typeName())
+//            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + clinicalPictureProcedure.getId()))
           .setCode(new CodeableConcept()
             .addNewCoding(new Coding()
               .setDisplay("Glasgow Coma Scale")
@@ -245,22 +269,27 @@ public class T4CRestInterface extends BaseRestInterface {
             .setType(ResourceType.ENCOUNTER.typeName())
             .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()))
           .setSubject(encounterPreh.getPatient());
+
+        domainResources.add(observation);
+
         traumaCondition
           .addNewConditionEvidence(new ConditionEvidence()
             .addNewCode(new CodeableConcept()
               .setText("Glasgow Coma Scale Verbal"))
             .addNewDetail(new Reference()
               .setType(ResourceType.OBSERVATION.typeName())
-              .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + dGcs.getId())));
+              .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + observation.getId())));
 
-        domainResources.add(dGcs);
       }
       String gcsEyes = clinicalPicture.getString("gcsEyes");
       if (gcsEyes != null) {
-        Observation dGcs = new Observation()
+        Observation observation = new Observation()
           .setId(UUID.randomUUID().toString())
           .setStatus("final")
           .setValueString(gcsEyes)
+//          .addNewPartOfReference(new Reference()
+//            .setType(ResourceType.PROCEDURE.typeName())
+//            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + clinicalPictureProcedure.getId()))
           .setCode(new CodeableConcept()
             .addNewCoding(new Coding()
               .setDisplay("Glasgow Coma Scale")
@@ -272,21 +301,24 @@ public class T4CRestInterface extends BaseRestInterface {
             .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()))
           .setSubject(encounterPreh.getPatient());
 
+
+        domainResources.add(observation);
+
         traumaCondition
           .addNewConditionEvidence(new ConditionEvidence()
             .addNewCode(new CodeableConcept()
               .setText("Glasgow Coma Scale Eyes"))
             .addNewDetail(new Reference()
               .setType(ResourceType.OBSERVATION.typeName())
-              .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + dGcs.getId())));
-
-
-        domainResources.add(dGcs);
+              .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + observation.getId())));
       }
       Boolean sedated = clinicalPicture.getBoolean("sedated");
       if (sedated != null) {
-        Observation sedatedObservation = new Observation()
+        Observation observation = new Observation()
           .setId(UUID.randomUUID().toString())
+//          .addNewPartOfReference(new Reference()
+//            .setType(ResourceType.PROCEDURE.typeName())
+//            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + clinicalPictureProcedure.getId()))
           .setStatus("final")
           .setValueBoolean(sedated)
           .setCode(new CodeableConcept()
@@ -294,21 +326,23 @@ public class T4CRestInterface extends BaseRestInterface {
           .setEncounter(new Reference()
             .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
           .setSubject(encounterPreh.getPatient());
-        domainResources.add(sedatedObservation);
 
+
+        domainResources.add(observation);
         traumaCondition
           .addNewConditionEvidence(new ConditionEvidence()
             .addNewCode(new CodeableConcept()
-              .setText("Glasgow Coma Scale Eyes"))
+              .setText("Patient Sedated"))
             .addNewDetail(new Reference()
               .setType(ResourceType.OBSERVATION.typeName())
-              .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + sedatedObservation.getId())));
-
-        domainResources.add(sedatedObservation);
+              .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + observation.getId())));
       }
       String pupils = clinicalPicture.getString("pupils");
       if (pupils != null) {
-        Observation pupilsObservation = new Observation()
+        Observation observation = new Observation()
+//          .addNewPartOfReference(new Reference()
+//            .setType(ResourceType.PROCEDURE.typeName())
+//            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + clinicalPictureProcedure.getId()))
           .setId(UUID.randomUUID().toString())
           .setStatus("final")
           .setValueString(pupils)
@@ -317,18 +351,279 @@ public class T4CRestInterface extends BaseRestInterface {
           .setEncounter(new Reference()
             .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
           .setSubject(encounterPreh.getPatient());
-        domainResources.add(pupilsObservation);
+
+
+        domainResources.add(observation);
 
         traumaCondition
           .addNewConditionEvidence(new ConditionEvidence()
             .addNewCode(new CodeableConcept()
-              .setText("Glasgow Coma Scale Eyes"))
+              .setText("Pupils"))
             .addNewDetail(new Reference()
               .setType(ResourceType.OBSERVATION.typeName())
-              .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + pupilsObservation.getId())));
-
-        domainResources.add(pupilsObservation);
+              .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + observation.getId())));
       }
+      String airway = clinicalPicture.getString("airway");
+      if (airway != null) {
+        Observation observation = new Observation()
+//          .addNewPartOfReference(new Reference()
+//            .setType(ResourceType.PROCEDURE.typeName())
+//            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + clinicalPictureProcedure.getId()))
+          .setId(UUID.randomUUID().toString())
+          .setStatus("final")
+          .setValueString(airway)
+          .setCode(new CodeableConcept()
+            .setText("Airways"))
+          .setEncounter(new Reference()
+            .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
+          .setSubject(encounterPreh.getPatient());
+
+
+        domainResources.add(observation);
+
+        traumaCondition
+          .addNewConditionEvidence(new ConditionEvidence()
+            .addNewCode(new CodeableConcept()
+              .setText("Airways"))
+            .addNewDetail(new Reference()
+              .setType(ResourceType.OBSERVATION.typeName())
+              .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + observation.getId())));
+      }
+      Boolean positiveInhalation = clinicalPicture.getBoolean("positiveInhalation");
+      if (positiveInhalation != null) {
+        Observation observation = new Observation()
+//          .addNewPartOfReference(new Reference()
+//            .setType(ResourceType.PROCEDURE.typeName())
+//            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + clinicalPictureProcedure.getId()))
+          .setId(UUID.randomUUID().toString())
+          .setStatus("final")
+          .setValueBoolean(positiveInhalation)
+          .setCode(new CodeableConcept()
+            .setText("Positive Inhalation"))
+          .setEncounter(new Reference()
+            .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
+          .setSubject(encounterPreh.getPatient());
+
+
+        domainResources.add(observation);
+
+        traumaCondition
+          .addNewConditionEvidence(new ConditionEvidence()
+            .addNewCode(new CodeableConcept()
+              .setText("positiveInhalation"))
+            .addNewDetail(new Reference()
+              .setType(ResourceType.OBSERVATION.typeName())
+              .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + observation.getId())));
+      }
+      Boolean intubationFailed = clinicalPicture.getBoolean("intubationFailed");
+      if (intubationFailed != null) {
+
+        CodeableConcept outcome = intubationFailed ?
+          new CodeableConcept()
+            .addNewCoding(new Coding()
+              .setCode("385671000")
+              .setDisplay("Unsuccessful")
+              .setSystem("http://www.snomed.org/")
+            ) : new CodeableConcept()
+          .addNewCoding(new Coding()
+            .setCode("385669000")
+            .setDisplay("Successful")
+          );
+        Procedure intubationFailedProcedure = new Procedure();
+        intubationFailedProcedure.setStatus("completed")
+          .setId(UUID.randomUUID().toString())
+          .setCode(new CodeableConcept()
+            .addNewCoding(new Coding()
+              .setCode("112798008")
+              .setDisplay("Insertion of endotracheal tube (procedure)")
+              .setSystem("http://www.snomed.org/"))
+            .setText("Intubation"))
+          .setOutcome(outcome)
+//          .addNewPartOf(new Reference()
+//            .setType(ResourceType.PROCEDURE.typeName())
+//            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + clinicalPictureProcedure.getId()))
+          .setEncounter(new Reference()
+            .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
+          .setSubject(encounterPreh.getPatient());
+
+        domainResources.add(intubationFailedProcedure);
+
+        traumaCondition
+          .addNewConditionEvidence(new ConditionEvidence()
+            .addNewCode(new CodeableConcept()
+              .setText("Intubation"))
+            .addNewDetail(new Reference()
+              .setType(ResourceType.PROCEDURE.typeName())
+              .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + intubationFailedProcedure.getId())));
+
+      }
+      String chestTube = clinicalPicture.getString("chestTube");
+      if (chestTube != null) {
+        Observation chestTubeObservation = new Observation()
+//          .addNewPartOfReference(new Reference()
+//            .setType(ResourceType.PROCEDURE.typeName())
+//            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + clinicalPictureProcedure.getId()))
+          .setId(UUID.randomUUID().toString())
+          .setStatus("final")
+          .setValueString(chestTube)
+          .setCode(new CodeableConcept()
+            .setText("Chest Tube"))
+          .setEncounter(new Reference()
+            .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
+          .setSubject(encounterPreh.getPatient());
+
+
+        domainResources.add(chestTubeObservation);
+
+        traumaCondition
+          .addNewConditionEvidence(new ConditionEvidence()
+            .addNewCode(new CodeableConcept()
+              .setText("Chest Tube"))
+            .addNewDetail(new Reference()
+              .setType(ResourceType.OBSERVATION.typeName())
+              .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + chestTubeObservation.getId())));
+      }
+      String oxygenPercentage = clinicalPicture.getString("oxygenPercentage");
+      if (oxygenPercentage != null) {
+        Observation oxygenPercentageObservation = new Observation()
+//          .addNewPartOfReference(new Reference()
+//            .setType(ResourceType.PROCEDURE.typeName())
+//            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + clinicalPictureProcedure.getId()))
+          .setId(UUID.randomUUID().toString())
+          .setStatus("final")
+          .setValueString(chestTube)
+          .setCode(new CodeableConcept()
+            .setText("Oxygen Percentage"))
+          .setEncounter(new Reference()
+            .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
+          .setSubject(encounterPreh.getPatient());
+
+        domainResources.add(oxygenPercentageObservation);
+        traumaCondition
+          .addNewConditionEvidence(new ConditionEvidence()
+            .addNewCode(new CodeableConcept()
+              .setText("Oxygen Percentage"))
+            .addNewDetail(new Reference()
+              .setType(ResourceType.OBSERVATION.typeName())
+              .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + oxygenPercentageObservation.getId())));
+      }
+      Boolean hemorrhage = clinicalPicture.getBoolean("hemorrhage");
+      if (hemorrhage != null) {
+        Observation hemorrhageObservation = new Observation()
+//          .addNewPartOfReference(new Reference()
+//            .setType(ResourceType.PROCEDURE.typeName())
+//            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + clinicalPictureProcedure.getId()))
+          .setId(UUID.randomUUID().toString())
+          .setStatus("final")
+          .setValueBoolean(positiveInhalation)
+          .setCode(new CodeableConcept()
+            .addNewCoding(new Coding()
+              .setCode("131148009")
+              .setDisplay("Bleeding (finding)")
+              .setSystem("http://www.snomed.org/"))
+            .setText("Hemorrhage"))
+          .setEncounter(new Reference()
+            .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
+          .setSubject(encounterPreh.getPatient());
+
+
+        domainResources.add(hemorrhageObservation);
+        traumaCondition
+          .addNewConditionEvidence(new ConditionEvidence()
+            .addNewCode(new CodeableConcept()
+              .setText("Hemorrhage"))
+            .addNewDetail(new Reference()
+              .setType(ResourceType.OBSERVATION.typeName())
+              .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + hemorrhageObservation.getId())));
+      }
+      Boolean limbsFracture = clinicalPicture.getBoolean("limbsFracture");
+      if (limbsFracture != null) {
+        Observation limbsFractureObservation = new Observation()
+//          .addNewPartOfReference(new Reference()
+//            .setType(ResourceType.PROCEDURE.typeName())
+//            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + clinicalPictureProcedure.getId()))
+          .setId(UUID.randomUUID().toString())
+          .setStatus("final")
+          .setValueBoolean(positiveInhalation)
+          .setCode(new CodeableConcept()
+            .addNewCoding(new Coding()
+              .setCode("125605004")
+              .setDisplay("Fracture of bone (disorder)")
+              .setSystem("http://www.snomed.org/"))
+            .setText("Limbs Fracture"))
+          .setEncounter(new Reference()
+            .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
+          .setSubject(encounterPreh.getPatient());
+
+
+        domainResources.add(limbsFractureObservation);
+        traumaCondition
+          .addNewConditionEvidence(new ConditionEvidence()
+            .addNewCode(new CodeableConcept()
+              .setText("Limbs Fracture"))
+            .addNewDetail(new Reference()
+              .setType(ResourceType.OBSERVATION.typeName())
+              .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + limbsFractureObservation.getId())));
+      }
+
+      Boolean fractureExposition = clinicalPicture.getBoolean("fractureExposition");
+      if (fractureExposition != null) {
+        Observation fractureExpositionObservation = new Observation()
+//          .addNewPartOfReference(new Reference()
+//            .setType(ResourceType.PROCEDURE.typeName())
+//            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + clinicalPictureProcedure.getId()))
+          .setId(UUID.randomUUID().toString())
+          .setStatus("final")
+          .setValueBoolean(positiveInhalation)
+          .setCode(new CodeableConcept()
+            .addNewCoding(new Coding()
+              .setCode("125605004")
+              .setDisplay("Fracture of bone (disorder)")
+              .setSystem("http://www.snomed.org/"))
+            .setText("Fracture Exposition"))
+          .setEncounter(new Reference()
+            .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
+          .setSubject(encounterPreh.getPatient());
+
+
+        domainResources.add(fractureExpositionObservation);
+        traumaCondition
+          .addNewConditionEvidence(new ConditionEvidence()
+            .addNewCode(new CodeableConcept()
+              .setText("Fracture Exposition"))
+            .addNewDetail(new Reference()
+              .setType(ResourceType.OBSERVATION.typeName())
+              .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + fractureExpositionObservation.getId())));
+      }
+
+      String burn = clinicalPicture.getString("burn");
+      if (burn != null) {
+        Observation burnObservation = new Observation()
+//          .addNewPartOfReference(new Reference()
+//            .setType(ResourceType.PROCEDURE.typeName())
+//            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + clinicalPictureProcedure.getId()))
+          .setId(UUID.randomUUID().toString())
+          .setStatus("final")
+          .setValueString(chestTube)
+          .setCode(new CodeableConcept()
+            .addNewCoding(new Coding()
+              .setCode("48333001")
+              .setDisplay("Burn injury (morphologic abnormality)"))
+            .setText("Burn"))
+          .setEncounter(new Reference()
+            .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
+          .setSubject(encounterPreh.getPatient());
+
+        domainResources.add(burnObservation);
+        traumaCondition
+          .addNewConditionEvidence(new ConditionEvidence()
+            .addNewCode(new CodeableConcept()
+              .setText("Burn"))
+            .addNewDetail(new Reference()
+              .setType(ResourceType.OBSERVATION.typeName())
+              .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + burnObservation.getId())));
+      }
+
 
     }
 
@@ -403,6 +698,8 @@ public class T4CRestInterface extends BaseRestInterface {
             .setDisplay("Stability of joint structure of pelvic girdle")
             .setSystem("http://browser.ihtsdotools.org/?perspective=full&conceptId1=5447007"))
           .setText("Tpod Responder"))
+        .addNewUsedCode(new CodeableConcept()
+          .setText("T-Pod Responder"))
         .setEncounter(new Reference()
           .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
         .setSubject(encounterPreh.getPatient());
@@ -952,7 +1249,6 @@ public class T4CRestInterface extends BaseRestInterface {
         startT.getMinute(), startT.getSecond(), startT.getNano(), ZoneId.systemDefault());
       traumaCondition.setOnsetDateTime(FhirUtils.fullDateTime.format(finalZonedStartDateTime));
     }
-
 
   }
 

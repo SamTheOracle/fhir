@@ -565,4 +565,20 @@ public class Procedure extends DomainResource {
     contained.add(dom);
     return this;
   }
+
+  public Procedure addNewPartOf(Reference reference) {
+    if (partOf == null) {
+      partOf = new ArrayList<>();
+    }
+    partOf.add(reference);
+    return this;
+  }
+
+  public Procedure addNewUsedCode(CodeableConcept usedCodeableConcept) {
+    if (usedCode == null) {
+      usedCode = new ArrayList<>();
+    }
+    usedCode.add(usedCodeableConcept);
+    return this;
+  }
 }
