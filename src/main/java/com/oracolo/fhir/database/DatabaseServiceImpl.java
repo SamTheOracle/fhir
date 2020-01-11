@@ -1,5 +1,6 @@
 package com.oracolo.fhir.database;
 
+import com.oracolo.fhir.model.ResourceType;
 import com.oracolo.fhir.model.backboneelements.BundleEntry;
 import com.oracolo.fhir.model.elements.Metadata;
 import com.oracolo.fhir.model.resources.Bundle;
@@ -68,6 +69,21 @@ public class DatabaseServiceImpl implements DatabaseService {
       }
     });
     return this;
+  }
+
+  @Override
+  public DatabaseService findEverythingAboutResource(ResourceType type, JsonObject query, Handler<AsyncResult<JsonObject>> handler) {
+    mongoClient.getCollections(collectionAsyncResult -> {
+      List<JsonObject> resourcesFound = new ArrayList<>();
+      if (collectionAsyncResult.succeeded() && collectionAsyncResult.result() != null && collectionAsyncResult.result().size() > 0) {
+        List<String> collectionNames = collectionAsyncResult.result();
+        //1)creare un lookup per ogni collection
+        //2)eseguire un comando mongoClient.runCommand con query del tipo
+        // runCommand({aggregate:"encounters",pipeline:[{$lookup:{from:"condition_test2",pipeline:[{$match:{$expr:{$eq:["$encounter.reference","/Encounter/3fd1affa-0c65-4bd5-befd-ec286409b77f"]}}}],as:"test2"}},{$lookup:{from:"condition_test1",pipeline:[{$match:{$expr:{$eq:["$encounter.reference","/Encounter/3fd1affa-0c65-4bd5-befd-ec286409b77f"]}}}],as:"test1"}}],cursor:{}})
+      }
+
+    });
+    return null;
   }
 
 

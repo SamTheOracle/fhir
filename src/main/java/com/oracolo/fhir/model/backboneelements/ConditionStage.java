@@ -37,8 +37,9 @@ public class ConditionStage extends BackboneElement {
     return summary;
   }
 
-  public void setSummary(CodeableConcept summary) {
+  public ConditionStage setSummary(CodeableConcept summary) {
     this.summary = summary;
+    return this;
   }
 
   public List<Reference> getAssessment() {

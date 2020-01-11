@@ -5,7 +5,10 @@ import com.oracolo.fhir.database.DatabaseService;
 import com.oracolo.fhir.model.DomainResource;
 import com.oracolo.fhir.model.ResourceType;
 import com.oracolo.fhir.model.backboneelements.*;
-import com.oracolo.fhir.model.datatypes.*;
+import com.oracolo.fhir.model.datatypes.Coding;
+import com.oracolo.fhir.model.datatypes.HumanName;
+import com.oracolo.fhir.model.datatypes.Identifier;
+import com.oracolo.fhir.model.datatypes.Period;
 import com.oracolo.fhir.model.domain.*;
 import com.oracolo.fhir.model.elements.CodeableConcept;
 import com.oracolo.fhir.model.elements.Quantity;
@@ -69,13 +72,13 @@ public class T4CRestInterface extends BaseRestInterface {
     Encounter encounterPreh = new Encounter()
       .setId(UUID.randomUUID().toString())
       .setPartOf(new Reference()
-        .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.BASE + "/" + ResourceType.ENCOUNTER.getCollection() + "/" + encounterAll.getId()));
+        .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.BASE + "/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterAll.getId()));
     //traumaInfo, majorTraumaCriteria,preh,anamnesi
     Encounter encounterShock = new Encounter()
       //patient initial condition, vital signs
       .setId(UUID.randomUUID().toString())
       .setPartOf(new Reference()
-        .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.BASE + "/" + ResourceType.ENCOUNTER.getCollection() + "/" + encounterAll.getId()));
+        .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.BASE + "/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterAll.getId()));
 
 
     Condition traumaCondition = new Condition()
@@ -88,8 +91,17 @@ public class T4CRestInterface extends BaseRestInterface {
 
     domainResources.add(traumaCondition);
 
-    encounterPreh.addNewReasonReference(new Reference()
-      .setReference("/" + ResourceType.CONDITION + "/" + traumaCondition.getId()));
+    encounterPreh.addNewDiagnosis(
+      new EncounterDiagnosis()
+        .setUse(new CodeableConcept()
+          .addNewCoding(new Coding()
+            .setSystem("http://terminology.hl7.org/CodeSystem/diagnosis-role")
+            .setDisplay("Admission diagnosis")
+            .setCode("AD")))
+        .setCondition(new Reference()
+          .setType(ResourceType.CONDITION.typeName())
+          .setReference("/" + ResourceType.CONDITION.typeName() + "/" + traumaCondition.getId()))
+    );
 
 
     //modellazione eventi???
@@ -124,8 +136,10 @@ public class T4CRestInterface extends BaseRestInterface {
 
 
     //iss
+    Condition issCondition = new Condition()
+      .setId(UUID.randomUUID().toString());
     if (iss != null) {
-      addIssToEncounter(iss, encounterShock, domainResources);
+      addIssToEncounterShock(iss, encounterShock, issCondition, domainResources);
     }
 
     //aggiunta della final destination del encounter all
@@ -146,7 +160,7 @@ public class T4CRestInterface extends BaseRestInterface {
     JsonObject anamnesisJsonObject = reportJson.getJsonObject("anamnesi");
     if (anamnesisJsonObject != null) {
       //mapped as procedure (e.g. a general action performed on a patient)
-      addAnamnesi(anamnesisJsonObject, encounterPreh, domainResources);
+      addAnamnesi(anamnesisJsonObject, encounterPreh, traumaCondition, domainResources);
     }
 
 
@@ -159,14 +173,70 @@ public class T4CRestInterface extends BaseRestInterface {
     if (patientInitialCondition != null) {
       addPatientInitialCondition(patientInitialCondition, encounterPreh, traumaCondition, domainResources);
     }
+
+    JsonArray events = reportJson.getJsonArray("events");
+    if (events != null && events.size() > 0) {
+      addEventsToShockEncounter(events, encounterShock, domainResources);
+    }
+    JsonArray vitalSignsObservations = reportJson.getJsonArray("vitalSignsObservations");
+    if (vitalSignsObservations != null && vitalSignsObservations.size() > 0) {
+      addVitalSignsObservations(vitalSignsObservations, encounterShock, domainResources);
+    }
+
     JsonObject ePreh = JsonObject.mapFrom(encounterPreh);
     JsonObject eShock = JsonObject.mapFrom(encounterShock);
     JsonObject eAll = JsonObject.mapFrom(encounterAll);
     JsonObject prehCondition = JsonObject.mapFrom(traumaCondition);
-
+    JsonObject issConditionJsonObject = JsonObject.mapFrom(issCondition);
     domainResources.add(encounterAll);
     domainResources.add(encounterShock);
     domainResources.add(encounterPreh);
+  }
+
+  private void addVitalSignsObservations(JsonArray vitalSignsObservations, Encounter encounterShock, List<DomainResource> domainResources) {
+    vitalSignsObservations.forEach(entry -> {
+      JsonObject vitalSignObservation = JsonObject.mapFrom(entry);
+    });
+  }
+
+  private void addEventsToShockEncounter(JsonArray events, Encounter encounterShock, List<DomainResource> domainResources) {
+
+    events.forEach(entry -> {
+      JsonObject event = JsonObject.mapFrom(entry);
+      Integer eventId = event.getInteger("eventId");
+      String date = event.getString("date");
+      String time = event.getString("time");
+      String place = event.getString("place");
+      String type = event.getString("type");
+      switch (type) {
+        case "procedure":
+          break;
+        case "diagnostic":
+          break;
+        case "drug":
+          break;
+        case "blood-product":
+          break;
+        case "vital-signs-mon":
+          break;
+        case "clinical-variation":
+          break;
+        case "trauma-leader":
+          break;
+        case "room-in":
+          break;
+        case "room-out":
+          break;
+        case "patient-accepted":
+          break;
+        case "report-reactivation":
+          //non fare nulla
+          break;
+        default:
+          //handle media item
+          break;
+      }
+    });
   }
 
   private void addPatientInitialCondition(JsonObject patientInitialCondition, Encounter encounterPreh, Condition traumaCondition, List<DomainResource> domainResources) {
@@ -183,16 +253,6 @@ public class T4CRestInterface extends BaseRestInterface {
     }
     if (clinicalPicture != null) {
       Integer gcsTotal = clinicalPicture.getInteger("gcsTotal");
-//      Procedure clinicalPictureProcedure = new Procedure()
-//        .setId(UUID.randomUUID().toString())
-//        .setStatus("completed")
-//        .setSubject(encounterPreh.getPatient())
-//        .setCode(new CodeableConcept()
-//          .setText("Clinical Picture"))
-//        .setEncounter(new Reference()
-//          .setType(ResourceType.ENCOUNTER.typeName())
-//          .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()));
-//      domainResources.add(clinicalPictureProcedure);
       if (gcsTotal != null) {
         Observation observation = new Observation()
           .setId(UUID.randomUUID().toString())
@@ -202,11 +262,9 @@ public class T4CRestInterface extends BaseRestInterface {
             .addNewCoding(new Coding()
               .setDisplay("Glasgow Coma Scale")
               .setCode("35088-4")
-              .setSystem("https://fhir.loinc.org/CodeSystem/$lookup?system=http://loinc.org&code=35088-4"))
+              .setSystem("https://loinc.org/"))
             .setText("Glasgow Coma Scale Totale"))
-//          .addNewPartOfReference(new Reference()
-//            .setType(ResourceType.PROCEDURE.typeName())
-//            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + clinicalPictureProcedure.getId()))
+
           .setEncounter(new Reference()
             .setType(ResourceType.ENCOUNTER.typeName())
             .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()))
@@ -227,14 +285,11 @@ public class T4CRestInterface extends BaseRestInterface {
           .setId(UUID.randomUUID().toString())
           .setStatus("final")
           .setValueString(gcsMotor)
-//          .addNewPartOfReference(new Reference()
-//            .setType(ResourceType.PROCEDURE.typeName())
-//            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + clinicalPictureProcedure.getId()))
           .setCode(new CodeableConcept()
             .addNewCoding(new Coding()
-              .setDisplay("Glasgow Coma Scale")
-              .setCode("35088-4")
-              .setSystem("https://fhir.loinc.org/CodeSystem/$lookup?system=http://loinc.org&code=35088-4"))
+              .setDisplay("Glasgow coma score motor")
+              .setCode("9268-4")
+              .setSystem("https://loinc.org/"))
             .setText("Glasgow Coma Scale Motor"))
           .setEncounter(new Reference()
             .setType(ResourceType.ENCOUNTER.typeName())
@@ -256,14 +311,11 @@ public class T4CRestInterface extends BaseRestInterface {
           .setId(UUID.randomUUID().toString())
           .setStatus("final")
           .setValueString(gcsVerbal)
-//          .addNewPartOfReference(new Reference()
-//            .setType(ResourceType.PROCEDURE.typeName())
-//            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + clinicalPictureProcedure.getId()))
           .setCode(new CodeableConcept()
             .addNewCoding(new Coding()
-              .setDisplay("Glasgow Coma Scale")
-              .setCode("35088-4")
-              .setSystem("https://fhir.loinc.org/CodeSystem/$lookup?system=http://loinc.org&code=35088-4"))
+              .setDisplay("Glasgow coma score verbal")
+              .setCode("9270-0")
+              .setSystem("https://loinc.org/"))
             .setText("Glasgow Coma Scale Verbal"))
           .setEncounter(new Reference()
             .setType(ResourceType.ENCOUNTER.typeName())
@@ -287,14 +339,11 @@ public class T4CRestInterface extends BaseRestInterface {
           .setId(UUID.randomUUID().toString())
           .setStatus("final")
           .setValueString(gcsEyes)
-//          .addNewPartOfReference(new Reference()
-//            .setType(ResourceType.PROCEDURE.typeName())
-//            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + clinicalPictureProcedure.getId()))
           .setCode(new CodeableConcept()
             .addNewCoding(new Coding()
-              .setDisplay("Glasgow Coma Scale")
-              .setCode("35088-4")
-              .setSystem("https://fhir.loinc.org/CodeSystem/$lookup?system=http://loinc.org&code=35088-4"))
+              .setDisplay("Glasgow coma score eye opening")
+              .setCode("9267-6")
+              .setSystem("https://loinc.org/"))
             .setText("Glasgow Coma Scale Eyes"))
           .setEncounter(new Reference()
             .setType(ResourceType.ENCOUNTER.typeName())
@@ -316,12 +365,13 @@ public class T4CRestInterface extends BaseRestInterface {
       if (sedated != null) {
         Observation observation = new Observation()
           .setId(UUID.randomUUID().toString())
-//          .addNewPartOfReference(new Reference()
-//            .setType(ResourceType.PROCEDURE.typeName())
-//            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + clinicalPictureProcedure.getId()))
           .setStatus("final")
           .setValueBoolean(sedated)
           .setCode(new CodeableConcept()
+            .addNewCoding(new Coding()
+              .setDisplay("Sedated (finding)")
+              .setCode("17971005 ")
+              .setSystem("http://www.snomed.org/"))
             .setText("Sedated Patient"))
           .setEncounter(new Reference()
             .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
@@ -340,13 +390,14 @@ public class T4CRestInterface extends BaseRestInterface {
       String pupils = clinicalPicture.getString("pupils");
       if (pupils != null) {
         Observation observation = new Observation()
-//          .addNewPartOfReference(new Reference()
-//            .setType(ResourceType.PROCEDURE.typeName())
-//            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + clinicalPictureProcedure.getId()))
           .setId(UUID.randomUUID().toString())
           .setStatus("final")
           .setValueString(pupils)
           .setCode(new CodeableConcept()
+            .addNewCoding(new Coding()
+              .setDisplay("Eye Physical findings panel")
+              .setCode("79897-5")
+              .setSystem("https://loinc.org/"))
             .setText("Pupils"))
           .setEncounter(new Reference()
             .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
@@ -366,13 +417,14 @@ public class T4CRestInterface extends BaseRestInterface {
       String airway = clinicalPicture.getString("airway");
       if (airway != null) {
         Observation observation = new Observation()
-//          .addNewPartOfReference(new Reference()
-//            .setType(ResourceType.PROCEDURE.typeName())
-//            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + clinicalPictureProcedure.getId()))
           .setId(UUID.randomUUID().toString())
           .setStatus("final")
           .setValueString(airway)
           .setCode(new CodeableConcept()
+            .addNewCoding(new Coding()
+              .setDisplay("Respiration rhythm")
+              .setCode("9304-7")
+              .setSystem("https://loinc.org/"))
             .setText("Airways"))
           .setEncounter(new Reference()
             .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
@@ -392,9 +444,6 @@ public class T4CRestInterface extends BaseRestInterface {
       Boolean positiveInhalation = clinicalPicture.getBoolean("positiveInhalation");
       if (positiveInhalation != null) {
         Observation observation = new Observation()
-//          .addNewPartOfReference(new Reference()
-//            .setType(ResourceType.PROCEDURE.typeName())
-//            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + clinicalPictureProcedure.getId()))
           .setId(UUID.randomUUID().toString())
           .setStatus("final")
           .setValueBoolean(positiveInhalation)
@@ -439,9 +488,6 @@ public class T4CRestInterface extends BaseRestInterface {
               .setSystem("http://www.snomed.org/"))
             .setText("Intubation"))
           .setOutcome(outcome)
-//          .addNewPartOf(new Reference()
-//            .setType(ResourceType.PROCEDURE.typeName())
-//            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + clinicalPictureProcedure.getId()))
           .setEncounter(new Reference()
             .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
           .setSubject(encounterPreh.getPatient());
@@ -460,13 +506,14 @@ public class T4CRestInterface extends BaseRestInterface {
       String chestTube = clinicalPicture.getString("chestTube");
       if (chestTube != null) {
         Observation chestTubeObservation = new Observation()
-//          .addNewPartOfReference(new Reference()
-//            .setType(ResourceType.PROCEDURE.typeName())
-//            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + clinicalPictureProcedure.getId()))
           .setId(UUID.randomUUID().toString())
           .setStatus("final")
           .setValueString(chestTube)
           .setCode(new CodeableConcept()
+            .addNewCoding(new Coding()
+              .setCode("264957007")
+              .setDisplay("Insertion of pleural tube drain (procedure)")
+              .setSystem("http://www.snomed.org/"))
             .setText("Chest Tube"))
           .setEncounter(new Reference()
             .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
@@ -486,13 +533,14 @@ public class T4CRestInterface extends BaseRestInterface {
       String oxygenPercentage = clinicalPicture.getString("oxygenPercentage");
       if (oxygenPercentage != null) {
         Observation oxygenPercentageObservation = new Observation()
-//          .addNewPartOfReference(new Reference()
-//            .setType(ResourceType.PROCEDURE.typeName())
-//            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + clinicalPictureProcedure.getId()))
           .setId(UUID.randomUUID().toString())
           .setStatus("final")
           .setValueString(chestTube)
           .setCode(new CodeableConcept()
+            .addNewCoding(new Coding()
+              .setDisplay("Inhaled oxygen concentration")
+              .setCode("3150-0")
+              .setSystem("https://loinc.org/"))
             .setText("Oxygen Percentage"))
           .setEncounter(new Reference()
             .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
@@ -510,9 +558,6 @@ public class T4CRestInterface extends BaseRestInterface {
       Boolean hemorrhage = clinicalPicture.getBoolean("hemorrhage");
       if (hemorrhage != null) {
         Observation hemorrhageObservation = new Observation()
-//          .addNewPartOfReference(new Reference()
-//            .setType(ResourceType.PROCEDURE.typeName())
-//            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + clinicalPictureProcedure.getId()))
           .setId(UUID.randomUUID().toString())
           .setStatus("final")
           .setValueBoolean(positiveInhalation)
@@ -521,7 +566,7 @@ public class T4CRestInterface extends BaseRestInterface {
               .setCode("131148009")
               .setDisplay("Bleeding (finding)")
               .setSystem("http://www.snomed.org/"))
-            .setText("Hemorrhage"))
+            .setText("External Hemorrhage"))
           .setEncounter(new Reference()
             .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
           .setSubject(encounterPreh.getPatient());
@@ -539,9 +584,6 @@ public class T4CRestInterface extends BaseRestInterface {
       Boolean limbsFracture = clinicalPicture.getBoolean("limbsFracture");
       if (limbsFracture != null) {
         Observation limbsFractureObservation = new Observation()
-//          .addNewPartOfReference(new Reference()
-//            .setType(ResourceType.PROCEDURE.typeName())
-//            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + clinicalPictureProcedure.getId()))
           .setId(UUID.randomUUID().toString())
           .setStatus("final")
           .setValueBoolean(positiveInhalation)
@@ -569,9 +611,6 @@ public class T4CRestInterface extends BaseRestInterface {
       Boolean fractureExposition = clinicalPicture.getBoolean("fractureExposition");
       if (fractureExposition != null) {
         Observation fractureExpositionObservation = new Observation()
-//          .addNewPartOfReference(new Reference()
-//            .setType(ResourceType.PROCEDURE.typeName())
-//            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + clinicalPictureProcedure.getId()))
           .setId(UUID.randomUUID().toString())
           .setStatus("final")
           .setValueBoolean(positiveInhalation)
@@ -599,9 +638,6 @@ public class T4CRestInterface extends BaseRestInterface {
       String burn = clinicalPicture.getString("burn");
       if (burn != null) {
         Observation burnObservation = new Observation()
-//          .addNewPartOfReference(new Reference()
-//            .setType(ResourceType.PROCEDURE.typeName())
-//            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + clinicalPictureProcedure.getId()))
           .setId(UUID.randomUUID().toString())
           .setStatus("final")
           .setValueString(chestTube)
@@ -648,28 +684,46 @@ public class T4CRestInterface extends BaseRestInterface {
         .setLocation(new Reference()
           .setDisplay(territorialArea)));
     }
+
     if (isCarAccident != null && isCarAccident) {
-      traumaCondition
-        .setCode(new CodeableConcept()
+      CodeableConcept codeableConcept = new CodeableConcept()
+        .addNewCoding(new Coding()
+          .setCode("418399005")
+          .setDisplay("Motor vehicle accident")
+          .setSystem("http://www.snomed.org/"))
+        .setText("Car accident");
+      CodeableConcept traumaCode = traumaCondition.getCode();
+      if (traumaCode != null) {
+        traumaCode
           .addNewCoding(new Coding()
             .setCode("418399005")
             .setDisplay("Motor vehicle accident")
-            .setSystem("http://www.snomed.org/")));
+            .setSystem("http://www.snomed.org/"));
+      } else {
+        traumaCondition.setCode(codeableConcept);
+      }
     }
+    //procedure
     if (bPleuralDecompression != null && bPleuralDecompression) {
       Procedure procedure = new Procedure();
       procedure.setStatus("completed")
         .setId(UUID.randomUUID().toString())
         .setCode(new CodeableConcept()
           .addNewCoding(new Coding()
-            .setCode("281613004")
-            .setDisplay("Decompression action")
-            .setSystem("https://browser.ihtsdotools.org/?perspective=full&conceptId1=281613004&edition=MAIN/2019-07-31&release=&languages=en"))
-          .setText("PleuralDecompression"))
+            .setCode("91602002")
+            .setDisplay("Thoracentesis (procedure)")
+            .setSystem("http://www.snomed.org/"))
+          .setText("Pleural Decompression"))
         .setEncounter(new Reference()
           .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
         .setSubject(new Reference()
           .setReference(encounterPreh.getPatient().getReference()));
+
+      domainResources.add(procedure);
+      traumaCondition
+        .addNewConditionEvidence(new ConditionEvidence()
+          .addNewDetail(new Reference()
+            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + procedure.getId())));
     }
     if (cBloodProtocol != null && cBloodProtocol) {
       //create blood protocol procedure and link to encounterPreh
@@ -680,12 +734,17 @@ public class T4CRestInterface extends BaseRestInterface {
           .addNewCoding(new Coding()
             .setCode("5447007")
             .setDisplay("Transfusion")
-            .setSystem("http://browser.ihtsdotools.org/?perspective=full&conceptId1=5447007"))
+            .setSystem("http://www.snomed.org/"))
           .setText("Blood Protocol"))
         .setEncounter(new Reference()
           .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
         .setSubject(encounterPreh.getPatient());
+
       domainResources.add(procedure);
+      traumaCondition
+        .addNewConditionEvidence(new ConditionEvidence()
+          .addNewDetail(new Reference()
+            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + procedure.getId())));
 
     }
     if (cTpod != null && cTpod) {
@@ -696,28 +755,41 @@ public class T4CRestInterface extends BaseRestInterface {
           .addNewCoding(new Coding()
             .setCode("771392003")
             .setDisplay("Stability of joint structure of pelvic girdle")
-            .setSystem("http://browser.ihtsdotools.org/?perspective=full&conceptId1=5447007"))
+            .setSystem("http://www.snomed.org/"))
           .setText("Tpod Responder"))
         .addNewUsedCode(new CodeableConcept()
           .setText("T-Pod Responder"))
         .setEncounter(new Reference()
           .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
         .setSubject(encounterPreh.getPatient());
+
       domainResources.add(procedure);
 
+      traumaCondition
+        .addNewConditionEvidence(new ConditionEvidence()
+          .addNewDetail(new Reference()
+            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + procedure.getId())));
+
     }
+    //osservazioni
     if (dAnisocoria != null && dAnisocoria) {
       Observation observationAnisocoria = new Observation();
       observationAnisocoria
         .setId(UUID.randomUUID().toString())
         .setCode(new CodeableConcept()
+          .addNewCoding(new Coding()
+            .setCode("13045009")
+            .setSystem("http://www.snomed.org/")
+            .setDisplay("Anisocoria (disorder)"))
           .setText("Anisocoria"))
         .setStatus("final")
         .setValueBoolean(true)
         .setEncounter(new Reference()
           .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
         .setSubject(encounterPreh.getPatient());
+
       domainResources.add(observationAnisocoria);
+
       traumaCondition
         .addNewConditionEvidence(new ConditionEvidence()
           .addNewCode(new CodeableConcept()
@@ -730,13 +802,19 @@ public class T4CRestInterface extends BaseRestInterface {
       observationMidriasi
         .setId(UUID.randomUUID().toString())
         .setCode(new CodeableConcept()
-          .setText("Midriasi"))
+          .addNewCoding(new Coding()
+            .setCode("404649002")
+            .setSystem("http://www.snomed.org/")
+            .setDisplay("Traumatic mydriasis (disorder)"))
+          .setText("Mydriasis"))
         .setStatus("final")
         .setValueBoolean(true)
         .setEncounter(new Reference()
           .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
         .setSubject(encounterPreh.getPatient());
+
       domainResources.add(observationMidriasi);
+
       traumaCondition
         .addNewConditionEvidence(new ConditionEvidence()
           .addNewCode(new CodeableConcept()
@@ -749,6 +827,10 @@ public class T4CRestInterface extends BaseRestInterface {
       observationMotility
         .setId(UUID.randomUUID().toString())
         .setCode(new CodeableConcept()
+          .addNewCoding(new Coding()
+            .setCode("398598008")
+            .setSystem("http://www.snomed.org/")
+            .setDisplay("Motility (observable entity)"))
           .setText("Motility"))
         .setStatus("final")
         .setValueBoolean(true)
@@ -759,11 +841,10 @@ public class T4CRestInterface extends BaseRestInterface {
       traumaCondition
         .addNewConditionEvidence(new ConditionEvidence()
           .addNewCode(new CodeableConcept()
-            .setText("Anisocoria Observation"))
+            .setText("Motility Observation"))
           .addNewDetail(new Reference()
             .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + observationMotility.getId())));
     }
-    //GCS Total obvservation
     if (dGcsTotal != null) {
       Observation dGcs = new Observation()
         .setId(UUID.randomUUID().toString())
@@ -773,8 +854,8 @@ public class T4CRestInterface extends BaseRestInterface {
           .addNewCoding(new Coding()
             .setDisplay("Glasgow Coma Scale")
             .setCode("35088-4")
-            .setSystem("https://fhir.loinc.org/CodeSystem/$lookup?system=http://loinc.org&code=35088-4"))
-          .setText("Gcs"))
+            .setSystem("https://loinc.org/"))
+          .setText("Glasgow Coma Scale Total"))
         .setEncounter(new Reference()
           .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
         .setSubject(encounterPreh.getPatient());
@@ -782,12 +863,10 @@ public class T4CRestInterface extends BaseRestInterface {
       traumaCondition
         .addNewConditionEvidence(new ConditionEvidence()
           .addNewCode(new CodeableConcept()
-            .setText("GCS TOTAL"))
+            .setText("Glasgow Coma Scale Total"))
           .addNewDetail(new Reference()
             .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + dGcs.getId())));
     }
-
-
     if (worstBloodPressure != null) {
       Observation worstBloodPressureObservation = new Observation();
 
@@ -800,6 +879,10 @@ public class T4CRestInterface extends BaseRestInterface {
           .setCode("Torr")
           .setSystem("https://www.britannica.com/science/torr"))
         .setCode(new CodeableConcept()
+          .addNewCoding(new Coding()
+            .setDisplay("Systolic blood pressure")
+            .setCode("8480-6")
+            .setSystem("https://loinc.org/"))
           .setText("Worst Blood Pressure Observation"))
         .setEncounter(new Reference()
           .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
@@ -823,11 +906,16 @@ public class T4CRestInterface extends BaseRestInterface {
           .setValue(worstRespiratoryRate)
           .setUnit("Lungs Volume per minute"))
         .setCode(new CodeableConcept()
+          .addNewCoding(new Coding()
+            .setDisplay("Respiratory rate")
+            .setCode("9279-1")
+            .setSystem("https://loinc.org/"))
           .setText("Worst Respiratory Rate Observation"))
         .setEncounter(new Reference()
           .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
         .setSubject(encounterPreh.getPatient());
       domainResources.add(worstRespiratoryRateObservation);
+
       traumaCondition
         .addNewConditionEvidence(new ConditionEvidence()
           .addNewCode(new CodeableConcept()
@@ -837,92 +925,156 @@ public class T4CRestInterface extends BaseRestInterface {
     }
   }
 
-  private void addAnamnesi(JsonObject anamnesisJsonObject, Encounter encounter, List<DomainResource> domainResources) {
+  private void addAnamnesi(JsonObject anamnesisJsonObject, Encounter encounter, Condition traumaCondition, List<DomainResource> domainResources) {
 
     Boolean antiplatelets = anamnesisJsonObject.getBoolean("antiplatelets");
     Boolean anticoagulants = anamnesisJsonObject.getBoolean("anticoagulant");
     Boolean nao = anamnesisJsonObject.getBoolean("nao");
     Procedure anamnesisProcedure = new Procedure()
+      .setCode(new CodeableConcept()
+        .addNewCoding(new Coding()
+          .setSystem("http://www.snomed.org/")
+          .setDisplay("Information gathering (procedure)")
+          .setCode("311791003")
+        )
+        .setText("Anamnesis")
+      ).setStatus("completed")
       .setId(UUID.randomUUID().toString())
       .setSubject(encounter.getPatient())
       .setEncounter(new Reference()
         .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounter.getId()));
-    DocumentReference documentReference = new DocumentReference();
+    if (anticoagulants != null || nao != null || antiplatelets != null) {
+      traumaCondition.addNewConditionEvidence(new ConditionEvidence()
+        .addNewCode(new CodeableConcept()
+          .setText("Anamnesis evidence"))
+        .addNewDetail(new Reference()
+          .setType(ResourceType.PROCEDURE.typeName())
+          .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + anamnesisProcedure.getId())));
+      domainResources.add(anamnesisProcedure);
+    }
     if (antiplatelets != null && antiplatelets) {
-
-      String documentReferenceUUid = UUID.randomUUID().toString();
-      documentReference
-        .setId(documentReferenceUUid)
-        .addNewDocumentContent(new DocumentReferenceContent()
-          .setAttachment(new Attachment()
-            .setContentType("text/plain")
-            .setLanguage("it")
-            .setData("Anti-aggreganti utilizzati")
-            .setTitle("Anamnesis")
-            .setCreation(LocalDate.now().toString())));
+      Observation observation = new Observation()
+        .setId(UUID.randomUUID().toString())
+        .setStatus("final")
+        .setCode(new CodeableConcept()
+          .addNewCoding(new Coding()
+            .setCode("29497-5")
+            .setDisplay("Platelet associated IgG Ab [Presence] in Blood by Flow cytometry (FC)")
+            .setSystem("https://loinc.org/"))
+          .setText("Use of anti-platelets"))
+        .setValueBoolean(true)
+        .setEncounter(new Reference()
+          .setType("Encounter")
+          .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounter.getId()))
+        .addNewPartOfReference(new Reference()
+          .setType(ResourceType.PROCEDURE.typeName())
+          .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + anamnesisProcedure.getId()));
+      domainResources.add(observation);
+//      String documentReferenceUUid = UUID.randomUUID().toString();
+//      documentReference
+//        .setId(documentReferenceUUid)
+//        .addNewDocumentContent(new DocumentReferenceContent()
+//          .setAttachment(new Attachment()
+//            .setContentType("text/plain")
+//            .setLanguage("it")
+//            .setData("Anti-aggreganti utilizzati")
+//            .setTitle("Anamnesis")
+//            .setCreation(LocalDate.now().toString())));
     } else if (antiplatelets != null) {
-      String documentReferenceUUid = UUID.randomUUID().toString();
-      documentReference
-        .setId(documentReferenceUUid)
-        .addNewDocumentContent(new DocumentReferenceContent()
-          .setAttachment(new Attachment()
-            .setContentType("text/plain")
-            .setLanguage("it")
-            .setData("Anti-aggreganti non utilizzati")
-            .setTitle("Anamnesis")
-            .setCreation(LocalDate.now().toString())));
+      Observation observation = new Observation()
+        .setId(UUID.randomUUID().toString())
+        .setStatus("final")
+        .setCode(new CodeableConcept()
+          .addNewCoding(new Coding()
+            .setCode("29497-5")
+            .setDisplay("Platelet associated IgG Ab [Presence] in Blood by Flow cytometry (FC)")
+            .setSystem("https://loinc.org/"))
+          .setText("Use of anti-platelets"))
+        .setValueBoolean(false)
+        .setEncounter(new Reference()
+          .setType("Encounter")
+          .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounter.getId()))
+        .addNewPartOfReference(new Reference()
+          .setType(ResourceType.PROCEDURE.typeName())
+          .setReference("/" + ResourceType.PROCEDURE + "/" + anamnesisProcedure.getId()));
+      domainResources.add(observation);
     }
     if (anticoagulants != null && anticoagulants) {
-      String documentReferenceUUid = UUID.randomUUID().toString();
-      documentReference
-        .setId(documentReferenceUUid)
-        .addNewDocumentContent(new DocumentReferenceContent()
-          .setAttachment(new Attachment()
-            .setContentType("text/plain")
-            .setLanguage("it")
-            .setData("Sono utilizzati gli anticoagulanti")
-            .setTitle("Anamnesis")
-            .setCreation(LocalDate.now().toString())));
+      Observation observation = new Observation()
+        .setId(UUID.randomUUID().toString())
+        .setStatus("final")
+        .setCode(new CodeableConcept()
+          .addNewCoding(new Coding()
+            .setCode("89063-2")
+            .setDisplay("Type of anticoagulant medication used")
+            .setSystem("https://loinc.org/"))
+          .setText("Use of anti-platelets"))
+        .setValueBoolean(true)
+        .setEncounter(new Reference()
+          .setType("Encounter")
+          .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounter.getId()))
+        .addNewPartOfReference(new Reference()
+          .setType(ResourceType.PROCEDURE.typeName())
+          .setReference("/" + ResourceType.PROCEDURE + "/" + anamnesisProcedure.getId()));
+      domainResources.add(observation);
     } else if (anticoagulants != null) {
-      String documentReferenceUUid = UUID.randomUUID().toString();
-      documentReference
-        .setId(documentReferenceUUid)
-        .addNewDocumentContent(new DocumentReferenceContent()
-          .setAttachment(new Attachment()
-            .setContentType("text/plain")
-            .setLanguage("it")
-            .setData("Non sono utilizzati gli anticoagulanti")
-            .setTitle("Anamnesis")
-            .setCreation(LocalDate.now().toString())));
+//      String documentReferenceUUid = UUID.randomUUID().toString();
+      Observation observation = new Observation()
+        .setId(UUID.randomUUID().toString())
+        .setStatus("final")
+        .setCode(new CodeableConcept()
+          .addNewCoding(new Coding()
+            .setCode("89063-2")
+            .setDisplay("Type of anticoagulant medication used")
+            .setSystem("https://loinc.org/"))
+          .setText("Use of anti-platelets"))
+        .setValueBoolean(false)
+        .setEncounter(new Reference()
+          .setType("Encounter")
+          .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounter.getId()))
+        .addNewPartOfReference(new Reference()
+          .setType(ResourceType.PROCEDURE.typeName())
+          .setReference("/" + ResourceType.PROCEDURE + "/" + anamnesisProcedure.getId()));
+      domainResources.add(observation);
     }
     if (nao != null && nao) {
-      String documentReferenceUUid = UUID.randomUUID().toString();
-      documentReference
-        .setId(documentReferenceUUid)
-        .addNewDocumentContent(new DocumentReferenceContent()
-          .setAttachment(new Attachment()
-            .setContentType("text/plain")
-            .setLanguage("it")
-            .setData("I nuovi anticoagulanti orali sono usati")
-            .setTitle("Anamnesis")
-            .setCreation(LocalDate.now().toString())));
+      Observation observation = new Observation()
+        .setId(UUID.randomUUID().toString())
+        .setStatus("final")
+        .setCode(new CodeableConcept()
+          .addNewCoding(new Coding()
+            .setCode("89063-2")
+            .setDisplay("Type of anticoagulant medication used")
+            .setSystem("https://loinc.org/"))
+          .setText("Use of new oral anti-coagulants"))
+        .setValueBoolean(true)
+        .setEncounter(new Reference()
+          .setType("Encounter")
+          .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounter.getId()))
+        .addNewPartOfReference(new Reference()
+          .setType(ResourceType.PROCEDURE.typeName())
+          .setReference("/" + ResourceType.PROCEDURE + "/" + anamnesisProcedure.getId()));
+      domainResources.add(observation);
     } else if (nao != null) {
-      String documentReferenceUUid = UUID.randomUUID().toString();
-      documentReference
-        .setId(documentReferenceUUid)
-        .addNewDocumentContent(new DocumentReferenceContent()
-          .setAttachment(new Attachment()
-            .setContentType("text/plain")
-            .setLanguage("it")
-            .setData("I nuovi anticoagulanti orali non sono usati")
-            .setTitle("Anamnesis")
-            .setCreation(LocalDate.now().toString())));
+      Observation observation = new Observation()
+        .setId(UUID.randomUUID().toString())
+        .setStatus("final")
+        .setCode(new CodeableConcept()
+          .addNewCoding(new Coding()
+            .setCode("89063-2")
+            .setDisplay("Type of anticoagulant medication used")
+            .setSystem("https://loinc.org/"))
+          .setText("Use of new oral anti-coagulants"))
+        .setValueBoolean(false)
+        .setEncounter(new Reference()
+          .setType("Encounter")
+          .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounter.getId()))
+        .addNewPartOfReference(new Reference()
+          .setType(ResourceType.PROCEDURE.typeName())
+          .setReference("/" + ResourceType.PROCEDURE + "/" + anamnesisProcedure.getId()));
+      domainResources.add(observation);
     }
-    anamnesisProcedure
-      .addNewContained(documentReference)
-      .addNewReport(new Reference()
-        .setDisplay("Anamnesis report")
-        .setReference("#" + documentReference.getId()));
+
 
     domainResources.add(anamnesisProcedure);
 
@@ -935,27 +1087,32 @@ public class T4CRestInterface extends BaseRestInterface {
 
     if (dynamic != null && dynamic) {
 
-      condition.addNewConditionStage(new ConditionStage()
-        .setType(new CodeableConcept()
+
+      condition.addNewConditionEvidence(new ConditionEvidence()
+        .addNewCode(new CodeableConcept()
           .addNewCoding(new Coding()
-            .setCode("Dynamic"))
+            .setDisplay("Dynamic")
+            .setCode("229027002")
+            .setSystem("http://www.snomed.org/"))
           .setText("Major Trauma Criteria - Dynamic")));
     }
     if (anatomical != null && anatomical) {
 
-      condition.addNewConditionStage(new ConditionStage()
-        .setType(new CodeableConcept()
+      condition.addNewConditionEvidence(new ConditionEvidence()
+        .addNewCode(new CodeableConcept()
           .addNewCoding(new Coding()
-            .setCode("Anatomical"))
+            .setDisplay("Anatomical ")
+            .setCode("36298004")
+            .setSystem("http://www.snomed.org/"))
           .setText("Major Trauma Criteria - Anatomical")));
     }
     if (physiological != null && physiological) {
-
-
-      condition.addNewConditionStage(new ConditionStage()
-        .setType(new CodeableConcept()
+      condition.addNewConditionEvidence(new ConditionEvidence()
+        .addNewCode(new CodeableConcept()
           .addNewCoding(new Coding()
-            .setCode("Physiological"))
+            .setDisplay("Physiological")
+            .setCode("1360005")
+            .setSystem("http://www.snomed.org/"))
           .setText("Major Trauma Criteria - Physiological")));
     }
 
@@ -988,10 +1145,6 @@ public class T4CRestInterface extends BaseRestInterface {
           .setCode("PPRF")
           .setDisplay("primary performer")
           .setSystem("http://terminology.hl7.org/CodeSystem/v3-ParticipationType"))
-        .addNewCoding(new Coding()
-          .setDisplay("startOperatorId"))
-        .addNewCoding(new Coding()
-          .setDisplay("startOperatorDescription"))
         .setText("Trauma Leader"))
         .setIndividual(new Reference()
           //need to create a fhir resource
@@ -1018,112 +1171,14 @@ public class T4CRestInterface extends BaseRestInterface {
     }
   }
 
-  private void addIssToEncounter(JsonObject iss, Encounter encounter, List<DomainResource> resources) {
+  private void addIssToEncounterShock(JsonObject iss, Encounter encounter, Condition conditionIssAssessment, List<DomainResource> resources) {
     //Condition for iss, referenced in encounter resource
-    Condition conditionIssAssessment = new Condition();
-
-
-    Procedure procedureInjurySeverityScore = new Procedure()
-      .setId(UUID.randomUUID().toString())
-      .setStatus("completed")
-      .setSubject(encounter.getPatient())
-      .setCode(new CodeableConcept()
-        .addNewCoding(new Coding()
-          .setCode("273533008")
-          .setDisplay("Injury Severity Score")
-          .setSystem("http://snomed.org")))
-      .setOutcome(new CodeableConcept()
-        .addNewCoding(new Coding()
-          .setCode("385669000")
-          .setSystem("http://www.snomed.org/")));
-    resources.add(procedureInjurySeverityScore);
-    iss.forEach(entry -> {
-      String key = entry.getKey();
-      //create a new condition for each body group in the object
-      if (!key.equalsIgnoreCase("totalIss")) {
-        JsonObject value = (JsonObject) entry.getValue();
-        //create a new reference of observation about each of the body part, then create and persist the observation
-        value.forEach(entryGroup -> {
-          String uuid = UUID.randomUUID().toString();
-
-          Observation observation = new Observation()
-            .setEncounter(new Reference()
-              .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounter.getId()))
-            .addNewPartOfReference(new Reference()
-              .setType(ResourceType.PROCEDURE.typeName())
-              .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + procedureInjurySeverityScore.getId()));
-
-          if (!entryGroup.getKey().equalsIgnoreCase("groupTotalIss")) {
-            observation.setStatus("final")
-              .setCode(new CodeableConcept()
-                .addNewCoding(new Coding()
-                  .setDisplay("Injury severity score Calculated")
-                  .setCode("74471-4")
-                  .setUserSelected(true))
-//                .addNewCoding(new Coding()
-//                  .setDisplay(entryGroup.getKey()))
-                .setText("Physical observation for injury severity score"))
-              .setId(uuid)
-              //set iss value
-              .setValueInteger((Integer) entryGroup.getValue())
-              //set body site name
-              .setBodySite(new CodeableConcept()
-                .setText(entryGroup.getKey()));
-
-          } else {
-            observation.setStatus("final")
-              .setCode(new CodeableConcept()
-                .addNewCoding(new Coding()
-                  .setDisplay("Injury severity score Calculated")
-                  .setCode("74471-4")
-                  .setUserSelected(true))
-//                .addNewCoding(new Coding()
-//                  .setDisplay(entryGroup.getKey()))
-                .setText("Physical observation for injury severity score"))
-              .setId(uuid)
-              //set iss value
-              .setValueInteger((Integer) entryGroup.getValue())
-              //set body site name
-              .setBodySite(new CodeableConcept()
-                .setText(entry.getKey()));
-
-          }
-          resources.add(observation);
-        });
-      } else {
-        Observation totalIssObservation = new Observation();
-        totalIssObservation.setStatus("final")
-          .setCode(new CodeableConcept()
-            .addNewCoding(new Coding()
-              .setDisplay("Injury severity score Calculated")
-              .setCode("74471-4")
-              .setUserSelected(true))
-            .addNewCoding(new Coding()
-              .setDisplay("Group Total Iss"))
-//            .addNewCoding(new Coding()
-//              .setDisplay("groupTotalIss"))
-            .setText("Physical observation for injury severity score"))
-          .setId(UUID.randomUUID().toString())
-          .addNewPartOfReference(new Reference()
-            .setType(ResourceType.PROCEDURE.typeName())
-            .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + procedureInjurySeverityScore.getId()))
-          //set iss value
-          .setValueInteger((Integer) entry.getValue())
-          //set body site name
-          .setBodySite(new CodeableConcept()
-            .setText(entry.getKey()))
-          .setEncounter(new Reference()
-            .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounter.getId()));
-        resources.add(totalIssObservation);
-
-      }
-    });
     conditionIssAssessment
       .setCode(new CodeableConcept()
           .addNewCoding(new Coding()
-            .setCode("118222006")
+            .setCode("417746004")
             .setSystem("https://www.hl7.org/fhir/codesystem-snomedct.html")
-            .setDisplay("General finding of observation of patient (finding)"))
+            .setDisplay("Traumatic injury"))
 //        .addNewCoding(new Coding()
 //          .setDisplay("iss"))
       )
@@ -1137,18 +1192,115 @@ public class T4CRestInterface extends BaseRestInterface {
           .setCode("active")
           .setDisplay("Active")
           .setSystem("http://terminology.hl7.org/CodeSystem/condition-clinicalversion4.0.1")))
-      .setSubject(encounter.getPatient())
-      .addNewConditionEvidence(new ConditionEvidence()
-        .addNewCode(new CodeableConcept()
-          .addNewCoding(new Coding()
-            .setUserSelected(true)
-            .setDisplay("AIS - Abbreviated injury scale")
-            .setCode("273255001")
-          ))
-        .addNewDetail(new Reference()
-          .setType(ResourceType.PROCEDURE.typeName())
-          .setDisplay("Injury Severity Score Observation")
-          .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + procedureInjurySeverityScore.getId())));
+      .setSubject(encounter.getPatient());
+
+    iss.forEach(entry -> {
+      String key = entry.getKey();
+      //create a new condition for each body group in the object
+      if (!key.equalsIgnoreCase("totalIss")) {
+        JsonObject value = (JsonObject) entry.getValue();
+        //create a new reference of observation about each of the body part, then create and persist the observation
+        value.forEach(entryGroup -> {
+          String uuid = UUID.randomUUID().toString();
+
+          Observation observation = new Observation()
+            .setEncounter(new Reference()
+              .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounter.getId()));
+
+          resources.add(observation);
+
+          if (!entryGroup.getKey().equalsIgnoreCase("groupTotalIss")) {
+            observation.setStatus("final")
+              .setCode(new CodeableConcept()
+                .addNewCoding(new Coding()
+                  .setDisplay("Injury severity score Calculated")
+                  .setCode("74471-4")
+                  .setUserSelected(true))
+                .setText("Physical observation for injury severity score"))
+              .setId(uuid)
+              //set iss value
+              .setValueInteger((Integer) entryGroup.getValue())
+              //set body site name
+              .setBodySite(new CodeableConcept()
+                .setText(entryGroup.getKey()));
+
+            conditionIssAssessment
+              .addNewConditionStage(new ConditionStage()
+                .setType(new CodeableConcept()
+                  .addNewCoding(new Coding()
+                    .setCode("273533008")
+                    .setDisplay("Injury severity score (assessment scale)")
+                    .setSystem("http://www.snomed.org/")))
+                .addNewAssessment(new Reference()
+                  .setDisplay(entryGroup.getKey() + " score: " + entryGroup.getValue())
+                  .setType(ResourceType.OBSERVATION.typeName())
+                  .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + observation.getId())));
+
+          } else {
+            observation.setStatus("final")
+              .setCode(new CodeableConcept()
+                .addNewCoding(new Coding()
+                  .setDisplay("Injury severity score Calculated")
+                  .setCode("74471-4")
+                  .setUserSelected(true))
+                .setText("Group Total Iss Score"))
+              .setId(uuid)
+              //set iss value
+              .setValueInteger((Integer) entryGroup.getValue())
+              //set body site name
+              .setBodySite(new CodeableConcept()
+                .setText(entry.getKey()));
+
+            conditionIssAssessment
+              .addNewConditionStage(new ConditionStage()
+                .setType(new CodeableConcept()
+                  .addNewCoding(new Coding()
+                    .setCode("273533008")
+                    .setDisplay("Injury severity score (assessment scale)")
+                    .setSystem("http://www.snomed.org/")))
+                .addNewAssessment(new Reference()
+                  .setDisplay("Group Total Iss Score: " + entryGroup.getValue())
+                  .setType(ResourceType.OBSERVATION.typeName())
+                  .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + observation.getId())));
+
+          }
+        });
+      } else {
+        Observation totalIssObservation = new Observation();
+        totalIssObservation.setStatus("final")
+          .setCode(new CodeableConcept()
+            .addNewCoding(new Coding()
+              .setDisplay("Injury severity score Calculated")
+              .setCode("74471-4")
+              .setUserSelected(true))
+            .addNewCoding(new Coding()
+              .setDisplay("Total Iss"))
+            .setText("Physical observation for injury severity score"))
+          .setId(UUID.randomUUID().toString())
+
+          .setValueInteger((Integer) entry.getValue())
+          //set body site name
+          .setBodySite(new CodeableConcept()
+            .setText(entry.getKey()))
+          .setEncounter(new Reference()
+            .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounter.getId()));
+        resources.add(totalIssObservation);
+
+        conditionIssAssessment
+          .addNewConditionStage(new ConditionStage()
+            .setType(new CodeableConcept()
+              .addNewCoding(new Coding()
+                .setCode("273533008")
+                .setDisplay("Injury severity score (assessment scale)")
+                .setSystem("http://www.snomed.org/")))
+            .addNewAssessment(new Reference()
+              .setDisplay("Total Iss Score: " + entry.getValue())
+              .setType(ResourceType.OBSERVATION.typeName())
+              .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + totalIssObservation.getId())));
+
+      }
+    });
+
 
     resources.add(conditionIssAssessment);
 
@@ -1159,6 +1311,8 @@ public class T4CRestInterface extends BaseRestInterface {
           .setDisplay("post-op diagnosis")
           .setCode("post-op")))
       .setCondition(new Reference()
+        .setType(ResourceType.CONDITION.typeName())
+        .setDisplay("Injury Severity Score")
         .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.BASE + "/" + FhirUtils.CONDITION_TYPE + "/"
           + conditionIssAssessment.getId())));
 
@@ -1181,11 +1335,12 @@ public class T4CRestInterface extends BaseRestInterface {
             .setSystem("https://www.hl7.org/fhir/valueset-location-physical-type.html"))
           .setText(vehicle)));
     }
-    //how to handle?
+
     String code = traumaInfo.getString("code");
+    //dimissione ospedaliera
     String sdo = traumaInfo.getString("sdo");
     String admissionCode = traumaInfo.getString("admissionCode");
-    String erDeceased = traumaInfo.getString("erDeceased");
+    Boolean erDeceased = traumaInfo.getBoolean("erDeceased");
     String name = traumaInfo.getString("name");
     String surname = traumaInfo.getString("surname");
     String gender = traumaInfo.getString("gender");
@@ -1218,29 +1373,57 @@ public class T4CRestInterface extends BaseRestInterface {
     if (admissionCode != null) {
       //set admission code
       encounterPreh.setPriority(new CodeableConcept()
-          .addNewCoding(new Coding()
-            .setSystem("http://www.eena.it/")
-            .setCode(admissionCode)
-            .setDisplay("Codice ammissione pronto soccorso"))
-//        .addNewCoding(new Coding()
-//          .setDisplay("admissionCode"))
+        .addNewCoding(new Coding()
+          .setSystem("http://www.eena.it/")
+          .setCode(admissionCode)
+          .setDisplay("Codice ammissione pronto soccorso"))
       );
     }
     if (code != null) {
-      encounterPreh
-        .setHospitalization(new EncounterHospitalization()
-          .setPreAdmissionIdentifier(new Identifier()
-            .setValue(code)));
+      encounterHospitalization
+        .setPreAdmissionIdentifier(new Identifier()
+          .setValue(code));
+    }
+    if (sdo != null) {
+      encounterHospitalization
+        .setDischargeDisposition(new CodeableConcept()
+          .setText(sdo));
     }
     if (accidentType != null) {
+      Observation accidentTypeObservation = new Observation()
+        .setCode(new CodeableConcept()
+          .addNewCoding(new Coding()
+            .setCode("67494-5")
+            .setDisplay("General mechanism of the forces which caused the injury (observation)")
+            .setSystem("https://loinc.org/"))
+          .setText("Accident Type Observation"))
+        .setId(UUID.randomUUID().toString())
+        .setEncounter(new Reference()
+          .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
+        .setSubject(encounterPreh.getPatient())
+        .setStatus("final")
+        .setValueString(accidentType);
+
+      CodeableConcept typeOfAccidentCodePenetr = new CodeableConcept()
+        .addNewCoding(new Coding()
+          .setDisplay("Penetrating wound")
+          .setCode("262560006")
+          .setSystem("http://www.snomed.org/"))
+        .setText("Type of accident " + accidentType);
+      CodeableConcept typeOfAccidentCodeClose = new CodeableConcept()
+        .addNewCoding(new Coding()
+          .setDisplay("Closed wound")
+          .setCode("416886008")
+          .setSystem("http://www.snomed.org/"))
+        .setText("Type of accident " + accidentType);
+      domainResources.add(accidentTypeObservation);
       traumaCondition
-        .addNewConditionStage(new ConditionStage()
-          .setType(new CodeableConcept()
-            .addNewCoding(new Coding()
-              .setDisplay(accidentType))
-//            .addNewCoding(new Coding()
-//              .setDisplay("accidentType"))
-            .setText("Tipo di Incidente")));
+        .addNewConditionEvidence(new ConditionEvidence()
+          .addNewCode(accidentType.equalsIgnoreCase("chiuso") ? typeOfAccidentCodeClose : typeOfAccidentCodePenetr)
+          .addNewDetail(new Reference()
+            .setType(ResourceType.OBSERVATION.typeName())
+            .setDisplay("Type of accident " + accidentType)
+            .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + accidentTypeObservation.getId())));
     }
     if (accidentDate != null && accidentTime != null) {
       LocalDate startD = LocalDate.parse(accidentDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -1250,11 +1433,17 @@ public class T4CRestInterface extends BaseRestInterface {
       traumaCondition.setOnsetDateTime(FhirUtils.fullDateTime.format(finalZonedStartDateTime));
     }
 
+    encounterPreh.setHospitalization(encounterHospitalization);
+
+
   }
 
-  private void createPatient(String name, String surname, String gender, int age, String dob, String erDeceased, Encounter encounter,
+  private void createPatient(String name, String surname, String gender, int age, String dob, Boolean erDeceased, Encounter encounter,
                              List<DomainResource> resources) {
 
+
+    surname = surname == null ? "" : surname;
+    name = name == null ? "" : name;
 
     Patient patient = new Patient()
       .setId(UUID.randomUUID().toString())
@@ -1263,6 +1452,7 @@ public class T4CRestInterface extends BaseRestInterface {
           .setFamily(surname)
           .addNewGiven(name)
       );
+    //parsing date problems
     if (dob != null) {
       DateTimeFormatter dateTimeFormatter = new DateTimeFormatterBuilder()
         .appendPattern("dd/MM/yy")
@@ -1276,11 +1466,16 @@ public class T4CRestInterface extends BaseRestInterface {
     }
 
     if (erDeceased != null) {
-      patient.setDeceasedBoolean(Boolean.parseBoolean(erDeceased));
+      patient.setDeceasedBoolean(erDeceased);
+    }
+    if (gender != null) {
+      patient
+        .setGender(gender);
     }
     encounter.setPatient(new Reference()
-      .setType("http://hl7.org/fhir/StructureDefinition/Patient")
-      .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.BASE + "/" + FhirUtils.PATIENT_TYPE + "/" + patient.getId()));
+      .setType(ResourceType.PATIENT.typeName())
+      .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.BASE + "/" + FhirUtils.PATIENT_TYPE + "/" + patient.getId())
+      .setDisplay(name + " " + surname));
     resources.add(patient);
   }
 
