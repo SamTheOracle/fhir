@@ -19,7 +19,7 @@ public enum ResourceType {
 
 
   private final String collection;
-  private final Class<? extends Resource> clazz;
+  private final Class<? extends FhirResourceAbstract> clazz;
   private final String value;
 
   ResourceType(String value, String collection, Class<? extends DomainResource> clazz) {
@@ -36,7 +36,7 @@ public enum ResourceType {
     return value;
   }
 
-  public Class<? extends Resource> getResourceClass() {
+  public Class<? extends FhirResourceAbstract> getResourceClass() {
     return clazz;
   }
 }

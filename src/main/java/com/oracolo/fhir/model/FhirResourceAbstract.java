@@ -23,7 +23,7 @@ import com.oracolo.fhir.model.elements.Metadata;
  * </p>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public abstract class Resource {
+public abstract class FhirResourceAbstract {
 
   /**
    * The logical id of the resource, as used in the URL for the resource. Once assigned, this value never changes.
@@ -59,7 +59,7 @@ public abstract class Resource {
   private Extension _language;
 
 
-  public Resource() {
+  public FhirResourceAbstract() {
   }
 
   public Extension get_implicitRules() {
@@ -83,7 +83,7 @@ public abstract class Resource {
   }
 
 
-  public Resource setId(String id) {
+  public FhirResourceAbstract setId(String id) {
     this.id = id;
     return this;
   }

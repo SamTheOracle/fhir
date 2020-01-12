@@ -10,6 +10,7 @@ import com.oracolo.fhir.model.datatypes.HumanName;
 import com.oracolo.fhir.model.datatypes.Identifier;
 import com.oracolo.fhir.model.datatypes.Period;
 import com.oracolo.fhir.model.domain.*;
+import com.oracolo.fhir.model.elements.Annotation;
 import com.oracolo.fhir.model.elements.CodeableConcept;
 import com.oracolo.fhir.model.elements.Quantity;
 import com.oracolo.fhir.model.elements.Reference;
@@ -29,7 +30,6 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -176,7 +176,7 @@ public class T4CRestInterface extends BaseRestInterface {
 
     JsonArray events = reportJson.getJsonArray("events");
     if (events != null && events.size() > 0) {
-      addEventsToShockEncounter(events, encounterShock, domainResources);
+      addEventsToEncounters(events, encounterShock, encounterPreh, domainResources);
     }
     JsonArray vitalSignsObservations = reportJson.getJsonArray("vitalSignsObservations");
     if (vitalSignsObservations != null && vitalSignsObservations.size() > 0) {
@@ -199,35 +199,240 @@ public class T4CRestInterface extends BaseRestInterface {
     });
   }
 
-  private void addEventsToShockEncounter(JsonArray events, Encounter encounterShock, List<DomainResource> domainResources) {
+  private void addEventsToEncounters(JsonArray events, Encounter encounterShock, Encounter preH, List<DomainResource> domainResources) {
 
     events.forEach(entry -> {
-      JsonObject event = JsonObject.mapFrom(entry);
-      Integer eventId = event.getInteger("eventId");
-      String date = event.getString("date");
-      String time = event.getString("time");
-      String place = event.getString("place");
-      String type = event.getString("type");
+      JsonObject fullEvent = JsonObject.mapFrom(entry);
+      Integer eventId = fullEvent.getInteger("eventId");
+      String date = fullEvent.getString("date");
+      String time = fullEvent.getString("time");
+      String place = fullEvent.getString("place");
+      String type = fullEvent.getString("type");
+      JsonObject content = fullEvent.getJsonObject("content");
       switch (type) {
         case "procedure":
+          String procedureId = content.getString("procedureId");
+          String procedureDescription = content.getString("procedureDescription");
+          String procedureType = content.getString("procedureType");
+          String procedureEvent = content.getString("event");
+          JsonObject intubation = content.getJsonObject("intubation");
+          JsonObject drainage = content.getJsonObject("drainage");
+          JsonObject chestTube = content.getJsonObject("chest-tube");
+
+          Procedure procedure = new Procedure().setId(String.valueOf(eventId));
+          if (date != null && time != null) {
+            procedure.setPerformedDateTime(date);
+          }
+          if (place != null) {
+            procedure
+              .setLocation(new Reference()
+                .setDisplay(place));
+            if (place.equalsIgnoreCase("PRE-H")) {
+              preH.addNewContained(procedure);
+
+            } else {
+              encounterShock.addNewContained(procedure);
+            }
+          }
+          if (procedureId != null) {
+            procedure.setCode(new CodeableConcept()
+              .setText(procedureId));
+          }
+          if (procedureDescription != null) {
+            procedure.addNewNote(new Annotation());
+          }
+          if (procedureType != null) {
+            procedure.setCategory(new CodeableConcept()
+              .setText(procedureType));
+          }
+          if (procedureEvent != null) {
+            if (procedureEvent.equalsIgnoreCase("start")) {
+              procedure.setStatus("in-progress");
+            } else {
+              procedure.setStatus("completed");
+            }
+          }
+          if (intubation != null) {
+            intubation.forEach(intubationEntry -> {
+              Object value = intubationEntry.getValue();
+              String name = intubationEntry.getKey();
+              Observation intubationObservation = new Observation()
+                .setId(UUID.randomUUID().toString())
+                .addNewPartOfReference(new Reference()
+                  .setType(ResourceType.PROCEDURE.typeName())
+                  .setDisplay("Intubation procedure")
+                  .setReference("#" + procedure.getId()))
+                .setStatus("final")
+                .setCode(new CodeableConcept()
+                  .setText(name))
+                .setValueBoolean((Boolean) value);
+              procedure
+                .addNewContained(intubationObservation);
+            });
+          }
+
+          if (drainage != null) {
+            drainage.forEach(drainageEntry -> {
+              Object value = drainageEntry.getValue();
+              String name = drainageEntry.getKey();
+              Observation intubationObservation = new Observation()
+                .setId(UUID.randomUUID().toString())
+                .addNewPartOfReference(new Reference()
+                  .setType(ResourceType.PROCEDURE.typeName())
+                  .setDisplay("Drainage procedure")
+                  .setReference("#" + procedure.getId()))
+                .setStatus("final")
+                .setCode(new CodeableConcept()
+                  .setText(name))
+                .setValueBoolean((Boolean) value);
+              procedure
+                .addNewContained(intubationObservation);
+            });
+          }
+
+          if (chestTube != null) {
+            chestTube.forEach(chestTubeEntry -> {
+              Object value = chestTubeEntry.getValue();
+              String name = chestTubeEntry.getKey();
+              Observation chestTubeObservation = new Observation()
+                .setId(UUID.randomUUID().toString())
+                .addNewPartOfReference(new Reference()
+                  .setType(ResourceType.PROCEDURE.typeName())
+                  .setDisplay("Chest Tube procedure")
+                  .setReference("#" + procedure.getId()))
+                .setStatus("final")
+                .setCode(new CodeableConcept()
+                  .setText(name))
+                .setValueBoolean((Boolean) value);
+              procedure
+                .addNewContained(chestTubeObservation);
+            });
+          }
+
+
           break;
         case "diagnostic":
+
           break;
         case "drug":
           break;
         case "blood-product":
           break;
         case "vital-signs-mon":
+          Observation vitalSignObservationContainer = new Observation()
+            .setId(String.valueOf(eventId))
+            .setCode(new CodeableConcept()
+              .addNewCoding(new Coding()
+                .setSystem("http://loinc.org")
+                .setDisplay("Vital Signs")
+                .setCode("85353-1")));
+
+          if (place != null) {
+
+            if (place.equalsIgnoreCase("PRE-H")) {
+              vitalSignObservationContainer
+                .setEncounter(new Reference()
+                  .setDisplay("Encounter pre-hospitalization")
+                  .setType(ResourceType.ENCOUNTER.typeName())
+                  .setReference("#" + preH.getId()));
+              preH.addNewContained(vitalSignObservationContainer);
+
+            } else {
+              vitalSignObservationContainer
+                .setEncounter(new Reference()
+                  .setDisplay("Encounter shock room")
+                  .setType(ResourceType.ENCOUNTER.typeName())
+                  .setReference("#" + encounterShock.getId()));
+              encounterShock.addNewContained(vitalSignObservationContainer);
+            }
+          }
+          content.forEach(vitalSignEntry -> {
+            Object value = vitalSignEntry.getValue();
+            String name = vitalSignEntry.getKey();
+            Observation observation = new Observation()
+              .setSubject(encounterShock.getPatient())
+              .setId(UUID.randomUUID().toString())
+              .setValueQuantity(new Quantity()
+                .setValue((Double) value))
+              .setStatus("final")
+              .setCode(new CodeableConcept()
+                .setText(name))
+              .setValueQuantity(new Quantity()
+                .setValue((Double) value));
+            if (date != null && time != null) {
+              observation.setEffectiveDateTime(date);
+            }
+
+            observation
+              .addNewPartOfReference(new Reference()
+                .setDisplay("Vital Signs Panel Observations")
+                .setType(ResourceType.OBSERVATION.typeName())
+                .setReference("#" + vitalSignObservationContainer.getId()));
+            vitalSignObservationContainer.addNewContained(observation);
+          });
           break;
         case "clinical-variation":
           break;
         case "trauma-leader":
           break;
         case "room-in":
-          break;
         case "room-out":
+          Procedure procedureRoomIn = new Procedure().setId(String.valueOf(eventId));
+          if (date != null && time != null) {
+            procedureRoomIn.setPerformedDateTime(date);
+          }
+          if (place != null) {
+            procedureRoomIn
+              .setLocation(new Reference()
+                .setDisplay(place));
+            if (place.equalsIgnoreCase("PRE-H")) {
+              procedureRoomIn.setEncounter(new Reference()
+                .setReference("#" + preH.getId())
+                .setType(ResourceType.ENCOUNTER.typeName())
+                .setDisplay("Encounter pre-hospitalization"));
+              preH.addNewContained(procedureRoomIn);
+
+            } else {
+              procedureRoomIn.setEncounter(new Reference()
+                .setReference("#" + encounterShock.getId())
+                .setType(ResourceType.ENCOUNTER.typeName())
+                .setDisplay("Encounter shock room"));
+              encounterShock.addNewContained(procedureRoomIn);
+            }
+          }
+          procedureRoomIn
+            .setId(String.valueOf(eventId))
+            .setCode(new CodeableConcept()
+              .setText(type))
+            .setStatus("completed");
           break;
         case "patient-accepted":
+
+          Procedure procedureAcceptance = new Procedure().setId(String.valueOf(eventId));
+          if (date != null && time != null) {
+            procedureAcceptance.setPerformedDateTime(date);
+          }
+          if (place != null) {
+            procedureAcceptance
+              .setLocation(new Reference()
+                .setDisplay(place));
+            if (place.equalsIgnoreCase("PRE-H")) {
+              preH.addNewContained(procedureAcceptance);
+
+            } else {
+              encounterShock.addNewContained(procedureAcceptance);
+            }
+          }
+          procedureAcceptance
+            .setId(String.valueOf(eventId))
+            .setCode(new CodeableConcept()
+              .addNewCoding(new Coding()
+                .setCode("32485007")
+                .setDisplay("Hospital admission (procedure)")
+                .setSystem("http://www.snomed.org/"))
+              .setText(type))
+            .setStatus("completed");
+
           break;
         case "report-reactivation":
           //non fare nulla
@@ -248,7 +453,137 @@ public class T4CRestInterface extends BaseRestInterface {
       String temp = vitalSigns.getString("temp");
 
       if (temp != null) {
+        //codice loinc 8310-5, display Body temperature
+        Observation observation = new Observation()
+          .setId(UUID.randomUUID().toString())
+          .setStatus("final")
+          .setValueString(temp)
+          .setCode(new CodeableConcept()
+            .addNewCoding(new Coding()
+              .setDisplay("Body temperature")
+              .setCode("8310-5")
+              .setSystem("https://loinc.org/"))
+            .setText("Oxygen Percentage"))
+          .setEncounter(new Reference()
+            .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
+          .setSubject(encounterPreh.getPatient());
 
+        domainResources.add(observation);
+        traumaCondition
+          .addNewConditionEvidence(new ConditionEvidence()
+            .addNewCode(new CodeableConcept()
+              .setText("Temperature"))
+            .addNewDetail(new Reference()
+              .setType(ResourceType.OBSERVATION.typeName())
+              .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + observation.getId())));
+      }
+      //frequenza cardiaca
+      String hr = vitalSigns.getString("hr");
+      if (hr != null) {
+        //codice loinc 8867-4, display Heart rate
+        Observation observation = new Observation()
+          .setId(UUID.randomUUID().toString())
+          .setStatus("final")
+          .setValueString(temp)
+          .setCode(new CodeableConcept()
+            .addNewCoding(new Coding()
+              .setDisplay("Heart rate")
+              .setCode("8867-4")
+              .setSystem("https://loinc.org/"))
+            .setText("Heart Rate"))
+          .setEncounter(new Reference()
+            .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
+          .setSubject(encounterPreh.getPatient());
+
+        domainResources.add(observation);
+        traumaCondition
+          .addNewConditionEvidence(new ConditionEvidence()
+            .addNewCode(new CodeableConcept()
+              .setText("Heart rate"))
+            .addNewDetail(new Reference()
+              .setType(ResourceType.OBSERVATION.typeName())
+              .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + observation.getId())));
+      }
+      //Pressione arteriosa sistolica
+      String bp = vitalSigns.getString("bp");
+      if (bp != null) {
+        //codice loinc 8480-6, display Systolic blood pressure
+        Observation observation = new Observation()
+          .setId(UUID.randomUUID().toString())
+          .setStatus("final")
+          .setValueString(temp)
+          .setCode(new CodeableConcept()
+            .addNewCoding(new Coding()
+              .setDisplay("Systolic blood pressure")
+              .setCode("8480-6")
+              .setSystem("https://loinc.org/"))
+            .setText("Blood Pressure"))
+          .setEncounter(new Reference()
+            .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
+          .setSubject(encounterPreh.getPatient());
+
+        domainResources.add(observation);
+        traumaCondition
+          .addNewConditionEvidence(new ConditionEvidence()
+            .addNewCode(new CodeableConcept()
+              .setText("Blood pressure"))
+            .addNewDetail(new Reference()
+              .setType(ResourceType.OBSERVATION.typeName())
+              .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + observation.getId())));
+      }
+      //saturazione ossigeno
+      String spo2 = vitalSigns.getString("spo2");
+      if (spo2 != null) {
+        //codice 20564-1, display Oxygen saturation in Blood
+        Observation observation = new Observation()
+          .setId(UUID.randomUUID().toString())
+          .setStatus("final")
+          .setValueString(temp)
+          .setCode(new CodeableConcept()
+            .addNewCoding(new Coding()
+              .setDisplay("Oxygen saturation in Blood")
+              .setCode("20564-1")
+              .setSystem("https://loinc.org/"))
+            .setText("Oxigen Saturation"))
+          .setEncounter(new Reference()
+            .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
+          .setSubject(encounterPreh.getPatient());
+
+        domainResources.add(observation);
+        traumaCondition
+          .addNewConditionEvidence(new ConditionEvidence()
+            .addNewCode(new CodeableConcept()
+              .setText("Oxygen Saturation"))
+            .addNewDetail(new Reference()
+              .setType(ResourceType.OBSERVATION.typeName())
+              .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + observation.getId())));
+      }
+      //concetrazione anidride carbonica espirazione (end tidal carbon dioxide)
+      String etco2 = vitalSigns.getString("etco2");
+      if (etco2 != null) {
+        //codice loinc 19889-5, display Carbon dioxide/Gas.total.at end expiration in Exhaled gas
+        Observation observation = new Observation()
+          .setId(UUID.randomUUID().toString())
+          .setStatus("final")
+          .setValueString(temp)
+          .setCode(new CodeableConcept()
+            .addNewCoding(new Coding()
+              .setDisplay("Oxygen saturation in Blood")
+              .setCode("20564-1")
+              .setSystem("https://loinc.org/"))
+            .setText("Oxigen Saturation"))
+          .setEncounter(new Reference()
+            .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
+          .setSubject(encounterPreh.getPatient());
+
+        domainResources.add(observation);
+        traumaCondition
+          .addNewConditionEvidence(new ConditionEvidence()
+            .addNewCode(new CodeableConcept()
+              .setText("Oxygen Saturation"))
+            .addNewDetail(new Reference()
+              .setType(ResourceType.OBSERVATION.typeName())
+              .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + observation.getId())));
       }
     }
     if (clinicalPicture != null) {
@@ -616,8 +951,8 @@ public class T4CRestInterface extends BaseRestInterface {
           .setValueBoolean(positiveInhalation)
           .setCode(new CodeableConcept()
             .addNewCoding(new Coding()
-              .setCode("125605004")
-              .setDisplay("Fracture of bone (disorder)")
+              .setCode("52329006")
+              .setDisplay("Fracture, open (morphologic abnormality)")
               .setSystem("http://www.snomed.org/"))
             .setText("Fracture Exposition"))
           .setEncounter(new Reference()
@@ -1454,14 +1789,14 @@ public class T4CRestInterface extends BaseRestInterface {
       );
     //parsing date problems
     if (dob != null) {
-      DateTimeFormatter dateTimeFormatter = new DateTimeFormatterBuilder()
-        .appendPattern("dd/MM/yy")
-        //.appendValueReduced(ChronoField.YEAR,2,2,1930)
-        .toFormatter();
-      LocalDate date = LocalDate.parse(dob, dateTimeFormatter);
-      LocalDate fhirDob = LocalDate.of(date.getYear(), date.getMonth(), date.getDayOfMonth());
-      String d = fhirDob.toString();
-      patient.setBirthDate(fhirDob.toString());
+//      DateTimeFormatter dateTimeFormatter = new DateTimeFormatterBuilder()
+//        .appendPattern("dd/MM/yy")
+//        //.appendValueReduced(ChronoField.YEAR,2,2,1930)
+//        .toFormatter();
+//      LocalDate date = LocalDate.parse(dob, dateTimeFormatter);
+//      LocalDate fhirDob = LocalDate.of(date.getYear(), date.getMonth(), date.getDayOfMonth());
+//      String d = fhirDob.toString();
+//      patient.setBirthDate(fhirDob.toString());
 
     }
 

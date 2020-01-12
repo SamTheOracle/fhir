@@ -469,4 +469,12 @@ public class Encounter extends DomainResource {
     participant.add(encounterParticipant);
     return this;
   }
+
+  public Encounter addNewContained(DomainResource resource) {
+    if (contained == null) {
+      contained = new ArrayList<>();
+    }
+    contained.add(resource);
+    return this;
+  }
 }

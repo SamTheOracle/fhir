@@ -2,7 +2,7 @@ package com.oracolo.fhir.model.backboneelements;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.oracolo.fhir.model.BackboneElement;
-import com.oracolo.fhir.model.Resource;
+import com.oracolo.fhir.model.FhirResourceAbstract;
 import com.oracolo.fhir.model.elements.Extension;
 
 /**
@@ -58,7 +58,7 @@ public class BundleResponse extends BackboneElement {
    * An OperationOutcome containing hints and warnings produced as part of processing this entry in a batch or transaction.
    * <p>Cardinality: 0..1</p>
    */
-  private Resource outcome;
+  private FhirResourceAbstract outcome;
 
 
   public String getStatus() {
@@ -129,11 +129,11 @@ public class BundleResponse extends BackboneElement {
     this._location = _location;
   }
 
-  public Resource getOutcome() {
+  public FhirResourceAbstract getOutcome() {
     return outcome;
   }
 
-  public BundleResponse setOutcome(Resource outcome) {
+  public BundleResponse setOutcome(FhirResourceAbstract outcome) {
     this.outcome = outcome;
     return this;
   }

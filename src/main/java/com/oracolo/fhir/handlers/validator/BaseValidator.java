@@ -1,6 +1,6 @@
 package com.oracolo.fhir.handlers.validator;
 
-import com.oracolo.fhir.model.Resource;
+import com.oracolo.fhir.model.FhirResourceAbstract;
 import com.oracolo.fhir.model.exceptions.NotValidFhirResourceException;
 import com.oracolo.fhir.utils.FhirValidationProblemHandler;
 import io.vertx.core.json.DecodeException;
@@ -45,7 +45,7 @@ public class BaseValidator implements ValidationHandler {
   }
 
   @Override
-  public boolean validateAgainstClass(JsonObject jsonObject, Class<? extends Resource> clazz) {
+  public boolean validateAgainstClass(JsonObject jsonObject, Class<? extends FhirResourceAbstract> clazz) {
     try {
       Json.decodeValue(jsonObject.encode(), clazz);
     } catch (DecodeException e) {

@@ -1,7 +1,7 @@
 package com.oracolo.fhir.model.resources;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.oracolo.fhir.model.Resource;
+import com.oracolo.fhir.model.FhirResourceAbstract;
 import com.oracolo.fhir.model.backboneelements.BundleEntry;
 import com.oracolo.fhir.model.backboneelements.BundleLink;
 import com.oracolo.fhir.model.datatypes.Identifier;
@@ -22,7 +22,7 @@ import java.util.List;
  * Storing a collection of resources
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Bundle extends Resource {
+public class Bundle extends FhirResourceAbstract {
 
 
   public final String resourceType = "Bundle";

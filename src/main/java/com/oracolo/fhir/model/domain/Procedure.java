@@ -581,4 +581,12 @@ public class Procedure extends DomainResource {
     usedCode.add(usedCodeableConcept);
     return this;
   }
+
+  public Procedure addNewNote(Annotation annotation) {
+    if (note == null) {
+      note = new ArrayList<>();
+    }
+    note.add(annotation);
+    return this;
+  }
 }

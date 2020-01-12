@@ -10,7 +10,7 @@ import java.util.List;
  * A resource that includes narrative, extensions, and contained resources.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public abstract class DomainResource extends Resource {
+public abstract class DomainResource extends FhirResourceAbstract {
 
   /**
    * A human-readable narrative that contains a summary of the resource and can be used to represent the content of the resource

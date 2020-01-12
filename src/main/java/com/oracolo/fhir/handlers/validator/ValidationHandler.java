@@ -1,6 +1,6 @@
 package com.oracolo.fhir.handlers.validator;
 
-import com.oracolo.fhir.model.Resource;
+import com.oracolo.fhir.model.FhirResourceAbstract;
 import io.vertx.core.json.JsonObject;
 
 public interface ValidationHandler {
@@ -12,5 +12,5 @@ public interface ValidationHandler {
 
   boolean validateAgainstJsonSchema(JsonObject jsonObject);
 
-  boolean validateAgainstClass(JsonObject jsonObject, Class<? extends Resource> clazz);
+  boolean validateAgainstClass(JsonObject jsonObject, Class<? extends FhirResourceAbstract> clazz);
 }

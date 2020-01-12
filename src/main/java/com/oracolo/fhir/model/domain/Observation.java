@@ -133,7 +133,7 @@ public class Observation extends DomainResource {
    * this is usually called the "physiologically relevant time". This is usually either the time of the procedure or of specimen collection, but very often the source of the date/time is not known, only the date/time itself.
    * <p>Cardinality: 0..1</p>
    */
-  private Date effectiveDateTime;
+  private String effectiveDateTime;
   /**
    * Extension for effectiveDateTime
    * <p>Cardinality: 0..1</p>
@@ -404,12 +404,13 @@ public class Observation extends DomainResource {
     return this;
   }
 
-  public Date getEffectiveDateTime() {
+  public String getEffectiveDateTime() {
     return effectiveDateTime;
   }
 
-  public void setEffectiveDateTime(Date effectiveDateTime) {
+  public Observation setEffectiveDateTime(String effectiveDateTime) {
     this.effectiveDateTime = effectiveDateTime;
+    return this;
   }
 
   public Extension get_effectiveDateTime() {
@@ -657,6 +658,21 @@ public class Observation extends DomainResource {
       partOf = new ArrayList<>();
     }
     partOf.add(reference);
+    return this;
+  }
+
+  public Observation addNewHasMember(Reference reference) {
+    if (hasMember == null) {
+      hasMember = new ArrayList<>();
+    }
+    hasMember.add(reference);
+    return this;
+  }
+
+  public Observation addNewContained(Observation observation) {
+    if (contained == null) {
+      contained = new ArrayList<>();
+    }
     return this;
   }
 }
