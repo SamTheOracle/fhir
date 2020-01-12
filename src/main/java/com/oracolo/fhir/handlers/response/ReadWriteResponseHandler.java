@@ -14,10 +14,10 @@ import io.vertx.core.json.JsonObject;
 import java.nio.charset.Charset;
 import java.util.function.BiConsumer;
 
-public class ReadCreateResponseHandler extends BaseResponseHandler implements ResponseHandler {
+public class ReadWriteResponseHandler extends BaseResponseHandler implements ResponseHandler {
 
 
-  public ReadCreateResponseHandler() {
+  public ReadWriteResponseHandler() {
   }
 
 

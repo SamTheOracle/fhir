@@ -20,7 +20,7 @@ public interface ResponseHandler {
   }
 
   static ResponseHandler createReadCreateContentHandler() {
-    return new ReadCreateResponseHandler();
+    return new ReadWriteResponseHandler();
   }
 
 
