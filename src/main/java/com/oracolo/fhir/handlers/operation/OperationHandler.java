@@ -29,6 +29,10 @@ public interface OperationHandler {
     return new SearchOperationHandler();
   }
 
+  static OperationHandler createBaseOperationHandler() {
+    return new BaseOperationHandler();
+  }
+
 
   OperationHandler withResponseFormat(ResponseFormat responseFormat);
 

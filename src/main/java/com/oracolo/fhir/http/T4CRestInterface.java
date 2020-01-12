@@ -73,41 +73,11 @@ public class T4CRestInterface extends BaseRestInterface {
       .setId(UUID.randomUUID().toString())
       .setPartOf(new Reference()
         .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.BASE + "/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterAll.getId()));
-    //traumaInfo, majorTraumaCriteria,preh,anamnesi
     Encounter encounterShock = new Encounter()
       //patient initial condition, vital signs
       .setId(UUID.randomUUID().toString())
       .setPartOf(new Reference()
         .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.BASE + "/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterAll.getId()));
-
-
-    Condition traumaCondition = new Condition()
-      .setId(UUID.randomUUID().toString())
-      .setCode(new CodeableConcept()
-        .addNewCoding(new Coding()
-          .setCode("417163006")
-          .setDisplay("Traumatic AND/OR non-traumatic injury (disorder)")
-          .setSystem("http://www.snomed.org/")));
-
-    domainResources.add(traumaCondition);
-
-    encounterPreh.addNewDiagnosis(
-      new EncounterDiagnosis()
-        .setUse(new CodeableConcept()
-          .addNewCoding(new Coding()
-            .setSystem("http://terminology.hl7.org/CodeSystem/diagnosis-role")
-            .setDisplay("Admission diagnosis")
-            .setCode("AD")))
-        .setCondition(new Reference()
-          .setType(ResourceType.CONDITION.typeName())
-          .setReference("/" + ResourceType.CONDITION.typeName() + "/" + traumaCondition.getId()))
-    );
-
-
-    //modellazione eventi???
-
-    JsonObject traumaInfo = reportJson.getJsonObject("traumaInfo");
-    JsonObject iss = reportJson.getJsonObject("iss");
 
     encounterPreh
       .setId(UUID.randomUUID().toString())
@@ -122,6 +92,76 @@ public class T4CRestInterface extends BaseRestInterface {
       .setStatus("finished")
       .setServiceProvider(new Reference()
         .setDisplay("Ospedale Bufalini"));
+
+
+    encounterShock.setServiceType(new CodeableConcept()
+      .addNewCoding(new Coding()
+        .setCode("117")
+        .setDisplay("Emergency Medical"))
+      .setText("Emergency intervention"))
+      .setClazz(new Coding()
+        .setCode("EMER")
+        .setDisplay("Emergency"))
+      .setStatus("finished")
+      .setServiceProvider(new Reference()
+        .setDisplay("Ospedale Bufalini"));
+
+
+    Condition traumaCondition = new Condition()
+      .setId(UUID.randomUUID().toString())
+      .setCode(new CodeableConcept()
+        .addNewCoding(new Coding()
+          .setCode("417163006")
+          .setDisplay("Traumatic AND/OR non-traumatic injury (disorder)")
+          .setSystem("http://www.snomed.org/"))
+        .setText("Trauma"));
+
+    domainResources.add(traumaCondition);
+
+    encounterPreh.addNewDiagnosis(
+      new EncounterDiagnosis()
+        .setUse(new CodeableConcept()
+          .addNewCoding(new Coding()
+            .setSystem("https://www.hl7.org/fhir/codesystem-diagnosis-role.html")
+            .setDisplay("Admission diagnosis")
+            .setCode("AD")))
+        .setCondition(new Reference()
+          .setType(ResourceType.CONDITION.typeName())
+          .setReference("/" + ResourceType.CONDITION.typeName() + "/" + traumaCondition.getId()))
+    );
+
+    Condition patientInitialCondition = new Condition()
+      .setId(UUID.randomUUID().toString())
+      .setCode(new CodeableConcept()
+        .addNewCoding(new Coding()
+          .setCode("417163006")
+          .setDisplay("Traumatic AND/OR non-traumatic injury (disorder)")
+          .setSystem("http://www.snomed.org/"))
+        .setText("Trauma"))
+      .setEncounter(new Reference()
+        .setDisplay("Encounter shock room")
+        .setType(ResourceType.ENCOUNTER.typeName())
+        .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()));
+
+    domainResources.add(patientInitialCondition);
+
+    encounterShock.addNewDiagnosis(
+      new EncounterDiagnosis()
+        .setUse(new CodeableConcept()
+          .addNewCoding(new Coding()
+            .setSystem("http://terminology.hl7.org/CodeSystem/diagnosis-role")
+            .setDisplay("pre-op diagnosis")
+            .setCode("pre-op")))
+        .setCondition(new Reference()
+          .setType(ResourceType.CONDITION.typeName())
+          .setDisplay("Patient Initial Condition")
+          .setReference("/" + ResourceType.CONDITION.typeName() + "/" + patientInitialCondition.getId()))
+    );
+
+
+    JsonObject traumaInfo = reportJson.getJsonObject("traumaInfo");
+    JsonObject iss = reportJson.getJsonObject("iss");
+
 
     addParticipant(reportJson, encounterPreh);
     addParticipant(reportJson, encounterAll);
@@ -169,9 +209,9 @@ public class T4CRestInterface extends BaseRestInterface {
       addPrehToEncounter(preh, encounterPreh, traumaCondition, domainResources);
 
     }
-    JsonObject patientInitialCondition = reportJson.getJsonObject("patientInitialCondition");
-    if (patientInitialCondition != null) {
-      addPatientInitialCondition(patientInitialCondition, encounterPreh, traumaCondition, domainResources);
+    JsonObject patientInitialConditionJsonObject = reportJson.getJsonObject("patientInitialCondition");
+    if (patientInitialConditionJsonObject != null) {
+      addPatientInitialCondition(patientInitialConditionJsonObject, encounterPreh, patientInitialCondition, domainResources);
     }
 
     JsonArray events = reportJson.getJsonArray("events");
@@ -183,14 +223,51 @@ public class T4CRestInterface extends BaseRestInterface {
       addVitalSignsObservations(vitalSignsObservations, encounterShock, domainResources);
     }
 
+
+    encounterAll
+      .addNewReasonCode(traumaCondition.getCode())
+      .setServiceType(new CodeableConcept()
+        .addNewCoding(new Coding()
+          .setCode("117")
+          .setDisplay("Emergency Medical"))
+        .setText("Emergency intervention"))
+      .setClazz(new Coding()
+        .setCode("EMER")
+        .setDisplay("Emergency"))
+      .setStatus("finished")
+      .setServiceProvider(new Reference()
+        .setDisplay("Ospedale Bufalini"))
+      .addNewIdentifier(new Identifier()
+        .setValue(reportJson.getString("_id")))
+      .addNewIdentifier(new Identifier()
+        .setValue(reportJson.getString("_version")));
+
+
+    if (encounterPreh.getLocation() != null) {
+      encounterPreh.getLocation().forEach(encounterAll::addNewLocation);
+    }
+    if (encounterShock.getLocation() != null) {
+      encounterShock.getLocation().forEach(encounterAll::addNewLocation);
+    }
+    if (encounterPreh.getDiagnosis() != null) {
+      encounterPreh.getDiagnosis().forEach(encounterAll::addNewDiagnosis);
+    }
+    if (encounterShock.getDiagnosis() != null) {
+      encounterShock.getDiagnosis().forEach(encounterAll::addNewDiagnosis);
+    }
+    traumaCondition.setSubject(encounterAll.getPatient());
+
     JsonObject ePreh = JsonObject.mapFrom(encounterPreh);
     JsonObject eShock = JsonObject.mapFrom(encounterShock);
     JsonObject eAll = JsonObject.mapFrom(encounterAll);
     JsonObject prehCondition = JsonObject.mapFrom(traumaCondition);
     JsonObject issConditionJsonObject = JsonObject.mapFrom(issCondition);
+    JsonObject conditionBeforeShock = JsonObject.mapFrom(patientInitialCondition);
     domainResources.add(encounterAll);
     domainResources.add(encounterShock);
     domainResources.add(encounterPreh);
+
+
   }
 
   private void addVitalSignsObservations(JsonArray vitalSignsObservations, Encounter encounterShock, List<DomainResource> domainResources) {
@@ -207,6 +284,36 @@ public class T4CRestInterface extends BaseRestInterface {
       String date = fullEvent.getString("date");
       String time = fullEvent.getString("time");
       String place = fullEvent.getString("place");
+      LocalDate startD = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+      LocalTime startT = LocalTime.parse(time, DateTimeFormatter.ofPattern("HH:mm:ss"));
+      ZonedDateTime finalZonedStartDateTime = ZonedDateTime.of(startD.getYear(), startD.getMonthValue(), startD.getDayOfMonth(), startT.getHour(),
+        startT.getMinute(), startT.getSecond(), startT.getNano(), ZoneId.systemDefault());
+      final String fhirDate = FhirUtils.fullDateTime.format(finalZonedStartDateTime);
+      if (place != null) {
+        if (place.equalsIgnoreCase("PRE-H")) {
+          preH.addNewLocation(new EncounterLocation()
+            .setLocation(new Reference()
+              .setDisplay(place))
+            .setPhysicalType(new CodeableConcept()
+              .addNewCoding(new Coding()
+                .setCode("ro")
+                .setDisplay("Room")
+                .setSystem("https://www.hl7.org/fhir/codesystem-location-physical-type.html")))
+            .setPeriod(new Period()
+              .setStart(fhirDate)));
+        } else {
+          encounterShock.addNewLocation(new EncounterLocation()
+            .setLocation(new Reference()
+              .setDisplay(place))
+            .setPhysicalType(new CodeableConcept()
+              .addNewCoding(new Coding()
+                .setCode("ro")
+                .setDisplay("Room")
+                .setSystem("https://www.hl7.org/fhir/codesystem-location-physical-type.html")))
+            .setPeriod(new Period()
+              .setStart(fhirDate)));
+        }
+      }
       String type = fullEvent.getString("type");
       JsonObject content = fullEvent.getJsonObject("content");
       switch (type) {
@@ -220,9 +327,7 @@ public class T4CRestInterface extends BaseRestInterface {
           JsonObject chestTube = content.getJsonObject("chest-tube");
 
           Procedure procedure = new Procedure().setId(String.valueOf(eventId));
-          if (date != null && time != null) {
-            procedure.setPerformedDateTime(date);
-          }
+          procedure.setPerformedDateTime(fhirDate);
           if (place != null) {
             procedure
               .setLocation(new Reference()
@@ -359,9 +464,7 @@ public class T4CRestInterface extends BaseRestInterface {
                 .setText(name))
               .setValueQuantity(new Quantity()
                 .setValue((Double) value));
-            if (date != null && time != null) {
-              observation.setEffectiveDateTime(date);
-            }
+            observation.setEffectiveDateTime(fhirDate);
 
             observation
               .addNewPartOfReference(new Reference()
@@ -378,9 +481,7 @@ public class T4CRestInterface extends BaseRestInterface {
         case "room-in":
         case "room-out":
           Procedure procedureRoomIn = new Procedure().setId(String.valueOf(eventId));
-          if (date != null && time != null) {
-            procedureRoomIn.setPerformedDateTime(date);
-          }
+          procedureRoomIn.setPerformedDateTime(fhirDate);
           if (place != null) {
             procedureRoomIn
               .setLocation(new Reference()
@@ -409,9 +510,7 @@ public class T4CRestInterface extends BaseRestInterface {
         case "patient-accepted":
 
           Procedure procedureAcceptance = new Procedure().setId(String.valueOf(eventId));
-          if (date != null && time != null) {
-            procedureAcceptance.setPerformedDateTime(date);
-          }
+          procedureAcceptance.setPerformedDateTime(fhirDate);
           if (place != null) {
             procedureAcceptance
               .setLocation(new Reference()
@@ -444,9 +543,10 @@ public class T4CRestInterface extends BaseRestInterface {
     });
   }
 
-  private void addPatientInitialCondition(JsonObject patientInitialCondition, Encounter encounterPreh, Condition traumaCondition, List<DomainResource> domainResources) {
-    JsonObject clinicalPicture = patientInitialCondition.getJsonObject("clinicalPicture");
-    JsonObject vitalSigns = patientInitialCondition.getJsonObject("vitalSigns");
+  private void addPatientInitialCondition(JsonObject patientInitialConditionJsonObject, Encounter encounterPreh, Condition patientInitialCondition, List<DomainResource> domainResources) {
+    JsonObject clinicalPicture = patientInitialConditionJsonObject.getJsonObject("clinicalPicture");
+    JsonObject vitalSigns = patientInitialConditionJsonObject.getJsonObject("vitalSigns");
+
 
     if (vitalSigns != null) {
 
@@ -469,7 +569,7 @@ public class T4CRestInterface extends BaseRestInterface {
           .setSubject(encounterPreh.getPatient());
 
         domainResources.add(observation);
-        traumaCondition
+        patientInitialCondition
           .addNewConditionEvidence(new ConditionEvidence()
             .addNewCode(new CodeableConcept()
               .setText("Temperature"))
@@ -496,7 +596,7 @@ public class T4CRestInterface extends BaseRestInterface {
           .setSubject(encounterPreh.getPatient());
 
         domainResources.add(observation);
-        traumaCondition
+        patientInitialCondition
           .addNewConditionEvidence(new ConditionEvidence()
             .addNewCode(new CodeableConcept()
               .setText("Heart rate"))
@@ -523,7 +623,7 @@ public class T4CRestInterface extends BaseRestInterface {
           .setSubject(encounterPreh.getPatient());
 
         domainResources.add(observation);
-        traumaCondition
+        patientInitialCondition
           .addNewConditionEvidence(new ConditionEvidence()
             .addNewCode(new CodeableConcept()
               .setText("Blood pressure"))
@@ -550,7 +650,7 @@ public class T4CRestInterface extends BaseRestInterface {
           .setSubject(encounterPreh.getPatient());
 
         domainResources.add(observation);
-        traumaCondition
+        patientInitialCondition
           .addNewConditionEvidence(new ConditionEvidence()
             .addNewCode(new CodeableConcept()
               .setText("Oxygen Saturation"))
@@ -577,7 +677,7 @@ public class T4CRestInterface extends BaseRestInterface {
           .setSubject(encounterPreh.getPatient());
 
         domainResources.add(observation);
-        traumaCondition
+        patientInitialCondition
           .addNewConditionEvidence(new ConditionEvidence()
             .addNewCode(new CodeableConcept()
               .setText("Oxygen Saturation"))
@@ -605,7 +705,7 @@ public class T4CRestInterface extends BaseRestInterface {
             .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()))
 
           .setSubject(encounterPreh.getPatient());
-        traumaCondition
+        patientInitialCondition
           .addNewConditionEvidence(new ConditionEvidence()
             .addNewCode(new CodeableConcept()
               .setText("Glasgow Coma Scale Total"))
@@ -631,7 +731,7 @@ public class T4CRestInterface extends BaseRestInterface {
             .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()))
           .setSubject(encounterPreh.getPatient());
 
-        traumaCondition
+        patientInitialCondition
           .addNewConditionEvidence(new ConditionEvidence()
             .addNewCode(new CodeableConcept()
               .setText("Glasgow Coma Scale Motor"))
@@ -659,7 +759,7 @@ public class T4CRestInterface extends BaseRestInterface {
 
         domainResources.add(observation);
 
-        traumaCondition
+        patientInitialCondition
           .addNewConditionEvidence(new ConditionEvidence()
             .addNewCode(new CodeableConcept()
               .setText("Glasgow Coma Scale Verbal"))
@@ -688,7 +788,7 @@ public class T4CRestInterface extends BaseRestInterface {
 
         domainResources.add(observation);
 
-        traumaCondition
+        patientInitialCondition
           .addNewConditionEvidence(new ConditionEvidence()
             .addNewCode(new CodeableConcept()
               .setText("Glasgow Coma Scale Eyes"))
@@ -714,7 +814,7 @@ public class T4CRestInterface extends BaseRestInterface {
 
 
         domainResources.add(observation);
-        traumaCondition
+        patientInitialCondition
           .addNewConditionEvidence(new ConditionEvidence()
             .addNewCode(new CodeableConcept()
               .setText("Patient Sedated"))
@@ -741,7 +841,7 @@ public class T4CRestInterface extends BaseRestInterface {
 
         domainResources.add(observation);
 
-        traumaCondition
+        patientInitialCondition
           .addNewConditionEvidence(new ConditionEvidence()
             .addNewCode(new CodeableConcept()
               .setText("Pupils"))
@@ -768,7 +868,7 @@ public class T4CRestInterface extends BaseRestInterface {
 
         domainResources.add(observation);
 
-        traumaCondition
+        patientInitialCondition
           .addNewConditionEvidence(new ConditionEvidence()
             .addNewCode(new CodeableConcept()
               .setText("Airways"))
@@ -791,7 +891,7 @@ public class T4CRestInterface extends BaseRestInterface {
 
         domainResources.add(observation);
 
-        traumaCondition
+        patientInitialCondition
           .addNewConditionEvidence(new ConditionEvidence()
             .addNewCode(new CodeableConcept()
               .setText("positiveInhalation"))
@@ -829,7 +929,7 @@ public class T4CRestInterface extends BaseRestInterface {
 
         domainResources.add(intubationFailedProcedure);
 
-        traumaCondition
+        patientInitialCondition
           .addNewConditionEvidence(new ConditionEvidence()
             .addNewCode(new CodeableConcept()
               .setText("Intubation"))
@@ -857,7 +957,7 @@ public class T4CRestInterface extends BaseRestInterface {
 
         domainResources.add(chestTubeObservation);
 
-        traumaCondition
+        patientInitialCondition
           .addNewConditionEvidence(new ConditionEvidence()
             .addNewCode(new CodeableConcept()
               .setText("Chest Tube"))
@@ -882,7 +982,7 @@ public class T4CRestInterface extends BaseRestInterface {
           .setSubject(encounterPreh.getPatient());
 
         domainResources.add(oxygenPercentageObservation);
-        traumaCondition
+        patientInitialCondition
           .addNewConditionEvidence(new ConditionEvidence()
             .addNewCode(new CodeableConcept()
               .setText("Oxygen Percentage"))
@@ -908,7 +1008,7 @@ public class T4CRestInterface extends BaseRestInterface {
 
 
         domainResources.add(hemorrhageObservation);
-        traumaCondition
+        patientInitialCondition
           .addNewConditionEvidence(new ConditionEvidence()
             .addNewCode(new CodeableConcept()
               .setText("Hemorrhage"))
@@ -934,7 +1034,7 @@ public class T4CRestInterface extends BaseRestInterface {
 
 
         domainResources.add(limbsFractureObservation);
-        traumaCondition
+        patientInitialCondition
           .addNewConditionEvidence(new ConditionEvidence()
             .addNewCode(new CodeableConcept()
               .setText("Limbs Fracture"))
@@ -961,7 +1061,7 @@ public class T4CRestInterface extends BaseRestInterface {
 
 
         domainResources.add(fractureExpositionObservation);
-        traumaCondition
+        patientInitialCondition
           .addNewConditionEvidence(new ConditionEvidence()
             .addNewCode(new CodeableConcept()
               .setText("Fracture Exposition"))
@@ -986,7 +1086,7 @@ public class T4CRestInterface extends BaseRestInterface {
           .setSubject(encounterPreh.getPatient());
 
         domainResources.add(burnObservation);
-        traumaCondition
+        patientInitialCondition
           .addNewConditionEvidence(new ConditionEvidence()
             .addNewCode(new CodeableConcept()
               .setText("Burn"))
@@ -1016,6 +1116,12 @@ public class T4CRestInterface extends BaseRestInterface {
 
     if (territorialArea != null) {
       encounterPreh.addNewLocation(new EncounterLocation()
+        .setPhysicalType(new CodeableConcept()
+          .addNewCoding(new Coding()
+            .setCode("si")
+            .setDisplay("Site")
+            .setSystem("https://www.hl7.org/fhir/codesystem-location-physical-type.html"))
+          .setText("Territorial Area"))
         .setLocation(new Reference()
           .setDisplay(territorialArea)));
     }
@@ -1263,7 +1369,7 @@ public class T4CRestInterface extends BaseRestInterface {
   private void addAnamnesi(JsonObject anamnesisJsonObject, Encounter encounter, Condition traumaCondition, List<DomainResource> domainResources) {
 
     Boolean antiplatelets = anamnesisJsonObject.getBoolean("antiplatelets");
-    Boolean anticoagulants = anamnesisJsonObject.getBoolean("anticoagulant");
+    Boolean anticoagulants = anamnesisJsonObject.getBoolean("anticoagulants");
     Boolean nao = anamnesisJsonObject.getBoolean("nao");
     Procedure anamnesisProcedure = new Procedure()
       .setCode(new CodeableConcept()
@@ -1287,7 +1393,7 @@ public class T4CRestInterface extends BaseRestInterface {
           .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + anamnesisProcedure.getId())));
       domainResources.add(anamnesisProcedure);
     }
-    if (antiplatelets != null && antiplatelets) {
+    if (antiplatelets != null) {
       Observation observation = new Observation()
         .setId(UUID.randomUUID().toString())
         .setStatus("final")
@@ -1297,7 +1403,7 @@ public class T4CRestInterface extends BaseRestInterface {
             .setDisplay("Platelet associated IgG Ab [Presence] in Blood by Flow cytometry (FC)")
             .setSystem("https://loinc.org/"))
           .setText("Use of anti-platelets"))
-        .setValueBoolean(true)
+        .setValueBoolean(antiplatelets)
         .setEncounter(new Reference()
           .setType("Encounter")
           .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounter.getId()))
@@ -1315,26 +1421,8 @@ public class T4CRestInterface extends BaseRestInterface {
 //            .setData("Anti-aggreganti utilizzati")
 //            .setTitle("Anamnesis")
 //            .setCreation(LocalDate.now().toString())));
-    } else if (antiplatelets != null) {
-      Observation observation = new Observation()
-        .setId(UUID.randomUUID().toString())
-        .setStatus("final")
-        .setCode(new CodeableConcept()
-          .addNewCoding(new Coding()
-            .setCode("29497-5")
-            .setDisplay("Platelet associated IgG Ab [Presence] in Blood by Flow cytometry (FC)")
-            .setSystem("https://loinc.org/"))
-          .setText("Use of anti-platelets"))
-        .setValueBoolean(false)
-        .setEncounter(new Reference()
-          .setType("Encounter")
-          .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounter.getId()))
-        .addNewPartOfReference(new Reference()
-          .setType(ResourceType.PROCEDURE.typeName())
-          .setReference("/" + ResourceType.PROCEDURE + "/" + anamnesisProcedure.getId()));
-      domainResources.add(observation);
     }
-    if (anticoagulants != null && anticoagulants) {
+    if (anticoagulants != null) {
       Observation observation = new Observation()
         .setId(UUID.randomUUID().toString())
         .setStatus("final")
@@ -1344,26 +1432,7 @@ public class T4CRestInterface extends BaseRestInterface {
             .setDisplay("Type of anticoagulant medication used")
             .setSystem("https://loinc.org/"))
           .setText("Use of anti-platelets"))
-        .setValueBoolean(true)
-        .setEncounter(new Reference()
-          .setType("Encounter")
-          .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounter.getId()))
-        .addNewPartOfReference(new Reference()
-          .setType(ResourceType.PROCEDURE.typeName())
-          .setReference("/" + ResourceType.PROCEDURE + "/" + anamnesisProcedure.getId()));
-      domainResources.add(observation);
-    } else if (anticoagulants != null) {
-//      String documentReferenceUUid = UUID.randomUUID().toString();
-      Observation observation = new Observation()
-        .setId(UUID.randomUUID().toString())
-        .setStatus("final")
-        .setCode(new CodeableConcept()
-          .addNewCoding(new Coding()
-            .setCode("89063-2")
-            .setDisplay("Type of anticoagulant medication used")
-            .setSystem("https://loinc.org/"))
-          .setText("Use of anti-platelets"))
-        .setValueBoolean(false)
+        .setValueBoolean(anticoagulants)
         .setEncounter(new Reference()
           .setType("Encounter")
           .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounter.getId()))
@@ -1372,7 +1441,7 @@ public class T4CRestInterface extends BaseRestInterface {
           .setReference("/" + ResourceType.PROCEDURE + "/" + anamnesisProcedure.getId()));
       domainResources.add(observation);
     }
-    if (nao != null && nao) {
+    if (nao != null) {
       Observation observation = new Observation()
         .setId(UUID.randomUUID().toString())
         .setStatus("final")
@@ -1382,25 +1451,7 @@ public class T4CRestInterface extends BaseRestInterface {
             .setDisplay("Type of anticoagulant medication used")
             .setSystem("https://loinc.org/"))
           .setText("Use of new oral anti-coagulants"))
-        .setValueBoolean(true)
-        .setEncounter(new Reference()
-          .setType("Encounter")
-          .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounter.getId()))
-        .addNewPartOfReference(new Reference()
-          .setType(ResourceType.PROCEDURE.typeName())
-          .setReference("/" + ResourceType.PROCEDURE + "/" + anamnesisProcedure.getId()));
-      domainResources.add(observation);
-    } else if (nao != null) {
-      Observation observation = new Observation()
-        .setId(UUID.randomUUID().toString())
-        .setStatus("final")
-        .setCode(new CodeableConcept()
-          .addNewCoding(new Coding()
-            .setCode("89063-2")
-            .setDisplay("Type of anticoagulant medication used")
-            .setSystem("https://loinc.org/"))
-          .setText("Use of new oral anti-coagulants"))
-        .setValueBoolean(false)
+        .setValueBoolean(nao)
         .setEncounter(new Reference()
           .setType("Encounter")
           .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounter.getId()))
@@ -1410,8 +1461,6 @@ public class T4CRestInterface extends BaseRestInterface {
       domainResources.add(observation);
     }
 
-
-    domainResources.add(anamnesisProcedure);
 
   }
 
@@ -1578,7 +1627,7 @@ public class T4CRestInterface extends BaseRestInterface {
                   .setDisplay("Injury severity score Calculated")
                   .setCode("74471-4")
                   .setUserSelected(true))
-                .setText("Group Total Iss Score"))
+                .setText("Group Total Iss  " + entry.getKey() + " Score"))
               .setId(uuid)
               //set iss value
               .setValueInteger((Integer) entryGroup.getValue())
@@ -1594,7 +1643,7 @@ public class T4CRestInterface extends BaseRestInterface {
                     .setDisplay("Injury severity score (assessment scale)")
                     .setSystem("http://www.snomed.org/")))
                 .addNewAssessment(new Reference()
-                  .setDisplay("Group Total Iss Score: " + entryGroup.getValue())
+                  .setDisplay("Group Total Iss  " + entry.getKey() + " score: " + entryGroup.getValue())
                   .setType(ResourceType.OBSERVATION.typeName())
                   .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + observation.getId())));
 
@@ -1676,6 +1725,7 @@ public class T4CRestInterface extends BaseRestInterface {
     String sdo = traumaInfo.getString("sdo");
     String admissionCode = traumaInfo.getString("admissionCode");
     Boolean erDeceased = traumaInfo.getBoolean("erDeceased");
+
     String name = traumaInfo.getString("name");
     String surname = traumaInfo.getString("surname");
     String gender = traumaInfo.getString("gender");
@@ -1696,7 +1746,13 @@ public class T4CRestInterface extends BaseRestInterface {
       encounterPreh.addNewLocation(new EncounterLocation()
         .setLocation(new Reference()
           .setReference(otherEmergency))
-        .setStatus("completed"));
+        .setStatus("completed")
+        .setPhysicalType(new CodeableConcept()
+          .addNewCoding(new Coding()
+            .setCode("si")
+            .setDisplay("Site")
+            .setSystem("https://www.hl7.org/fhir/codesystem-location-physical-type.html"))
+          .setText("Other Emergency")));
       encounterHospitalization.setAdmitSource(new CodeableConcept()
         .addNewCoding(new Coding()
           .setCode("hosp-trans")

@@ -477,4 +477,12 @@ public class Encounter extends DomainResource {
     contained.add(resource);
     return this;
   }
+
+  public Encounter addNewIdentifier(Identifier identifier) {
+    if (this.identifier == null) {
+      this.identifier = new ArrayList<>();
+    }
+    this.identifier.add(identifier);
+    return this;
+  }
 }

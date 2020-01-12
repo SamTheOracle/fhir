@@ -175,7 +175,7 @@ public class FhirServer extends BaseRestInterface {
     FhirHttpHeader accept = FhirHttpHeader.of(FhirHttpHeader.ACCEPT, acceptableType);
     String collection = type.getCollection();
     OperationHandler
-      .createReadOperationHandler()
+      .createBaseOperationHandler()
       .setService(databaseService)
       .withResponseFormat(new ResponseFormat()
         .withAcceptHeader(accept))
@@ -229,7 +229,7 @@ public class FhirServer extends BaseRestInterface {
       .put("id", id)
       .put("meta.versionId", vId);
     OperationHandler
-      .createReadOperationHandler()
+      .createBaseOperationHandler()
       .setService(databaseService)
       .withResponseFormat(new ResponseFormat()
         .withAcceptHeader(accept))
@@ -297,7 +297,7 @@ public class FhirServer extends BaseRestInterface {
       String preferHeader = routingContext.request().headers().get(FhirHttpHeader.PREFER);
       FhirHttpHeader prefer = FhirHttpHeader.fromPreferString(preferHeader);
       OperationHandler
-        .createUpdateCreateOperationHandler()
+        .createBaseOperationHandler()
         .setService(databaseService)
         .withResponseFormat(new ResponseFormat()
           .withAcceptHeader(accept)
@@ -367,7 +367,7 @@ public class FhirServer extends BaseRestInterface {
         String preferHeader = routingContext.request().headers().get(FhirHttpHeader.PREFER);
         FhirHttpHeader prefer = FhirHttpHeader.fromPreferString(preferHeader);
         OperationHandler
-          .createUpdateCreateOperationHandler()
+          .createBaseOperationHandler()
           .setService(databaseService)
           .withResponseFormat(new ResponseFormat()
             .withAcceptHeader(accept)
