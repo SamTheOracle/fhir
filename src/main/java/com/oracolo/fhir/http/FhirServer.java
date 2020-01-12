@@ -2,8 +2,9 @@ package com.oracolo.fhir.http;
 
 import com.oracolo.fhir.BaseRestInterface;
 import com.oracolo.fhir.database.DatabaseService;
-import com.oracolo.fhir.handlers.operation.OperationHandler;
 import com.oracolo.fhir.handlers.query.QueryHandler;
+import com.oracolo.fhir.handlers.response.ResponseHandler;
+import com.oracolo.fhir.handlers.response.format.BaseFormatHandler;
 import com.oracolo.fhir.handlers.validator.ValidationHandler;
 import com.oracolo.fhir.model.ResourceType;
 import com.oracolo.fhir.model.backboneelements.BundleRequest;
@@ -14,7 +15,6 @@ import com.oracolo.fhir.model.resources.Bundle;
 import com.oracolo.fhir.utils.ErrorFormat;
 import com.oracolo.fhir.utils.FhirHttpHeader;
 import com.oracolo.fhir.utils.FhirUtils;
-import com.oracolo.fhir.utils.ResponseFormat;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -172,13 +172,12 @@ public class FhirServer extends BaseRestInterface {
     if (acceptableType == null) {
       acceptableType = FhirHttpHeader.APPLICATION_JSON.value();
     }
-    FhirHttpHeader accept = FhirHttpHeader.of(FhirHttpHeader.ACCEPT, acceptableType);
     String collection = type.getCollection();
-    OperationHandler
-      .createBaseOperationHandler()
-      .setService(databaseService)
-      .withResponseFormat(new ResponseFormat()
-        .withAcceptHeader(accept))
+    ResponseHandler
+      .createReadCreateContentHandler()
+      .withService(databaseService)
+      .withFormatHandler(new BaseFormatHandler()
+        .withAcceptHeader(acceptableType))
       .createResponseAsync(serverResponse, (service, promise) ->
         service.fetchDomainResourceWithQuery(collection, query, null, promise))
       .releaseAsync()
@@ -223,16 +222,15 @@ public class FhirServer extends BaseRestInterface {
     if (acceptableType == null) {
       acceptableType = FhirHttpHeader.APPLICATION_JSON.value();
     }
-    FhirHttpHeader accept = FhirHttpHeader.of(FhirHttpHeader.ACCEPT, acceptableType);
     HttpServerResponse serverResponse = routingContext.response();
     JsonObject query = new JsonObject()
       .put("id", id)
       .put("meta.versionId", vId);
-    OperationHandler
-      .createBaseOperationHandler()
-      .setService(databaseService)
-      .withResponseFormat(new ResponseFormat()
-        .withAcceptHeader(accept))
+    ResponseHandler
+      .createReadCreateContentHandler()
+      .withService(databaseService)
+      .withFormatHandler(new BaseFormatHandler()
+        .withAcceptHeader(acceptableType))
       .createResponseAsync(serverResponse, (service, promise) ->
         service.fetchDomainResourceWithQuery(collection, query, null, promise))
       .releaseAsync()
@@ -279,6 +277,8 @@ public class FhirServer extends BaseRestInterface {
     resourceJson.put("meta", JsonObject.mapFrom(meta));
     String collection = type.getCollection();
     String acceptableType = routingContext.getAcceptableContentType();
+    String preferHeader = routingContext.request().headers().get(FhirHttpHeader.PREFER);
+
     if (acceptableType == null) {
       acceptableType = FhirHttpHeader.APPLICATION_JSON.value();
     }
@@ -293,15 +293,12 @@ public class FhirServer extends BaseRestInterface {
       routingContext.put("code", "invariant");
       routingContext.fail(HttpResponseStatus.BAD_REQUEST.code());
     } else {
-      FhirHttpHeader accept = FhirHttpHeader.of(FhirHttpHeader.ACCEPT, acceptableType);
-      String preferHeader = routingContext.request().headers().get(FhirHttpHeader.PREFER);
-      FhirHttpHeader prefer = FhirHttpHeader.fromPreferString(preferHeader);
-      OperationHandler
-        .createBaseOperationHandler()
-        .setService(databaseService)
-        .withResponseFormat(new ResponseFormat()
-          .withAcceptHeader(accept)
-          .withPreferHeader(prefer))
+      ResponseHandler
+        .createReadCreateContentHandler()
+        .withService(databaseService)
+        .withFormatHandler(new BaseFormatHandler()
+          .withAcceptHeader(acceptableType)
+          .withPreferHeader(preferHeader))
         .createResponseAsync(serverResponse, (service, promise) -> service.createUpdateResource(collection, resourceJson, promise))
         .releaseAsync()
         .future()
@@ -350,6 +347,7 @@ public class FhirServer extends BaseRestInterface {
       //Prefer header, response object depends on its value
       //Db operation using service proxy
       String acceptableType = routingContext.getAcceptableContentType();
+      String preferHeader = routingContext.request().headers().get(FhirHttpHeader.PREFER);
       if (acceptableType == null) {
         acceptableType = FhirHttpHeader.APPLICATION_JSON.value();
       }
@@ -363,15 +361,12 @@ public class FhirServer extends BaseRestInterface {
         routingContext.put("code", "invariant");
         routingContext.fail(HttpResponseStatus.BAD_REQUEST.code());
       } else {
-        FhirHttpHeader accept = FhirHttpHeader.of(FhirHttpHeader.ACCEPT, acceptableType);
-        String preferHeader = routingContext.request().headers().get(FhirHttpHeader.PREFER);
-        FhirHttpHeader prefer = FhirHttpHeader.fromPreferString(preferHeader);
-        OperationHandler
-          .createBaseOperationHandler()
-          .setService(databaseService)
-          .withResponseFormat(new ResponseFormat()
-            .withAcceptHeader(accept)
-            .withPreferHeader(prefer))
+        ResponseHandler
+          .createReadCreateContentHandler()
+          .withService(databaseService)
+          .withFormatHandler(new BaseFormatHandler()
+            .withAcceptHeader(acceptableType)
+            .withPreferHeader(preferHeader))
           .createResponseAsync(serverResponse, (service, promise)
             -> service.createUpdateResource(collection, resourceJson, promise))
           .releaseAsync()
@@ -408,9 +403,9 @@ public class FhirServer extends BaseRestInterface {
       .put("id", id);
 
     HttpServerResponse serverResponse = routingContext.response();
-    OperationHandler
+    ResponseHandler
       .createDeleteOperationHandler()
-      .setService(databaseService)
+      .withService(databaseService)
       .createResponseAsync(serverResponse, (service, promise) ->
         service.createDeletedResource(collection, query, promise))
       .releaseAsync()
@@ -471,18 +466,17 @@ public class FhirServer extends BaseRestInterface {
     if (acceptableType == null) {
       acceptableType = FhirHttpHeader.APPLICATION_JSON.value();
     }
-    FhirHttpHeader accept = FhirHttpHeader.of(FhirHttpHeader.ACCEPT, acceptableType);
 
     JsonObject query = QueryHandler
       .fromResourceType(type)
       .query(queryParams)
       .createMongoDbQuery();
     HttpServerResponse serverResponse = routingContext.response();
-    OperationHandler
+    ResponseHandler
       .createSearchOperationHandler()
-      .setService(databaseService)
-      .withResponseFormat(new ResponseFormat()
-        .withAcceptHeader(accept))
+      .withService(databaseService)
+      .withFormatHandler(new BaseFormatHandler()
+        .withAcceptHeader(acceptableType))
       .createResponseAsync(serverResponse, (service, promise)
         -> service.fetchDomainResourcesWithQuery(collection, query, promise))
       .releaseAsync()

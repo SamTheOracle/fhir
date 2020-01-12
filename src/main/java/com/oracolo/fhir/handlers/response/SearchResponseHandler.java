@@ -1,9 +1,8 @@
-package com.oracolo.fhir.handlers.operation;
+package com.oracolo.fhir.handlers.response;
 
 import com.oracolo.fhir.database.DatabaseService;
+import com.oracolo.fhir.handlers.response.format.Format;
 import com.oracolo.fhir.model.resources.Bundle;
-import com.oracolo.fhir.utils.FhirHttpHeader;
-import com.oracolo.fhir.utils.ResponseFormat;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpServerResponse;
@@ -14,12 +13,11 @@ import java.nio.charset.Charset;
 import java.util.function.BiConsumer;
 
 //TO-DO
-public class SearchOperationHandler extends BaseOperationHandler implements OperationHandler {
+public class SearchResponseHandler extends BaseResponseHandler implements ResponseHandler {
 
 
-  public SearchOperationHandler() {
+  public SearchResponseHandler() {
   }
-
 
 
   /**
@@ -29,7 +27,7 @@ public class SearchOperationHandler extends BaseOperationHandler implements Oper
    * @return
    */
   @Override
-  public OperationHandler createResponseAsync(HttpServerResponse serverResponse, BiConsumer<DatabaseService, Promise<JsonObject>> databaseServiceConsumer) {
+  public ResponseHandler createResponseAsync(HttpServerResponse serverResponse, BiConsumer<DatabaseService, Promise<JsonObject>> databaseServiceConsumer) {
     Promise<JsonObject> promise = Promise.promise();
     databaseServiceConsumer.accept(service, promise);
     promise
@@ -37,12 +35,12 @@ public class SearchOperationHandler extends BaseOperationHandler implements Oper
       .onSuccess(jsonObject -> {
         Bundle bundle = Json.decodeValue(jsonObject.encodePrettily(), Bundle.class);
         bundle.setType(Bundle.BundleTypeCodes.SEARCHSET.code());
-        ResponseFormat responseFormat = super.responseFormat.format(JsonObject.mapFrom(bundle));
-        FhirHttpHeader header = responseFormat.contentType();
-        String response = responseFormat.response();
+        Format format = super.responseFormat.createFormat(JsonObject.mapFrom(bundle));
+        String response = format.getResponse();
+        String contentType = format.getContentType();
         serverResponse
           .putHeader(HttpHeaderNames.CONTENT_LENGTH, String.valueOf(response.getBytes(Charset.defaultCharset()).length))
-          .putHeader(header.name(), header.value())
+          .putHeader(HttpHeaderNames.CONTENT_TYPE.toString(), contentType)
           .write(response);
         httpServerResponsePromise.complete(serverResponse);
 

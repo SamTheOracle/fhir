@@ -315,7 +315,7 @@ public class T4CRestInterface extends BaseRestInterface {
         }
       }
       String type = fullEvent.getString("type");
-      JsonObject content = fullEvent.getJsonObject("content");
+      JsonObject content = fullEvent.getJsonObject("response");
       switch (type) {
         case "procedure":
           String procedureId = content.getString("procedureId");

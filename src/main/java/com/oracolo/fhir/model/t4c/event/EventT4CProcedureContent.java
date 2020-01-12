@@ -1,7 +1,7 @@
 package com.oracolo.fhir.model.t4c.event;
 
 /**
- * Represents the content information about a EventT4cProcedure
+ * Represents the response information about a EventT4cProcedure
  */
 public class EventT4CProcedureContent {
   /**

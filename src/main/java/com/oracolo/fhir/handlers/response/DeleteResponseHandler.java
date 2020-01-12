@@ -1,4 +1,4 @@
-package com.oracolo.fhir.handlers.operation;
+package com.oracolo.fhir.handlers.response;
 
 import com.oracolo.fhir.database.DatabaseService;
 import com.oracolo.fhir.model.elements.Metadata;
@@ -14,16 +14,16 @@ import io.vertx.core.json.JsonObject;
 import java.nio.charset.Charset;
 import java.util.function.BiConsumer;
 
-public class DeleteOperationHandler extends BaseOperationHandler implements OperationHandler {
+public class DeleteResponseHandler extends BaseResponseHandler implements ResponseHandler {
 
 
-  public DeleteOperationHandler() {
+  public DeleteResponseHandler() {
 
   }
 
 
   @Override
-  public OperationHandler createResponseAsync(HttpServerResponse serverResponse, BiConsumer<DatabaseService, Promise<JsonObject>> databaseServiceConsumer) {
+  public ResponseHandler createResponseAsync(HttpServerResponse serverResponse, BiConsumer<DatabaseService, Promise<JsonObject>> databaseServiceConsumer) {
 
     Promise<JsonObject> jsonObjectPromise = Promise.promise();
     databaseServiceConsumer.accept(service, jsonObjectPromise);

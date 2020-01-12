@@ -13,15 +13,15 @@ import java.util.List;
 public abstract class DomainResource extends FhirResourceAbstract {
 
   /**
-   * A human-readable narrative that contains a summary of the resource and can be used to represent the content of the resource
+   * A human-readable narrative that contains a summary of the resource and can be used to represent the response of the resource
    * to a human. The narrative need not encode all the structured data, but is required to contain sufficient detail to make
    * it "clinically safe" for a human to just read the narrative.
-   * Resource definitions may define what content should be represented in the narrative to ensure clinical safety.
+   * Resource definitions may define what response should be represented in the narrative to ensure clinical safety.
    * <p>Cardinality:  0..1</p>
    */
   protected Narrative text;
   /**
-   * In some circumstances, the content referred to in the resource reference does not have an independent existence apart from the
+   * In some circumstances, the response referred to in the resource reference does not have an independent existence apart from the
    * resource that contains it - it cannot be identified independently, and nor can it have its own independent transaction scope.
    * Typically, such circumstances arise where resources are being assembled by a secondary user of the source data,
    * such as a middleware engine.

@@ -8,7 +8,7 @@ import com.oracolo.fhir.model.elements.Reference;
 
 /**
  * A numeric or alphanumeric string that is associated with a single object or entity within a given system. Typically, identifiers are
- * used to connect content in resources to external content available in other frameworks or protocols.
+ * used to connect response in resources to external response available in other frameworks or protocols.
  * Identifiers are associated with objects and may be changed or retired due to human or system process and errors.
  * <p>
  * It can be a driving license or passport: any type of personal identifier

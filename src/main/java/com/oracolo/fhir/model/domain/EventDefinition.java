@@ -69,7 +69,7 @@ public abstract class EventDefinition extends DomainResource {
    */
   protected Extension _title;
   /**
-   * An explanatory or alternate title for the event definition giving additional information about its content.
+   * An explanatory or alternate title for the event definition giving additional information about its response.
    * <p>Cardinality: 0..1</p>
    */
   protected String subtitle;
@@ -79,7 +79,7 @@ public abstract class EventDefinition extends DomainResource {
    */
   protected Extension _subtitle;
   /**
-   * The status of this event definition. Enables tracking the life-cycle of the content.
+   * The status of this event definition. Enables tracking the life-cycle of the response.
    * <p>See status codes: http://hl7.org/fhir/valueset-publication-status.html</p>
    * <p>Cardinality: 1..1</p>
    */
@@ -113,7 +113,7 @@ public abstract class EventDefinition extends DomainResource {
   /**
    * The date (and optionally time) when the event definition was published.
    * The date must change when the business version changes and it must change if the status code changes.
-   * In addition, it should change when the substantive content of the event definition changes.
+   * In addition, it should change when the substantive response of the event definition changes.
    * <p>Cardinality: 0..1</p>
    */
   protected Date dateTime;
@@ -143,7 +143,7 @@ public abstract class EventDefinition extends DomainResource {
    */
   protected Extension _description;
   /**
-   * The content was developed with a focus and intent of supporting the contexts that are listed.
+   * The response was developed with a focus and intent of supporting the contexts that are listed.
    * These contexts may be general categories (gender, age, ...) or may be references to specific programs (insurance plans,
    * studies, ...) and may be used to assist with indexing and searching for appropriate event definition instances.
    * <p>Cardinality: 0..*</p>
@@ -187,8 +187,8 @@ public abstract class EventDefinition extends DomainResource {
    */
   protected Extension _copyright;
   /**
-   * The date on which the resource content was approved by the publisher.
-   * Approval happens once when the content is officially approved for usage.
+   * The date on which the resource response was approved by the publisher.
+   * Approval happens once when the response is officially approved for usage.
    * <p>Cardinality: 0..1</p>
    */
   protected Date approvalDate;
@@ -198,7 +198,7 @@ public abstract class EventDefinition extends DomainResource {
    */
   protected Extension _approvalDate;
   /**
-   * The date on which the resource content was last reviewed. Review happens periodically
+   * The date on which the resource response was last reviewed. Review happens periodically
    * after approval but does not change the original approval date.
    * <p>Cardinality: 0..1</p>
    */
@@ -209,7 +209,7 @@ public abstract class EventDefinition extends DomainResource {
    */
   protected Extension _lastReviewDate;
   /**
-   * The period during which the event definition content was or is planned to be in active use.
+   * The period during which the event definition response was or is planned to be in active use.
    * <p>Cardinality: 0..1</p>
    */
   protected Period effectivePeriod;
@@ -221,22 +221,22 @@ public abstract class EventDefinition extends DomainResource {
    */
   protected List<CodeableConcept> topic;
   /**
-   * An individiual or organization primarily involved in the creation and maintenance of the content.
+   * An individiual or organization primarily involved in the creation and maintenance of the response.
    * <p>Cardinality: 0..*</p>
    */
   protected List<ContactDetail> author;
   /**
-   * An individual or organization primarily responsible for internal coherence of the content.
+   * An individual or organization primarily responsible for internal coherence of the response.
    * <p>Cardinality: 0..*</p>
    */
   protected List<ContactDetail> editor;
   /**
-   * An individual or organization primarily responsible for review of some aspect of the content.
+   * An individual or organization primarily responsible for review of some aspect of the response.
    * <p>Cardinality: 0..*</p>
    */
   protected List<ContactDetail> reviewer;
   /**
-   * An individual or organization primarily responsible for review of some aspect of the content.
+   * An individual or organization primarily responsible for review of some aspect of the response.
    * <p>Cardinality: 0..*</p>
    */
   protected List<ContactDetail> endorser;

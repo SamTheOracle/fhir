@@ -215,7 +215,7 @@ public class Procedure extends DomainResource {
   private Range performedRange;
 
   /**
-   * Individual who recorded the record and takes responsibility for its content.
+   * Individual who recorded the record and takes responsibility for its response.
    * <p>Cardinality: 0..1</p>
    */
   private Reference recorder;

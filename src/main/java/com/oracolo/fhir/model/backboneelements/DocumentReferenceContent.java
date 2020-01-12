@@ -9,7 +9,7 @@ import com.oracolo.fhir.model.datatypes.Coding;
 public class DocumentReferenceContent extends BackboneElement {
 
   /**
-   * The document or URL of the document along with critical metadata to prove content has integrity.
+   * The document or URL of the document along with critical metadata to prove response has integrity.
    * <p>Cardinality: 1..1</p>
    */
   private Attachment attachment;

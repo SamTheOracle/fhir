@@ -17,14 +17,14 @@ import java.util.List;
 public class Metadata extends Element {
 
   /**
-   * Changes each time the content of the resource changes. Can be referenced in a resource reference.
+   * Changes each time the response of the resource changes. Can be referenced in a resource reference.
    * It Can be used to ensure that updates are based on the latest version of the resource.
    * <p>Cardinality: 0..1</p>
    */
   private String versionId;
   /**
-   * If populated, this value changes each time the content of the resource changes. It can be used by a system
-   * or a human to judge the currency of the resource content.
+   * If populated, this value changes each time the response of the resource changes. It can be used by a system
+   * or a human to judge the currency of the resource response.
    * Note that version aware updates do not depend on this element.
    * Note that a timezone code extension may be present on Meta.lastUpdated.
    * <p>Cardinality: 0..1</p>
@@ -36,7 +36,7 @@ public class Metadata extends Element {
    */
   private String source;
   /**
-   * An assertion that the content conforms to a resource profile
+   * An assertion that the response conforms to a resource profile
    * <p>Ex. a structure definition http://hl7.org/fhir/structuredefinition.html</p>
    * <p>Cardinality: 0..*</p>
    */

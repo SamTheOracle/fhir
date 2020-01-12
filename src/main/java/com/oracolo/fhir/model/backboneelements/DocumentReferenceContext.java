@@ -11,7 +11,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DocumentReferenceContext extends BackboneElement {
   /**
-   * Describes the clinical encounter or type of care that the document content is associated with.
+   * Describes the clinical encounter or type of care that the document response is associated with.
    * <p>Cardinality: 0..*</p>
    */
   private List<Reference> encounter;
@@ -34,7 +34,7 @@ public class DocumentReferenceContext extends BackboneElement {
    */
   private CodeableConcept facilityType;
   /**
-   * This property may convey specifics about the practice setting where the content was created, often reflecting the clinical specialty.
+   * This property may convey specifics about the practice setting where the response was created, often reflecting the clinical specialty.
    * <p>Code as example https://www.hl7.org/fhir/terminologies.html#example</p>
    * <p>Cardinality: 0..1</p>
    */

@@ -17,7 +17,7 @@ public class Narrative extends Element {
    */
   private String status;
   /**
-   * The actual narrative content, a stripped down version of XHTML.
+   * The actual narrative response, a stripped down version of XHTML.
    * <p>Cardinality: 1..1</p>
    */
   private String div;

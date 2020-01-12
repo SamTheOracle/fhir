@@ -3,7 +3,7 @@ package com.oracolo.fhir.model.datatypes;
 import com.oracolo.fhir.model.Element;
 
 /**
- * This type is for containing or referencing attachments - additional data content defined in other formats.
+ * This type is for containing or referencing attachments - additional data response defined in other formats.
  * The most common use of this type is to include images or reports in some report format such as PDF. However, it can be used for any data that has a MIME type.
  */
 public class Attachment extends Element {
@@ -14,7 +14,7 @@ public class Attachment extends Element {
    */
   private String contentType;
   /**
-   * The human language of the content. The value can be any valid value according to BCP 47.
+   * The human language of the response. The value can be any valid value according to BCP 47.
    * <p>Cardinality: 0..1</p>
    */
   private String language;

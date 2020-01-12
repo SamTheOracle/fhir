@@ -31,13 +31,13 @@ public abstract class FhirResourceAbstract {
    */
   protected String id;
   /**
-   * The metadata about the resource. This is content that is maintained by the infrastructure.
-   * Changes to the content might not always be associated with version changes to the resource.
+   * The metadata about the resource. This is response that is maintained by the infrastructure.
+   * Changes to the response might not always be associated with version changes to the resource.
    * <p>Cardinality: 0..1</p>
    */
   protected Metadata meta;
   /**
-   * A reference to a set of rules that were followed when the resource was constructed, and which must be understood when processing the content.
+   * A reference to a set of rules that were followed when the resource was constructed, and which must be understood when processing the response.
    * Often, this is a reference to an implementation guide that defines the special rules along with other profiles etc.
    * <p>Cardinality: 0..1</p>
    */
