@@ -15,15 +15,27 @@ import java.util.Objects;
 
 public class BaseValidator implements ValidationHandler {
 
+  //  private JsonSchema jsonSchema;
+  private static BaseValidator instance;
   private JsonSchema jsonSchema;
+
+  private BaseValidator() {
+  }
+
+  static BaseValidator getInstance() {
+    if (instance == null) {
+      instance = new BaseValidator();
+    }
+    return instance;
+  }
 
   @Override
   public boolean validateAgainstJsonSchema(JsonObject jsonObject) {
 
     JsonValidationService jsonValidationService = JsonValidationService.newInstance();
     try {
-      //loading only once
       if (jsonSchema == null) {
+        System.out.println("loading only once");
         InputStream inputStream = new BufferedInputStream(new FileInputStream(Objects.requireNonNull(FhirValidationProblemHandler.class.getClassLoader()
           .getResource("fhir.schema.json")).getFile()));
         jsonSchema = jsonValidationService.readSchema(inputStream);

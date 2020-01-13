@@ -7,7 +7,7 @@ public interface ValidationHandler {
 
 
   static ValidationHandler createValidator() {
-    return new BaseValidator();
+    return BaseValidator.getInstance();
   }
 
   boolean validateAgainstJsonSchema(JsonObject jsonObject);

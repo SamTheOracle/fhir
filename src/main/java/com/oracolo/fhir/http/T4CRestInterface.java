@@ -1216,7 +1216,7 @@ public class T4CRestInterface extends BaseRestInterface {
             .setSystem("https://www.hl7.org/fhir/codesystem-location-physical-type.html"))
           .setText("Territorial Area"))
         .setLocation(new Reference()
-          .setDisplay(territorialArea)));
+          .setDisplay("Territorial Area: " + territorialArea)));
     }
 
     if (isCarAccident != null && isCarAccident) {
