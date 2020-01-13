@@ -6,8 +6,8 @@ import com.oracolo.fhir.handlers.query.QueryHandler;
 import com.oracolo.fhir.handlers.response.ResponseHandler;
 import com.oracolo.fhir.handlers.response.format.BaseFormatHandler;
 import com.oracolo.fhir.handlers.validator.ValidationHandler;
-import com.oracolo.fhir.model.ResourceType;
 import com.oracolo.fhir.model.backboneelements.BundleRequest;
+import com.oracolo.fhir.model.domain.Encounter;
 import com.oracolo.fhir.model.domain.OperationOutcome;
 import com.oracolo.fhir.model.domain.OperationOutcomeIssue;
 import com.oracolo.fhir.model.elements.Metadata;
@@ -15,6 +15,7 @@ import com.oracolo.fhir.model.resources.Bundle;
 import com.oracolo.fhir.utils.ErrorFormat;
 import com.oracolo.fhir.utils.FhirHttpHeader;
 import com.oracolo.fhir.utils.FhirUtils;
+import com.oracolo.fhir.utils.ResourceType;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -56,7 +57,14 @@ public class FhirServer extends BaseRestInterface {
       .produces("*/xml")
       .handler(this::handleBatchOperations)
       .failureHandler(this::errorHandler);
-
+    restApi.get("/" + FhirUtils.BASE + "/" + ResourceType.ENCOUNTER.typeName() + "/:" + FhirUtils.ID + "/" + Encounter.everything)
+      .produces(HttpHeaderValues.APPLICATION_JSON.toString())
+      .produces(FhirHttpHeader.APPLICATION_JSON.value())
+      .produces(FhirHttpHeader.APPLICATION_JSON.value())
+      .produces("*/json")
+      .produces("*/xml")
+      .handler(this::handleEncounterEverything)
+      .failureHandler(this::errorHandler);
     createAPIServer(0, restApi)
       .compose(httpServer -> {
         int port = httpServer.actualPort();
@@ -71,6 +79,45 @@ public class FhirServer extends BaseRestInterface {
         startPromise.fail(publishSuccessful.cause());
       }
     });
+  }
+
+  private void handleEncounterEverything(RoutingContext routingContext) {
+    String id = routingContext.pathParam(FhirUtils.ID);
+    MultiMap headers = routingContext.request().headers();
+    MultiMap queryParams = routingContext.request().params();
+    String acceptableType = routingContext.getAcceptableContentType();
+    if (acceptableType == null) {
+      acceptableType = FhirHttpHeader.APPLICATION_JSON.value();
+    }
+
+
+    HttpServerResponse serverResponse = routingContext.response();
+    ResponseHandler
+      .createSearchOperationHandler()
+      .withService(databaseService)
+      .withFormatHandler(new BaseFormatHandler()
+        .withAcceptHeader(acceptableType))
+      .createResponseAsync(serverResponse, (service, promise)
+        -> service.findEverythingAboutEncounter(id, promise))
+      .releaseAsync()
+      .future()
+      .onSuccess(HttpServerResponse::end)
+      .onFailure(throwable -> {
+
+        if (throwable instanceof ServiceException) {
+          int code = ((ServiceException) throwable).failureCode();
+          String message = throwable.getMessage();
+          ErrorFormat errorFormat = ErrorFormat.createFormat(code);
+          routingContext.put("error", message);
+          routingContext.put("code", errorFormat.getFhirErrorCode());
+          routingContext.fail(code);
+
+        } else {
+          routingContext.put("error", throwable.getMessage());
+          routingContext.put("code", "invariant");
+          routingContext.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
+        }
+      });
   }
 
 

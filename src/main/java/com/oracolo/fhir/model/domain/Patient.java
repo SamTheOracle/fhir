@@ -2,6 +2,7 @@ package com.oracolo.fhir.model.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.oracolo.fhir.model.DomainResource;
+import com.oracolo.fhir.model.backboneelements.PatientContact;
 import com.oracolo.fhir.model.datatypes.*;
 import com.oracolo.fhir.model.elements.CodeableConcept;
 import com.oracolo.fhir.model.elements.Extension;
@@ -73,12 +74,12 @@ public class Patient extends DomainResource {
    */
   private List<HumanName> name;
   /**
-   * A contact detail (e.g. a telephone number or an email address) by which the individual may be contacted.
+   * A patientContact detail (e.g. a telephone number or an email address) by which the individual may be contacted.
    * <p>Cardinality: 0..*</p>
    */
   private List<ContactPoint> telecom;
   /**
-   * A contact detail (e.g. a telephone number or an email address) by which the individual may be contacted.
+   * A patientContact detail (e.g. a telephone number or an email address) by which the individual may be contacted.
    * <p>Cardinality: 0..*</p>
    */
   private List<ContactPoint> contactPoints;
@@ -167,10 +168,10 @@ public class Patient extends DomainResource {
    */
   private List<Attachment> photo;
   /**
-   * A contact party (e.g. guardian, partner, friend) for the patient.
+   * A patientContact party (e.g. guardian, partner, friend) for the patient.
    * <p>Cardinality: 0..*</p>
    */
-  private List<Contact> contact;
+  private List<PatientContact> patientContact;
 
   /**
    * A language which may be used to communicate with the patient about his or her health.
@@ -383,12 +384,12 @@ public class Patient extends DomainResource {
     this.photo = photo;
   }
 
-  public List<Contact> getContact() {
-    return contact;
+  public List<PatientContact> getPatientContact() {
+    return patientContact;
   }
 
-  public void setContact(List<Contact> contact) {
-    this.contact = contact;
+  public void setPatientContact(List<PatientContact> patientContact) {
+    this.patientContact = patientContact;
   }
 
   public List<Communication> getCommunication() {

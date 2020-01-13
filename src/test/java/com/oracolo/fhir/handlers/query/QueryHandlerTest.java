@@ -1,8 +1,8 @@
 package com.oracolo.fhir.handlers.query;
 
-import com.oracolo.fhir.model.ResourceType;
 import com.oracolo.fhir.model.domain.Patient;
 import com.oracolo.fhir.utils.FhirUtils;
+import com.oracolo.fhir.utils.ResourceType;
 import io.vertx.core.MultiMap;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.Json;
@@ -56,7 +56,7 @@ class QueryHandlerTest {
           .createMongoDbQuery();
         Assertions.assertNotNull(query);
         MongoClient client = FhirUtils.createFhirMongoDbConnection(vertx);
-        client.find(FhirUtils.PATIENTS_COLLECTION, query, listAsyncResult -> {
+        client.find(ResourceType.PATIENT.getCollection(), query, listAsyncResult -> {
           if (listAsyncResult.succeeded()) {
             List<Patient> patients = listAsyncResult.result()
               .stream()
@@ -94,7 +94,7 @@ class QueryHandlerTest {
           .createMongoDbQuery();
         Assertions.assertNotNull(query);
         MongoClient client = FhirUtils.createFhirMongoDbConnection(vertx);
-        client.find(FhirUtils.PATIENTS_COLLECTION, query, listAsyncResult -> {
+        client.find(ResourceType.PATIENT.getCollection(), query, listAsyncResult -> {
           if (listAsyncResult.succeeded()) {
             List<Patient> patients = listAsyncResult.result()
               .stream()

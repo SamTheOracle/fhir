@@ -18,32 +18,13 @@ public class FhirUtils {
   public static final String HISTORY = "_history";
   public static final String PATH_VERSIONID = "vid";
   public static final String BASE = "fhirAPI";
-  public static final String PATIENT_TYPE = "Patient";
-  public static final String PATIENTS_COLLECTION = "patients";
   public static final String FHIR_SERVICE = "fhir_service";
   public static final String LOCALHOST = "localhost";
   public static final String T4CSERVICE = "t4cservice";
-  public static final String OBSERVATION_TYPE = "Observation";
-  public static final String GATEWAY_ENDPOINT = "http://localhost:8000";
-  public static final String CONDITION_TYPE = "Condition";
-  public static final String OBSERVATIONS_COLLECTION = "observations";
-  public static final String CONDITIONS_COLLECTION = "conditions";
-  public static final String DELETE_COLLECTION = "deleted_resources";
+//  public static final String GATEWAY_ENDPOINT = "http://localhost:8000";
   public static final String DATABASE_SERVICE_ADDRESS = "database_service";
   public static final String DELETED = "DELETED";
   public static final int MONGODB_CONNECTION_FAIL = 12;
-  public static final String DOCUMENTREFERENCE_TYPE = "DocumentReference";
-  public static final String ENCOUNTER_TYPE = "Encounter";
-  public static final String ENCOUNTER_COLLECTION = "encounters";
-  public static final String PROCEDURE_COLLECTION = "procedures";
-  public static final String BUNDLE_COLLECTION = "bundles";
-  public static final String DIAGNOSTICREPORTS_COLLECTION = "diagnosticreports";
-  public static final String MEDICATIONADMINISTRATIONS_COLLECTIONS = "medicationadministrations";
-  public static final String MEDICATIONS_COLLECTION = "medications";
-  public static final String PRACTITIONERS_COLLECTION = "practitioners";
-  public static final String LOCATIONS_COLLECTIONS = "locations";
-  public static final String ORGANIZATIONS_COLLECTION = "organizations";
-  public static final int RESOURCE_ALREADY_EXIST_CODE = 1;
 
 
   public static MongoClient createFhirMongoDbConnection(Vertx vertx) {

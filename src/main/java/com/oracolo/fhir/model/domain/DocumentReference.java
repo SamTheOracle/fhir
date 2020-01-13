@@ -22,6 +22,13 @@ import java.util.List;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DocumentReference extends DomainResource {
+  private String resourceType = "DocumentReference";
+
+  @Override
+  public String getResourceType() {
+    return resourceType;
+  }
+
   /**
    * Document identifier as assigned by the source of the document. This identifier is specific to this version of the document.
    * This unique identifier may be used elsewhere to identify this version of the document.

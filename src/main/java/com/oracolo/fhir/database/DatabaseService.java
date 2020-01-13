@@ -1,6 +1,5 @@
 package com.oracolo.fhir.database;
 
-import com.oracolo.fhir.model.ResourceType;
 import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.ProxyGen;
 import io.vertx.codegen.annotations.VertxGen;
@@ -43,5 +42,5 @@ public interface DatabaseService {
   DatabaseService createUpdateResource(String collection, JsonObject body, Handler<AsyncResult<JsonObject>> handler);
 
   @Fluent
-  DatabaseService findEverythingAboutResource(ResourceType type, JsonObject query, Handler<AsyncResult<JsonObject>> handler);
+  DatabaseService findEverythingAboutEncounter(String encounterId, Handler<AsyncResult<JsonObject>> handler);
 }

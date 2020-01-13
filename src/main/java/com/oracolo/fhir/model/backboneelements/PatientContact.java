@@ -1,6 +1,6 @@
-package com.oracolo.fhir.model.domain;
+package com.oracolo.fhir.model.backboneelements;
 
-import com.oracolo.fhir.model.DomainResource;
+import com.oracolo.fhir.model.BackboneElement;
 import com.oracolo.fhir.model.datatypes.Address;
 import com.oracolo.fhir.model.datatypes.ContactPoint;
 import com.oracolo.fhir.model.datatypes.HumanName;
@@ -13,7 +13,8 @@ import java.util.List;
 /**
  * Custom object representing a contact
  */
-public class Contact extends DomainResource {
+public class PatientContact extends BackboneElement {
+
 
   /**
    * The nature of the relationship between the patient and the contact person.

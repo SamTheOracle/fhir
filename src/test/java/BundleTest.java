@@ -1,12 +1,12 @@
 import com.oracolo.fhir.database.DatabaseService;
 import com.oracolo.fhir.database.DatabaseServiceVerticle;
 import com.oracolo.fhir.handlers.validator.ValidationHandler;
-import com.oracolo.fhir.model.ResourceType;
 import com.oracolo.fhir.model.backboneelements.BundleEntry;
 import com.oracolo.fhir.model.backboneelements.BundleRequest;
 import com.oracolo.fhir.model.domain.Patient;
 import com.oracolo.fhir.model.resources.Bundle;
 import com.oracolo.fhir.utils.FhirUtils;
+import com.oracolo.fhir.utils.ResourceType;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
@@ -66,25 +66,25 @@ class BundleTest {
         .setResource(new Patient())
         .setRequest(new BundleRequest()
           .setMethod("POST")
-          .setUrl(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.BASE + "/" + ResourceType.PATIENT.typeName())
+          .setUrl("/" + FhirUtils.BASE + "/" + ResourceType.PATIENT.typeName())
         )
       )
       .addNewEntry(new BundleEntry()
         .setResource(new Patient())
         .setRequest(new BundleRequest()
           .setMethod("POST")
-          .setUrl(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.BASE + "/" + ResourceType.PATIENT.typeName())
+          .setUrl("/" + FhirUtils.BASE + "/" + ResourceType.PATIENT.typeName())
         )
       ).addNewEntry(new BundleEntry()
         .setResource(new Patient())
         .setRequest(new BundleRequest()
           .setMethod("PUT")
-          .setUrl(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.BASE + "/" + ResourceType.PATIENT.typeName())
+          .setUrl("/" + FhirUtils.BASE + "/" + ResourceType.PATIENT.typeName())
         ))
       .addNewEntry(new BundleEntry()
         .setRequest(new BundleRequest()
           .setMethod("GET")
-          .setUrl(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.BASE + "/" + ResourceType.PATIENT.typeName() + "/168428ca-9aac-491b-af95-ca5792f58e11")
+          .setUrl("/" + FhirUtils.BASE + "/" + ResourceType.PATIENT.typeName() + "/168428ca-9aac-491b-af95-ca5792f58e11")
         ));
     Bundle responseBundle = new Bundle();
 

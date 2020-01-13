@@ -18,6 +18,13 @@ import java.util.List;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EpisodeOfCare extends DomainResource {
+  private String resourceType = "EpisodeOfCare";
+
+  @Override
+  public String getResourceType() {
+    return resourceType;
+  }
+
   /**
    * The EpisodeOfCare may be known by different identifiers for different contexts of use,
    * such as when an external agency is tracking the Episode for funding purposes.

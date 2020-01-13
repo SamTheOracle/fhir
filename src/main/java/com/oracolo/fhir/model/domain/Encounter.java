@@ -1,5 +1,6 @@
 package com.oracolo.fhir.model.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.oracolo.fhir.model.DomainResource;
@@ -25,6 +26,10 @@ import java.util.List;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Encounter extends DomainResource {
+
+  @JsonIgnore
+  public final static String everything = "$everything";
+
 
   private String resourceType = "Encounter";
   /**
@@ -270,8 +275,14 @@ public class Encounter extends DomainResource {
     return patient;
   }
 
-  public void setPatient(Reference patient) {
+  public Encounter setPatient(Reference patient) {
     this.patient = patient;
+    return this;
+  }
+
+  @Override
+  public String getId() {
+    return id;
   }
 
   public List<Reference> getEpisodeOfCare() {

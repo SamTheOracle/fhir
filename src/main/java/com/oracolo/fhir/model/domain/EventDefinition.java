@@ -128,7 +128,7 @@ public abstract class EventDefinition extends DomainResource {
    */
   protected String publisher;
   /**
-   * Contact details to assist a user in finding and communicating with the publisher.
+   * PatientContact details to assist a user in finding and communicating with the publisher.
    * <p>Cardinality: 0..*</p>
    */
   protected List<ContactDetail> contact;

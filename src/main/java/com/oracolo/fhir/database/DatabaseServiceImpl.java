@@ -1,10 +1,11 @@
 package com.oracolo.fhir.database;
 
-import com.oracolo.fhir.model.ResourceType;
 import com.oracolo.fhir.model.backboneelements.BundleEntry;
+import com.oracolo.fhir.model.backboneelements.BundleResponse;
 import com.oracolo.fhir.model.elements.Metadata;
 import com.oracolo.fhir.model.resources.Bundle;
 import com.oracolo.fhir.utils.FhirUtils;
+import com.oracolo.fhir.utils.ResourceType;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
@@ -72,18 +73,91 @@ public class DatabaseServiceImpl implements DatabaseService {
   }
 
   @Override
-  public DatabaseService findEverythingAboutResource(ResourceType type, JsonObject query, Handler<AsyncResult<JsonObject>> handler) {
-    mongoClient.getCollections(collectionAsyncResult -> {
-      List<JsonObject> resourcesFound = new ArrayList<>();
-      if (collectionAsyncResult.succeeded() && collectionAsyncResult.result() != null && collectionAsyncResult.result().size() > 0) {
-        List<String> collectionNames = collectionAsyncResult.result();
-        //1)creare un lookup per ogni collection
-        //2)eseguire un comando mongoClient.runCommand con query del tipo
-        // runCommand({aggregate:"encounters",pipeline:[{$lookup:{from:"condition_test2",pipeline:[{$match:{$expr:{$eq:["$encounter.reference","/Encounter/3fd1affa-0c65-4bd5-befd-ec286409b77f"]}}}],as:"test2"}},{$lookup:{from:"condition_test1",pipeline:[{$match:{$expr:{$eq:["$encounter.reference","/Encounter/3fd1affa-0c65-4bd5-befd-ec286409b77f"]}}}],as:"test1"}}],cursor:{}})
+  public DatabaseService findEverythingAboutEncounter(String id, Handler<AsyncResult<JsonObject>> handler) {
+
+
+    mongoClient.find(ResourceType.ENCOUNTER.getCollection(), new JsonObject()
+      .put("partOf.reference", "/Encounter/" + id), subEncounterRes -> {
+      JsonArray pipeline = new JsonArray();
+
+      if (subEncounterRes.succeeded() && subEncounterRes.result() != null && subEncounterRes.result().size() > 0) {
+
+        List<String> encountersIds = new ArrayList<>();
+        encountersIds.add(id);
+        subEncounterRes.result()
+          .stream()
+          .peek(jsonObject -> jsonObject.remove("_id"))
+          .map(jsonObject -> jsonObject.getString("id"))
+          .peek(encountersIds::add)
+          .forEach(encounterId -> {
+            for (ResourceType type : ResourceType.values()) {
+              pipeline.add(new JsonObject()
+                .put("$lookup", new JsonObject()
+                  .put("from", type.getCollection())
+                  .put("pipeline", new JsonArray()
+                    .add(new JsonObject()
+                      .put("$match", new JsonObject()
+                        .put("$expr", new JsonObject()
+                          .put("$eq", new JsonArray()
+                            .add("$encounter.reference")
+                            .add("/Encounter/" + encounterId))))
+                    ))
+                  .put("as", type.getCollection())));
+            }
+          });
+        JsonObject command = new JsonObject()
+          .put("aggregate", "encounters")
+          .put("pipeline", pipeline)
+          .put("cursor", new JsonObject());
+        mongoClient.runCommand("aggregate", command, res -> {
+          if (res.succeeded()) {
+            Bundle bundle = new Bundle()
+              .setTimestamp(Instant.now());
+            JsonObject r = res.result();
+            r.getJsonObject("cursor")
+              .getJsonArray("firstBatch")
+              .stream()
+              .map(JsonObject::mapFrom)
+              .filter(jsonObject -> encountersIds.contains(jsonObject.getString("id")))
+              .forEach(encounterJsonObject -> {
+                Metadata metaEncounter = Json.decodeValue(encounterJsonObject.getJsonObject("meta").encode(), Metadata.class);
+                bundle.addNewEntry(new BundleEntry()
+                  .setResponse(new BundleResponse()
+                    .setEtag(metaEncounter.getVersionId())
+                    .setLastModified(metaEncounter.getLastUpdated().toString()))
+                  .setResource(encounterJsonObject));
+                for (ResourceType type : ResourceType.values()) {
+                  JsonArray resources = encounterJsonObject.getJsonArray(type.getCollection());
+                  if (resources != null) {
+                    resources.stream().map(JsonObject::mapFrom).forEach(resource -> {
+                      Metadata meta = Json.decodeValue(resource.getJsonObject("meta").encode(), Metadata.class);
+                      bundle.addNewEntry(new BundleEntry()
+                        .setResponse(new BundleResponse()
+                          .setEtag(meta.getVersionId())
+                          .setLastModified(meta.getLastUpdated().toString()))
+                        .setResource(resource));
+                    });
+                  }
+                }
+              });
+            bundle
+              .setTotal(bundle.getEntry().size());
+            handler.handle(Future.succeededFuture(JsonObject.mapFrom(bundle)));
+          } else if (res.succeeded() && res.result() != null && res.result().getJsonObject("cursor")
+            .getJsonArray("firstBatch").size() == 0) {
+            handler.handle(ServiceException.fail(HttpResponseStatus.NOT_FOUND.code(), "No resource found"));
+
+          } else {
+            handler.handle(ServiceException.fail(FhirUtils.MONGODB_CONNECTION_FAIL, res.cause().getMessage()));
+          }
+        });
+      } else {
+        handler.handle(ServiceException.fail(FhirUtils.MONGODB_CONNECTION_FAIL, subEncounterRes.cause().getMessage()));
       }
 
     });
-    return null;
+
+    return this;
   }
 
 

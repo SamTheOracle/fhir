@@ -46,6 +46,7 @@ public class BaseQueryHandler implements QueryHandler {
   @Override
   public JsonObject createMongoDbQuery() {
     JsonObject query = new JsonObject();
+    JsonArray andOperations = new JsonArray();
     params.forEach(entry -> {
       String queryName = entry.getKey();
       switch (queryName) {
@@ -54,12 +55,12 @@ public class BaseQueryHandler implements QueryHandler {
           JsonArray queryParametersId = new JsonArray();
           values.forEach(v -> queryParametersId.add(new JsonObject()
             .put(FhirUtils.ID, v)));
-          query.put("$or", queryParametersId);
+          andOperations.add(new JsonObject().put("$or", queryParametersId));
           break;
         case _text:
           String textSearchFinalValue = String.join(" ", params.getAll(queryName));
-          query.put("$text", new JsonObject()
-            .put("$search", textSearchFinalValue));
+          andOperations.add(new JsonObject().put("$text", new JsonObject()
+            .put("$search", textSearchFinalValue)));
           break;
         default:
           break;
@@ -68,6 +69,7 @@ public class BaseQueryHandler implements QueryHandler {
       }
 
     });
+    query.put("$and", andOperations);
     return query;
   }
 }

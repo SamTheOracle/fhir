@@ -2,22 +2,20 @@ package com.oracolo.fhir.http;
 
 import com.oracolo.fhir.BaseRestInterface;
 import com.oracolo.fhir.database.DatabaseService;
-import com.oracolo.fhir.model.DomainResource;
-import com.oracolo.fhir.model.ResourceType;
+import com.oracolo.fhir.model.Resource;
 import com.oracolo.fhir.model.backboneelements.*;
 import com.oracolo.fhir.model.datatypes.Coding;
 import com.oracolo.fhir.model.datatypes.HumanName;
 import com.oracolo.fhir.model.datatypes.Identifier;
 import com.oracolo.fhir.model.datatypes.Period;
 import com.oracolo.fhir.model.domain.*;
-import com.oracolo.fhir.model.elements.Annotation;
-import com.oracolo.fhir.model.elements.CodeableConcept;
-import com.oracolo.fhir.model.elements.Quantity;
-import com.oracolo.fhir.model.elements.Reference;
+import com.oracolo.fhir.model.elements.*;
 import com.oracolo.fhir.utils.FhirUtils;
+import com.oracolo.fhir.utils.ResourceType;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import io.vertx.core.CompositeFuture;
 import io.vertx.core.Promise;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -25,15 +23,13 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class T4CRestInterface extends BaseRestInterface {
   private static final Logger LOGGER = Logger.getLogger(FhirServer.class.getName());
@@ -63,7 +59,7 @@ public class T4CRestInterface extends BaseRestInterface {
   }
 
   private void handleReports(RoutingContext routingContext) {
-    List<DomainResource> domainResources = new ArrayList<>();
+    List<Resource> domainResources = new ArrayList<>();
     //Main json
     JsonObject reportJson = routingContext.getBodyAsJson();
 
@@ -72,12 +68,12 @@ public class T4CRestInterface extends BaseRestInterface {
     Encounter encounterPreh = new Encounter()
       .setId(UUID.randomUUID().toString())
       .setPartOf(new Reference()
-        .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.BASE + "/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterAll.getId()));
+        .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterAll.getId()));
     Encounter encounterShock = new Encounter()
       //patient initial condition, vital signs
       .setId(UUID.randomUUID().toString())
       .setPartOf(new Reference()
-        .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.BASE + "/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterAll.getId()));
+        .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterAll.getId()));
 
     encounterPreh
       .setId(UUID.randomUUID().toString())
@@ -114,7 +110,11 @@ public class T4CRestInterface extends BaseRestInterface {
           .setCode("417163006")
           .setDisplay("Traumatic AND/OR non-traumatic injury (disorder)")
           .setSystem("http://www.snomed.org/"))
-        .setText("Trauma"));
+        .setText("Trauma"))
+      .setEncounter(new Reference()
+        .setType(ResourceType.ENCOUNTER.typeName())
+        .setDisplay("Encounter pre ospedalizzazione")
+        .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()));
 
     domainResources.add(traumaCondition);
 
@@ -189,7 +189,7 @@ public class T4CRestInterface extends BaseRestInterface {
         .setDisplay(finalDestination)));
 
     if (traumaInfo != null) {
-      addTraumaInformation(traumaInfo, encounterPreh, traumaCondition, domainResources);
+      addTraumaInformation(traumaInfo, encounterPreh, encounterShock, encounterAll, traumaCondition, domainResources);
     }
 
     JsonObject majorTraumaCriteria = reportJson.getJsonObject("majorTraumaCriteria");
@@ -211,7 +211,7 @@ public class T4CRestInterface extends BaseRestInterface {
     }
     JsonObject patientInitialConditionJsonObject = reportJson.getJsonObject("patientInitialCondition");
     if (patientInitialConditionJsonObject != null) {
-      addPatientInitialCondition(patientInitialConditionJsonObject, encounterPreh, patientInitialCondition, domainResources);
+      addPatientInitialCondition(patientInitialConditionJsonObject, encounterShock, patientInitialCondition, domainResources);
     }
 
     JsonArray events = reportJson.getJsonArray("events");
@@ -255,7 +255,6 @@ public class T4CRestInterface extends BaseRestInterface {
     if (encounterShock.getDiagnosis() != null) {
       encounterShock.getDiagnosis().forEach(encounterAll::addNewDiagnosis);
     }
-    traumaCondition.setSubject(encounterAll.getPatient());
 
     JsonObject ePreh = JsonObject.mapFrom(encounterPreh);
     JsonObject eShock = JsonObject.mapFrom(encounterShock);
@@ -263,20 +262,77 @@ public class T4CRestInterface extends BaseRestInterface {
     JsonObject prehCondition = JsonObject.mapFrom(traumaCondition);
     JsonObject issConditionJsonObject = JsonObject.mapFrom(issCondition);
     JsonObject conditionBeforeShock = JsonObject.mapFrom(patientInitialCondition);
-    domainResources.add(encounterAll);
-    domainResources.add(encounterShock);
+    domainResources.add(encounterAll.setPatient(encounterPreh.getPatient()));
+    domainResources.add(encounterShock.setPatient(encounterPreh.getPatient()));
     domainResources.add(encounterPreh);
 
 
+    List<JsonObject> observations = domainResources
+      .stream()
+      .filter(resource -> ResourceType.valueOf(resource.getResourceType().toUpperCase()).equals(ResourceType.OBSERVATION))
+      .map(JsonObject::mapFrom)
+      .peek(json -> json.put("meta", JsonObject.mapFrom(new Metadata()
+        .setLastUpdated(Instant.now())
+        .setVersionId(UUID.randomUUID().toString()))))
+      .collect(Collectors.toList());
+    List<JsonObject> procedures = domainResources
+      .stream()
+      .filter(resource -> ResourceType.valueOf(resource.getResourceType().toUpperCase()).equals(ResourceType.PROCEDURE))
+      .map(JsonObject::mapFrom)
+      .peek(json -> json.put("meta", JsonObject.mapFrom(new Metadata()
+        .setLastUpdated(Instant.now())
+        .setVersionId(UUID.randomUUID().toString()))))
+      .collect(Collectors.toList());
+    List<JsonObject> encounters = domainResources
+      .stream()
+      .filter(resource -> ResourceType.valueOf(resource.getResourceType().toUpperCase()).equals(ResourceType.ENCOUNTER))
+      .map(JsonObject::mapFrom)
+      .peek(json -> json.put("meta", JsonObject.mapFrom(new Metadata()
+        .setLastUpdated(Instant.now())
+        .setVersionId(UUID.randomUUID().toString()))))
+      .collect(Collectors.toList());
+    List<JsonObject> conditions = domainResources
+      .stream()
+      .filter(resource -> ResourceType.valueOf(resource.getResourceType().toUpperCase()).equals(ResourceType.CONDITION))
+      .map(JsonObject::mapFrom)
+      .peek(json -> json.put("meta", JsonObject.mapFrom(new Metadata()
+        .setLastUpdated(Instant.now())
+        .setVersionId(UUID.randomUUID().toString()))))
+      .collect(Collectors.toList());
+    Promise<JsonObject> encountersBulkOperationsPromise = Promise.promise();
+    Promise<JsonObject> procedureBulkOperationsPromise = Promise.promise();
+    Promise<JsonObject> observationsBulkOperationsPromise = Promise.promise();
+    Promise<JsonObject> conditionsBulkOperationsPromise = Promise.promise();
+
+    DatabaseService.createProxy(vertx, FhirUtils.DATABASE_SERVICE_ADDRESS)
+      .executeWriteBulkOperations(ResourceType.ENCOUNTER.getCollection(), encounters, encountersBulkOperationsPromise)
+      .executeWriteBulkOperations(ResourceType.OBSERVATION.getCollection(), observations, observationsBulkOperationsPromise)
+      .executeWriteBulkOperations(ResourceType.CONDITION.getCollection(), conditions, conditionsBulkOperationsPromise)
+      .executeWriteBulkOperations(ResourceType.PROCEDURE.getCollection(), procedures, procedureBulkOperationsPromise);
+
+    CompositeFuture.all(encountersBulkOperationsPromise.future(),
+      procedureBulkOperationsPromise.future(),
+      observationsBulkOperationsPromise.future(), conditionsBulkOperationsPromise
+        .future()).setHandler(handler -> {
+      if (handler.succeeded()) {
+        routingContext.response()
+          .putHeader(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON)
+          .setStatusCode(HttpResponseStatus.CREATED.code()).end(new JsonObject()
+          .put("encounterId", encounterAll.getId()).toBuffer());
+      } else {
+        routingContext.response().setStatusCode(HttpResponseStatus.BAD_REQUEST.code()).end();
+      }
+    });
+
   }
 
-  private void addVitalSignsObservations(JsonArray vitalSignsObservations, Encounter encounterShock, List<DomainResource> domainResources) {
+  private void addVitalSignsObservations(JsonArray vitalSignsObservations, Encounter encounterShock, List<Resource> domainResources) {
     vitalSignsObservations.forEach(entry -> {
       JsonObject vitalSignObservation = JsonObject.mapFrom(entry);
     });
   }
 
-  private void addEventsToEncounters(JsonArray events, Encounter encounterShock, Encounter preH, List<DomainResource> domainResources) {
+  private void addEventsToEncounters(JsonArray events, Encounter encounterShock, Encounter preH, List<Resource> domainResources) {
 
     events.forEach(entry -> {
       JsonObject fullEvent = JsonObject.mapFrom(entry);
@@ -543,7 +599,7 @@ public class T4CRestInterface extends BaseRestInterface {
     });
   }
 
-  private void addPatientInitialCondition(JsonObject patientInitialConditionJsonObject, Encounter encounterPreh, Condition patientInitialCondition, List<DomainResource> domainResources) {
+  private void addPatientInitialCondition(JsonObject patientInitialConditionJsonObject, Encounter encounterShock, Condition patientInitialCondition, List<Resource> domainResources) {
     JsonObject clinicalPicture = patientInitialConditionJsonObject.getJsonObject("clinicalPicture");
     JsonObject vitalSigns = patientInitialConditionJsonObject.getJsonObject("vitalSigns");
 
@@ -563,16 +619,18 @@ public class T4CRestInterface extends BaseRestInterface {
               .setDisplay("Body temperature")
               .setCode("8310-5")
               .setSystem("https://loinc.org/"))
-            .setText("Oxygen Percentage"))
+            .setText("Temperatura"))
           .setEncounter(new Reference()
-            .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
-          .setSubject(encounterPreh.getPatient());
+            .setType(ResourceType.ENCOUNTER.typeName())
+            .setDisplay("Encounter shock room")
+            .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
+          .setSubject(encounterShock.getPatient());
 
         domainResources.add(observation);
         patientInitialCondition
           .addNewConditionEvidence(new ConditionEvidence()
             .addNewCode(new CodeableConcept()
-              .setText("Temperature"))
+              .setText("Temperature (temp)"))
             .addNewDetail(new Reference()
               .setType(ResourceType.OBSERVATION.typeName())
               .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + observation.getId())));
@@ -584,16 +642,18 @@ public class T4CRestInterface extends BaseRestInterface {
         Observation observation = new Observation()
           .setId(UUID.randomUUID().toString())
           .setStatus("final")
-          .setValueString(temp)
+          .setValueString(hr)
           .setCode(new CodeableConcept()
             .addNewCoding(new Coding()
               .setDisplay("Heart rate")
               .setCode("8867-4")
               .setSystem("https://loinc.org/"))
-            .setText("Heart Rate"))
+            .setText("Frequenza cardiaca (hr)"))
           .setEncounter(new Reference()
-            .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
-          .setSubject(encounterPreh.getPatient());
+            .setType(ResourceType.ENCOUNTER.typeName())
+            .setDisplay("Encounter shock room")
+            .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
+          .setSubject(encounterShock.getPatient());
 
         domainResources.add(observation);
         patientInitialCondition
@@ -611,16 +671,18 @@ public class T4CRestInterface extends BaseRestInterface {
         Observation observation = new Observation()
           .setId(UUID.randomUUID().toString())
           .setStatus("final")
-          .setValueString(temp)
+          .setValueString(bp)
           .setCode(new CodeableConcept()
             .addNewCoding(new Coding()
               .setDisplay("Systolic blood pressure")
               .setCode("8480-6")
               .setSystem("https://loinc.org/"))
-            .setText("Blood Pressure"))
+            .setText("Pressione Arteriosa Sistolica (bp)"))
           .setEncounter(new Reference()
-            .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
-          .setSubject(encounterPreh.getPatient());
+            .setType(ResourceType.ENCOUNTER.typeName())
+            .setDisplay("Encounter shock room")
+            .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
+          .setSubject(encounterShock.getPatient());
 
         domainResources.add(observation);
         patientInitialCondition
@@ -638,16 +700,18 @@ public class T4CRestInterface extends BaseRestInterface {
         Observation observation = new Observation()
           .setId(UUID.randomUUID().toString())
           .setStatus("final")
-          .setValueString(temp)
+          .setValueString(spo2)
           .setCode(new CodeableConcept()
             .addNewCoding(new Coding()
               .setDisplay("Oxygen saturation in Blood")
               .setCode("20564-1")
               .setSystem("https://loinc.org/"))
-            .setText("Oxigen Saturation"))
+            .setText("Saturazione ossigeno (spO2)"))
           .setEncounter(new Reference()
-            .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
-          .setSubject(encounterPreh.getPatient());
+            .setType(ResourceType.ENCOUNTER.typeName())
+            .setDisplay("Encounter shock room")
+            .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
+          .setSubject(encounterShock.getPatient());
 
         domainResources.add(observation);
         patientInitialCondition
@@ -665,22 +729,24 @@ public class T4CRestInterface extends BaseRestInterface {
         Observation observation = new Observation()
           .setId(UUID.randomUUID().toString())
           .setStatus("final")
-          .setValueString(temp)
+          .setValueString(etco2)
           .setCode(new CodeableConcept()
             .addNewCoding(new Coding()
-              .setDisplay("Oxygen saturation in Blood")
-              .setCode("20564-1")
+              .setDisplay("Carbon dioxide [Partial pressure] in Exhaled gas --at end expiration")
+              .setCode("19891-1")
               .setSystem("https://loinc.org/"))
-            .setText("Oxigen Saturation"))
+            .setText("End Tidal Carbon Dioxide (etcO2"))
           .setEncounter(new Reference()
-            .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
-          .setSubject(encounterPreh.getPatient());
+            .setType(ResourceType.ENCOUNTER.typeName())
+            .setDisplay("Encounter shock room")
+            .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
+          .setSubject(encounterShock.getPatient());
 
         domainResources.add(observation);
         patientInitialCondition
           .addNewConditionEvidence(new ConditionEvidence()
             .addNewCode(new CodeableConcept()
-              .setText("Oxygen Saturation"))
+              .setText("End Tidal Carbon Dioxide"))
             .addNewDetail(new Reference()
               .setType(ResourceType.OBSERVATION.typeName())
               .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + observation.getId())));
@@ -702,9 +768,11 @@ public class T4CRestInterface extends BaseRestInterface {
 
           .setEncounter(new Reference()
             .setType(ResourceType.ENCOUNTER.typeName())
-            .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()))
+            .setType(ResourceType.ENCOUNTER.typeName())
+            .setDisplay("Encounter shock room")
+            .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
 
-          .setSubject(encounterPreh.getPatient());
+          .setSubject(encounterShock.getPatient());
         patientInitialCondition
           .addNewConditionEvidence(new ConditionEvidence()
             .addNewCode(new CodeableConcept()
@@ -728,8 +796,9 @@ public class T4CRestInterface extends BaseRestInterface {
             .setText("Glasgow Coma Scale Motor"))
           .setEncounter(new Reference()
             .setType(ResourceType.ENCOUNTER.typeName())
-            .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()))
-          .setSubject(encounterPreh.getPatient());
+            .setDisplay("Encounter shock room")
+            .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
+          .setSubject(encounterShock.getPatient());
 
         patientInitialCondition
           .addNewConditionEvidence(new ConditionEvidence()
@@ -754,8 +823,9 @@ public class T4CRestInterface extends BaseRestInterface {
             .setText("Glasgow Coma Scale Verbal"))
           .setEncounter(new Reference()
             .setType(ResourceType.ENCOUNTER.typeName())
-            .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()))
-          .setSubject(encounterPreh.getPatient());
+            .setDisplay("Encounter shock room")
+            .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
+          .setSubject(encounterShock.getPatient());
 
         domainResources.add(observation);
 
@@ -782,8 +852,9 @@ public class T4CRestInterface extends BaseRestInterface {
             .setText("Glasgow Coma Scale Eyes"))
           .setEncounter(new Reference()
             .setType(ResourceType.ENCOUNTER.typeName())
-            .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()))
-          .setSubject(encounterPreh.getPatient());
+            .setDisplay("Encounter shock room")
+            .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
+          .setSubject(encounterShock.getPatient());
 
 
         domainResources.add(observation);
@@ -809,8 +880,10 @@ public class T4CRestInterface extends BaseRestInterface {
               .setSystem("http://www.snomed.org/"))
             .setText("Sedated Patient"))
           .setEncounter(new Reference()
-            .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
-          .setSubject(encounterPreh.getPatient());
+            .setType(ResourceType.ENCOUNTER.typeName())
+            .setDisplay("Encounter shock room")
+            .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
+          .setSubject(encounterShock.getPatient());
 
 
         domainResources.add(observation);
@@ -835,8 +908,10 @@ public class T4CRestInterface extends BaseRestInterface {
               .setSystem("https://loinc.org/"))
             .setText("Pupils"))
           .setEncounter(new Reference()
-            .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
-          .setSubject(encounterPreh.getPatient());
+            .setType(ResourceType.ENCOUNTER.typeName())
+            .setDisplay("Encounter shock room")
+            .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
+          .setSubject(encounterShock.getPatient());
 
 
         domainResources.add(observation);
@@ -862,8 +937,10 @@ public class T4CRestInterface extends BaseRestInterface {
               .setSystem("https://loinc.org/"))
             .setText("Airways"))
           .setEncounter(new Reference()
-            .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
-          .setSubject(encounterPreh.getPatient());
+            .setType(ResourceType.ENCOUNTER.typeName())
+            .setDisplay("Encounter shock room")
+            .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
+          .setSubject(encounterShock.getPatient());
 
 
         domainResources.add(observation);
@@ -885,8 +962,10 @@ public class T4CRestInterface extends BaseRestInterface {
           .setCode(new CodeableConcept()
             .setText("Positive Inhalation"))
           .setEncounter(new Reference()
-            .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
-          .setSubject(encounterPreh.getPatient());
+            .setType(ResourceType.ENCOUNTER.typeName())
+            .setDisplay("Encounter shock room")
+            .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
+          .setSubject(encounterShock.getPatient());
 
 
         domainResources.add(observation);
@@ -924,8 +1003,10 @@ public class T4CRestInterface extends BaseRestInterface {
             .setText("Intubation"))
           .setOutcome(outcome)
           .setEncounter(new Reference()
-            .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
-          .setSubject(encounterPreh.getPatient());
+            .setType(ResourceType.ENCOUNTER.typeName())
+            .setDisplay("Encounter shock room")
+            .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
+          .setSubject(encounterShock.getPatient());
 
         domainResources.add(intubationFailedProcedure);
 
@@ -951,8 +1032,10 @@ public class T4CRestInterface extends BaseRestInterface {
               .setSystem("http://www.snomed.org/"))
             .setText("Chest Tube"))
           .setEncounter(new Reference()
-            .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
-          .setSubject(encounterPreh.getPatient());
+            .setType(ResourceType.ENCOUNTER.typeName())
+            .setDisplay("Encounter shock room")
+            .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
+          .setSubject(encounterShock.getPatient());
 
 
         domainResources.add(chestTubeObservation);
@@ -978,8 +1061,10 @@ public class T4CRestInterface extends BaseRestInterface {
               .setSystem("https://loinc.org/"))
             .setText("Oxygen Percentage"))
           .setEncounter(new Reference()
-            .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
-          .setSubject(encounterPreh.getPatient());
+            .setType(ResourceType.ENCOUNTER.typeName())
+            .setDisplay("Encounter shock room")
+            .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
+          .setSubject(encounterShock.getPatient());
 
         domainResources.add(oxygenPercentageObservation);
         patientInitialCondition
@@ -1003,8 +1088,10 @@ public class T4CRestInterface extends BaseRestInterface {
               .setSystem("http://www.snomed.org/"))
             .setText("External Hemorrhage"))
           .setEncounter(new Reference()
-            .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
-          .setSubject(encounterPreh.getPatient());
+            .setType(ResourceType.ENCOUNTER.typeName())
+            .setDisplay("Encounter shock room")
+            .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
+          .setSubject(encounterShock.getPatient());
 
 
         domainResources.add(hemorrhageObservation);
@@ -1029,8 +1116,10 @@ public class T4CRestInterface extends BaseRestInterface {
               .setSystem("http://www.snomed.org/"))
             .setText("Limbs Fracture"))
           .setEncounter(new Reference()
-            .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
-          .setSubject(encounterPreh.getPatient());
+            .setType(ResourceType.ENCOUNTER.typeName())
+            .setDisplay("Encounter shock room")
+            .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
+          .setSubject(encounterShock.getPatient());
 
 
         domainResources.add(limbsFractureObservation);
@@ -1056,8 +1145,10 @@ public class T4CRestInterface extends BaseRestInterface {
               .setSystem("http://www.snomed.org/"))
             .setText("Fracture Exposition"))
           .setEncounter(new Reference()
-            .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
-          .setSubject(encounterPreh.getPatient());
+            .setType(ResourceType.ENCOUNTER.typeName())
+            .setDisplay("Encounter shock room")
+            .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
+          .setSubject(encounterShock.getPatient());
 
 
         domainResources.add(fractureExpositionObservation);
@@ -1082,8 +1173,10 @@ public class T4CRestInterface extends BaseRestInterface {
               .setDisplay("Burn injury (morphologic abnormality)"))
             .setText("Burn"))
           .setEncounter(new Reference()
-            .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
-          .setSubject(encounterPreh.getPatient());
+            .setType(ResourceType.ENCOUNTER.typeName())
+            .setDisplay("Encounter shock room")
+            .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
+          .setSubject(encounterShock.getPatient());
 
         domainResources.add(burnObservation);
         patientInitialCondition
@@ -1101,7 +1194,7 @@ public class T4CRestInterface extends BaseRestInterface {
 
   }
 
-  private void addPrehToEncounter(JsonObject preh, Encounter encounterPreh, Condition traumaCondition, List<DomainResource> domainResources) {
+  private void addPrehToEncounter(JsonObject preh, Encounter encounterPreh, Condition traumaCondition, List<Resource> domainResources) {
     String territorialArea = preh.getString("territorialArea");
     Boolean isCarAccident = preh.getBoolean("isCarAccident");
     Boolean bPleuralDecompression = preh.getBoolean("bPleuralDecompression");
@@ -1156,7 +1249,9 @@ public class T4CRestInterface extends BaseRestInterface {
             .setSystem("http://www.snomed.org/"))
           .setText("Pleural Decompression"))
         .setEncounter(new Reference()
-          .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
+          .setDisplay("Encounter pre ospedalizzazione")
+          .setType(ResourceType.ENCOUNTER.typeName())
+          .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()))
         .setSubject(new Reference()
           .setReference(encounterPreh.getPatient().getReference()));
 
@@ -1178,7 +1273,9 @@ public class T4CRestInterface extends BaseRestInterface {
             .setSystem("http://www.snomed.org/"))
           .setText("Blood Protocol"))
         .setEncounter(new Reference()
-          .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
+          .setDisplay("Encounter pre ospedalizzazione")
+          .setType(ResourceType.ENCOUNTER.typeName())
+          .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()))
         .setSubject(encounterPreh.getPatient());
 
       domainResources.add(procedure);
@@ -1201,7 +1298,9 @@ public class T4CRestInterface extends BaseRestInterface {
         .addNewUsedCode(new CodeableConcept()
           .setText("T-Pod Responder"))
         .setEncounter(new Reference()
-          .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
+          .setDisplay("Encounter pre ospedalizzazione")
+          .setType(ResourceType.ENCOUNTER.typeName())
+          .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()))
         .setSubject(encounterPreh.getPatient());
 
       domainResources.add(procedure);
@@ -1226,7 +1325,9 @@ public class T4CRestInterface extends BaseRestInterface {
         .setStatus("final")
         .setValueBoolean(true)
         .setEncounter(new Reference()
-          .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
+          .setDisplay("Encounter pre ospedalizzazione")
+          .setType(ResourceType.ENCOUNTER.typeName())
+          .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()))
         .setSubject(encounterPreh.getPatient());
 
       domainResources.add(observationAnisocoria);
@@ -1251,7 +1352,9 @@ public class T4CRestInterface extends BaseRestInterface {
         .setStatus("final")
         .setValueBoolean(true)
         .setEncounter(new Reference()
-          .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
+          .setDisplay("Encounter pre ospedalizzazione")
+          .setType(ResourceType.ENCOUNTER.typeName())
+          .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()))
         .setSubject(encounterPreh.getPatient());
 
       domainResources.add(observationMidriasi);
@@ -1276,7 +1379,7 @@ public class T4CRestInterface extends BaseRestInterface {
         .setStatus("final")
         .setValueBoolean(true)
         .setEncounter(new Reference()
-          .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
+          .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()))
         .setSubject(encounterPreh.getPatient());
       domainResources.add(observationMotility);
       traumaCondition
@@ -1298,7 +1401,9 @@ public class T4CRestInterface extends BaseRestInterface {
             .setSystem("https://loinc.org/"))
           .setText("Glasgow Coma Scale Total"))
         .setEncounter(new Reference()
-          .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
+          .setDisplay("Encounter pre ospedalizzazione")
+          .setType(ResourceType.ENCOUNTER.typeName())
+          .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()))
         .setSubject(encounterPreh.getPatient());
       domainResources.add(dGcs);
       traumaCondition
@@ -1326,7 +1431,9 @@ public class T4CRestInterface extends BaseRestInterface {
             .setSystem("https://loinc.org/"))
           .setText("Worst Blood Pressure Observation"))
         .setEncounter(new Reference()
-          .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
+          .setDisplay("Encounter pre ospedalizzazione")
+          .setType(ResourceType.ENCOUNTER.typeName())
+          .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()))
         .setSubject(encounterPreh.getPatient());
 
       traumaCondition
@@ -1353,7 +1460,9 @@ public class T4CRestInterface extends BaseRestInterface {
             .setSystem("https://loinc.org/"))
           .setText("Worst Respiratory Rate Observation"))
         .setEncounter(new Reference()
-          .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
+          .setDisplay("Encounter pre ospedalizzazione")
+          .setType(ResourceType.ENCOUNTER.typeName())
+          .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()))
         .setSubject(encounterPreh.getPatient());
       domainResources.add(worstRespiratoryRateObservation);
 
@@ -1366,7 +1475,7 @@ public class T4CRestInterface extends BaseRestInterface {
     }
   }
 
-  private void addAnamnesi(JsonObject anamnesisJsonObject, Encounter encounter, Condition traumaCondition, List<DomainResource> domainResources) {
+  private void addAnamnesi(JsonObject anamnesisJsonObject, Encounter encounter, Condition traumaCondition, List<Resource> domainResources) {
 
     Boolean antiplatelets = anamnesisJsonObject.getBoolean("antiplatelets");
     Boolean anticoagulants = anamnesisJsonObject.getBoolean("anticoagulants");
@@ -1383,6 +1492,8 @@ public class T4CRestInterface extends BaseRestInterface {
       .setId(UUID.randomUUID().toString())
       .setSubject(encounter.getPatient())
       .setEncounter(new Reference()
+        .setDisplay("Encounter pre ospedalizzazione")
+        .setType(ResourceType.ENCOUNTER.typeName())
         .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounter.getId()));
     if (anticoagulants != null || nao != null || antiplatelets != null) {
       traumaCondition.addNewConditionEvidence(new ConditionEvidence()
@@ -1390,6 +1501,7 @@ public class T4CRestInterface extends BaseRestInterface {
           .setText("Anamnesis evidence"))
         .addNewDetail(new Reference()
           .setType(ResourceType.PROCEDURE.typeName())
+          .setDisplay("Anamnesi procedure")
           .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + anamnesisProcedure.getId())));
       domainResources.add(anamnesisProcedure);
     }
@@ -1405,7 +1517,8 @@ public class T4CRestInterface extends BaseRestInterface {
           .setText("Use of anti-platelets"))
         .setValueBoolean(antiplatelets)
         .setEncounter(new Reference()
-          .setType("Encounter")
+          .setType(ResourceType.ENCOUNTER.typeName())
+          .setDisplay("Encounter pre ospedalizzazione")
           .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounter.getId()))
         .addNewPartOfReference(new Reference()
           .setType(ResourceType.PROCEDURE.typeName())
@@ -1434,11 +1547,12 @@ public class T4CRestInterface extends BaseRestInterface {
           .setText("Use of anti-platelets"))
         .setValueBoolean(anticoagulants)
         .setEncounter(new Reference()
-          .setType("Encounter")
+          .setType(ResourceType.ENCOUNTER.typeName())
+          .setDisplay("Encounter pre ospedalizzazione")
           .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounter.getId()))
         .addNewPartOfReference(new Reference()
           .setType(ResourceType.PROCEDURE.typeName())
-          .setReference("/" + ResourceType.PROCEDURE + "/" + anamnesisProcedure.getId()));
+          .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + anamnesisProcedure.getId()));
       domainResources.add(observation);
     }
     if (nao != null) {
@@ -1453,11 +1567,12 @@ public class T4CRestInterface extends BaseRestInterface {
           .setText("Use of new oral anti-coagulants"))
         .setValueBoolean(nao)
         .setEncounter(new Reference()
-          .setType("Encounter")
+          .setType(ResourceType.ENCOUNTER.typeName())
+          .setDisplay("Encounter pre ospedalizzazione")
           .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounter.getId()))
         .addNewPartOfReference(new Reference()
           .setType(ResourceType.PROCEDURE.typeName())
-          .setReference("/" + ResourceType.PROCEDURE + "/" + anamnesisProcedure.getId()));
+          .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + anamnesisProcedure.getId()));
       domainResources.add(observation);
     }
 
@@ -1555,7 +1670,7 @@ public class T4CRestInterface extends BaseRestInterface {
     }
   }
 
-  private void addIssToEncounterShock(JsonObject iss, Encounter encounter, Condition conditionIssAssessment, List<DomainResource> resources) {
+  private void addIssToEncounterShock(JsonObject iss, Encounter encounter, Condition conditionIssAssessment, List<Resource> resources) {
     //Condition for iss, referenced in encounter resource
     conditionIssAssessment
       .setCode(new CodeableConcept()
@@ -1565,7 +1680,10 @@ public class T4CRestInterface extends BaseRestInterface {
             .setDisplay("Traumatic injury"))
 //        .addNewCoding(new Coding()
 //          .setDisplay("iss"))
-      )
+      ).setEncounter(new Reference()
+      .setType(ResourceType.ENCOUNTER.typeName())
+      .setDisplay("Encounter shock room")
+      .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounter.getId()))
       .addNewCategory(new CodeableConcept()
         .addNewCoding(new Coding()
           .setDisplay("Encounter Diagnosis")
@@ -1589,7 +1707,9 @@ public class T4CRestInterface extends BaseRestInterface {
 
           Observation observation = new Observation()
             .setEncounter(new Reference()
-              .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounter.getId()));
+              .setDisplay("Encounter shock room")
+              .setType(ResourceType.ENCOUNTER.typeName())
+              .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounter.getId()));
 
           resources.add(observation);
 
@@ -1600,7 +1720,7 @@ public class T4CRestInterface extends BaseRestInterface {
                   .setDisplay("Injury severity score Calculated")
                   .setCode("74471-4")
                   .setUserSelected(true))
-                .setText("Physical observation for injury severity score"))
+                .setText(entryGroup.getKey() + " iss score"))
               .setId(uuid)
               //set iss value
               .setValueInteger((Integer) entryGroup.getValue())
@@ -1630,10 +1750,8 @@ public class T4CRestInterface extends BaseRestInterface {
                 .setText("Group Total Iss  " + entry.getKey() + " Score"))
               .setId(uuid)
               //set iss value
-              .setValueInteger((Integer) entryGroup.getValue())
-              //set body site name
-              .setBodySite(new CodeableConcept()
-                .setText(entry.getKey()));
+              .setValueInteger((Integer) entryGroup.getValue());
+            //set body site name
 
             conditionIssAssessment
               .addNewConditionStage(new ConditionStage()
@@ -1657,17 +1775,15 @@ public class T4CRestInterface extends BaseRestInterface {
               .setDisplay("Injury severity score Calculated")
               .setCode("74471-4")
               .setUserSelected(true))
-            .addNewCoding(new Coding()
-              .setDisplay("Total Iss"))
-            .setText("Physical observation for injury severity score"))
+            .setText("Total Iss"))
           .setId(UUID.randomUUID().toString())
 
           .setValueInteger((Integer) entry.getValue())
           //set body site name
-          .setBodySite(new CodeableConcept()
-            .setText(entry.getKey()))
           .setEncounter(new Reference()
-            .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounter.getId()));
+            .setDisplay("Encounter shock room")
+            .setType(ResourceType.ENCOUNTER.typeName())
+            .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounter.getId()));
         resources.add(totalIssObservation);
 
         conditionIssAssessment
@@ -1697,13 +1813,13 @@ public class T4CRestInterface extends BaseRestInterface {
       .setCondition(new Reference()
         .setType(ResourceType.CONDITION.typeName())
         .setDisplay("Injury Severity Score")
-        .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.BASE + "/" + FhirUtils.CONDITION_TYPE + "/"
+        .setReference("/" + FhirUtils.BASE + "/" + ResourceType.CONDITION.typeName() + "/"
           + conditionIssAssessment.getId())));
 
 
   }
 
-  private void addTraumaInformation(JsonObject traumaInfo, Encounter encounterPreh, Condition traumaCondition, List<DomainResource> domainResources) {
+  private void addTraumaInformation(JsonObject traumaInfo, Encounter encounterPreh, Encounter encounterShock, Encounter encounterAll, Condition traumaCondition, List<Resource> domainResources) {
 
     EncounterHospitalization encounterHospitalization = new EncounterHospitalization();
     String vehicle = traumaInfo.getString("vehicle");
@@ -1732,7 +1848,7 @@ public class T4CRestInterface extends BaseRestInterface {
     String dob = traumaInfo.getString("dob");
     Integer age = traumaInfo.getInteger("age");
 
-    createPatient(name, surname, gender, age, dob, erDeceased, encounterPreh, domainResources);
+    createPatient(name, surname, gender, age, dob, erDeceased, encounterPreh, encounterShock, encounterAll, domainResources);
 
     String accidentDate = traumaInfo.getString("accidentDate");
     String accidentTime = traumaInfo.getString("accidentTime");
@@ -1790,7 +1906,8 @@ public class T4CRestInterface extends BaseRestInterface {
           .setText("Accident Type Observation"))
         .setId(UUID.randomUUID().toString())
         .setEncounter(new Reference()
-          .setReference("/" + FhirUtils.ENCOUNTER_TYPE + "/" + encounterPreh.getId()))
+          .setDisplay("Encounter pre ospedalizzazione")
+          .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()))
         .setSubject(encounterPreh.getPatient())
         .setStatus("final")
         .setValueString(accidentType);
@@ -1829,8 +1946,10 @@ public class T4CRestInterface extends BaseRestInterface {
 
   }
 
-  private void createPatient(String name, String surname, String gender, int age, String dob, Boolean erDeceased, Encounter encounter,
-                             List<DomainResource> resources) {
+  private void createPatient(String name, String surname, String gender, int age, String dob, Boolean erDeceased, Encounter encounterPreh,
+                             Encounter shock,
+                             Encounter all,
+                             List<Resource> resources) {
 
 
     surname = surname == null ? "" : surname;
@@ -1863,11 +1982,12 @@ public class T4CRestInterface extends BaseRestInterface {
       patient
         .setGender(gender);
     }
-    encounter.setPatient(new Reference()
+    encounterPreh.setPatient(new Reference()
       .setType(ResourceType.PATIENT.typeName())
-      .setReference(FhirUtils.GATEWAY_ENDPOINT + "/" + FhirUtils.BASE + "/" + FhirUtils.PATIENT_TYPE + "/" + patient.getId())
       .setDisplay(name + " " + surname));
     resources.add(patient);
+    all.setPatient(encounterPreh.getPatient());
+    shock.setPatient(encounterPreh.getPatient());
   }
 
   private void handleWelcome(RoutingContext routingContext) {

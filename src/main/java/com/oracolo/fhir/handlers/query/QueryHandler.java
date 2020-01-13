@@ -1,6 +1,6 @@
 package com.oracolo.fhir.handlers.query;
 
-import com.oracolo.fhir.model.ResourceType;
+import com.oracolo.fhir.utils.ResourceType;
 import io.vertx.core.MultiMap;
 import io.vertx.core.json.JsonObject;
 
@@ -20,6 +20,8 @@ public interface QueryHandler {
         return new ConditionQueryHandler();
       case OBSERVATION:
         return new ObservationQueryHandler();
+      case ENCOUNTER:
+        return new EncounterQueryHandler();
       default:
         return new BaseQueryHandler();
     }
