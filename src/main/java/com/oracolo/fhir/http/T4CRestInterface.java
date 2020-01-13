@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 public class T4CRestInterface extends BaseRestInterface {
   private static final Logger LOGGER = Logger.getLogger(FhirServer.class.getName());
   private DatabaseService databaseService;
+  private Reference patientReference;
 
 
   @Override
@@ -256,12 +257,7 @@ public class T4CRestInterface extends BaseRestInterface {
       encounterShock.getDiagnosis().forEach(encounterAll::addNewDiagnosis);
     }
 
-    JsonObject ePreh = JsonObject.mapFrom(encounterPreh);
-    JsonObject eShock = JsonObject.mapFrom(encounterShock);
-    JsonObject eAll = JsonObject.mapFrom(encounterAll);
-    JsonObject prehCondition = JsonObject.mapFrom(traumaCondition);
-    JsonObject issConditionJsonObject = JsonObject.mapFrom(issCondition);
-    JsonObject conditionBeforeShock = JsonObject.mapFrom(patientInitialCondition);
+
     domainResources.add(encounterAll.setPatient(encounterPreh.getPatient()));
     domainResources.add(encounterShock.setPatient(encounterPreh.getPatient()));
     domainResources.add(encounterPreh);
@@ -271,6 +267,7 @@ public class T4CRestInterface extends BaseRestInterface {
       .stream()
       .filter(resource -> ResourceType.valueOf(resource.getResourceType().toUpperCase()).equals(ResourceType.OBSERVATION))
       .map(JsonObject::mapFrom)
+      .peek(json -> json.put("subject", JsonObject.mapFrom(patientReference)))
       .peek(json -> json.put("meta", JsonObject.mapFrom(new Metadata()
         .setLastUpdated(Instant.now())
         .setVersionId(UUID.randomUUID().toString()))))
@@ -279,6 +276,7 @@ public class T4CRestInterface extends BaseRestInterface {
       .stream()
       .filter(resource -> ResourceType.valueOf(resource.getResourceType().toUpperCase()).equals(ResourceType.PROCEDURE))
       .map(JsonObject::mapFrom)
+      .peek(json -> json.put("subject", JsonObject.mapFrom(patientReference)))
       .peek(json -> json.put("meta", JsonObject.mapFrom(new Metadata()
         .setLastUpdated(Instant.now())
         .setVersionId(UUID.randomUUID().toString()))))
@@ -287,6 +285,7 @@ public class T4CRestInterface extends BaseRestInterface {
       .stream()
       .filter(resource -> ResourceType.valueOf(resource.getResourceType().toUpperCase()).equals(ResourceType.ENCOUNTER))
       .map(JsonObject::mapFrom)
+      .peek(json -> json.put("patient", JsonObject.mapFrom(patientReference)))
       .peek(json -> json.put("meta", JsonObject.mapFrom(new Metadata()
         .setLastUpdated(Instant.now())
         .setVersionId(UUID.randomUUID().toString()))))
@@ -298,6 +297,7 @@ public class T4CRestInterface extends BaseRestInterface {
       .peek(json -> json.put("meta", JsonObject.mapFrom(new Metadata()
         .setLastUpdated(Instant.now())
         .setVersionId(UUID.randomUUID().toString()))))
+      .peek(json -> json.put("subject", JsonObject.mapFrom(patientReference)))
       .collect(Collectors.toList());
     Promise<JsonObject> encountersBulkOperationsPromise = Promise.promise();
     Promise<JsonObject> procedureBulkOperationsPromise = Promise.promise();
@@ -318,7 +318,10 @@ public class T4CRestInterface extends BaseRestInterface {
         routingContext.response()
           .putHeader(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON)
           .setStatusCode(HttpResponseStatus.CREATED.code()).end(new JsonObject()
-          .put("encounterId", encounterAll.getId()).toBuffer());
+          .put("encounterAllId", encounterAll.getId())
+          .put("encounterShockId", encounterShock.getId())
+          .put("encounterPrehId", encounterPreh.getId())
+          .toBuffer());
       } else {
         routingContext.response().setStatusCode(HttpResponseStatus.BAD_REQUEST.code()).end();
       }
@@ -1982,12 +1985,14 @@ public class T4CRestInterface extends BaseRestInterface {
       patient
         .setGender(gender);
     }
-    encounterPreh.setPatient(new Reference()
-      .setType(ResourceType.PATIENT.typeName())
-      .setDisplay(name + " " + surname));
+
     resources.add(patient);
-    all.setPatient(encounterPreh.getPatient());
-    shock.setPatient(encounterPreh.getPatient());
+
+    this.patientReference = new Reference()
+      .setReference("/#" + patient.getId())
+      .setDisplay(name + " " + surname + " età " + age)
+      .setType(ResourceType.PATIENT.typeName());
+
   }
 
   private void handleWelcome(RoutingContext routingContext) {

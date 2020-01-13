@@ -48,11 +48,15 @@ public class DatabaseServiceImpl implements DatabaseService {
             resultFromFetch.remove("_id");
             handler.handle(Future.succeededFuture(resultFromFetch));
           } else {
-            handler.handle(ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), insertRes.cause().getMessage()));
+            handler.handle(ServiceException.fail(FhirUtils.MONGODB_CONNECTION_FAIL, insertRes.cause().getMessage()));
           }
         });
+        //client is trying to delete a resource that does not exist but it is ok
       } else {
-        handler.handle(ServiceException.fail(HttpResponseStatus.GONE.code(), "Resource already deleted"));
+        ServiceException exception = (ServiceException) res.cause();
+
+        handler.handle(ServiceException.fail(exception.failureCode(), res.cause().getMessage()));
+
       }
     });
     return this;
@@ -120,12 +124,6 @@ public class DatabaseServiceImpl implements DatabaseService {
               .map(JsonObject::mapFrom)
               .filter(jsonObject -> encountersIds.contains(jsonObject.getString("id")))
               .forEach(encounterJsonObject -> {
-                Metadata metaEncounter = Json.decodeValue(encounterJsonObject.getJsonObject("meta").encode(), Metadata.class);
-                bundle.addNewEntry(new BundleEntry()
-                  .setResponse(new BundleResponse()
-                    .setEtag(metaEncounter.getVersionId())
-                    .setLastModified(metaEncounter.getLastUpdated().toString()))
-                  .setResource(encounterJsonObject));
                 for (ResourceType type : ResourceType.values()) {
                   JsonArray resources = encounterJsonObject.getJsonArray(type.getCollection());
                   if (resources != null) {
@@ -137,8 +135,15 @@ public class DatabaseServiceImpl implements DatabaseService {
                           .setLastModified(meta.getLastUpdated().toString()))
                         .setResource(resource));
                     });
+                    encounterJsonObject.remove(type.getCollection());
                   }
                 }
+                Metadata metaEncounter = Json.decodeValue(encounterJsonObject.getJsonObject("meta").encode(), Metadata.class);
+                bundle.addNewEntry(new BundleEntry()
+                  .setResponse(new BundleResponse()
+                    .setEtag(metaEncounter.getVersionId())
+                    .setLastModified(metaEncounter.getLastUpdated().toString()))
+                  .setResource(encounterJsonObject));
               });
             bundle
               .setTotal(bundle.getEntry().size());

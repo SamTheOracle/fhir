@@ -6,12 +6,10 @@ import com.oracolo.fhir.handlers.query.QueryHandler;
 import com.oracolo.fhir.handlers.response.ResponseHandler;
 import com.oracolo.fhir.handlers.response.format.BaseFormatHandler;
 import com.oracolo.fhir.handlers.validator.ValidationHandler;
-import com.oracolo.fhir.model.backboneelements.BundleRequest;
 import com.oracolo.fhir.model.domain.Encounter;
 import com.oracolo.fhir.model.domain.OperationOutcome;
 import com.oracolo.fhir.model.domain.OperationOutcomeIssue;
 import com.oracolo.fhir.model.elements.Metadata;
-import com.oracolo.fhir.model.resources.Bundle;
 import com.oracolo.fhir.utils.ErrorFormat;
 import com.oracolo.fhir.utils.FhirHttpHeader;
 import com.oracolo.fhir.utils.FhirUtils;
@@ -22,7 +20,6 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.MultiMap;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpServerResponse;
-import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
@@ -81,44 +78,7 @@ public class FhirServer extends BaseRestInterface {
     });
   }
 
-  private void handleEncounterEverything(RoutingContext routingContext) {
-    String id = routingContext.pathParam(FhirUtils.ID);
-    MultiMap headers = routingContext.request().headers();
-    MultiMap queryParams = routingContext.request().params();
-    String acceptableType = routingContext.getAcceptableContentType();
-    if (acceptableType == null) {
-      acceptableType = FhirHttpHeader.APPLICATION_JSON.value();
-    }
 
-
-    HttpServerResponse serverResponse = routingContext.response();
-    ResponseHandler
-      .createSearchOperationHandler()
-      .withService(databaseService)
-      .withFormatHandler(new BaseFormatHandler()
-        .withAcceptHeader(acceptableType))
-      .createResponseAsync(serverResponse, (service, promise)
-        -> service.findEverythingAboutEncounter(id, promise))
-      .releaseAsync()
-      .future()
-      .onSuccess(HttpServerResponse::end)
-      .onFailure(throwable -> {
-
-        if (throwable instanceof ServiceException) {
-          int code = ((ServiceException) throwable).failureCode();
-          String message = throwable.getMessage();
-          ErrorFormat errorFormat = ErrorFormat.createFormat(code);
-          routingContext.put("error", message);
-          routingContext.put("code", errorFormat.getFhirErrorCode());
-          routingContext.fail(code);
-
-        } else {
-          routingContext.put("error", throwable.getMessage());
-          routingContext.put("code", "invariant");
-          routingContext.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
-        }
-      });
-  }
 
 
   private void loadRoutes(Router restApi) {
@@ -249,6 +209,45 @@ public class FhirServer extends BaseRestInterface {
         //Check if the documents have been deleted
 
 
+      });
+  }
+
+  private void handleEncounterEverything(RoutingContext routingContext) {
+    String id = routingContext.pathParam(FhirUtils.ID);
+    MultiMap headers = routingContext.request().headers();
+    MultiMap queryParams = routingContext.request().params();
+    String acceptableType = routingContext.getAcceptableContentType();
+    if (acceptableType == null) {
+      acceptableType = FhirHttpHeader.APPLICATION_JSON.value();
+    }
+
+
+    HttpServerResponse serverResponse = routingContext.response();
+    ResponseHandler
+      .createSearchOperationHandler()
+      .withService(databaseService)
+      .withFormatHandler(new BaseFormatHandler()
+        .withAcceptHeader(acceptableType))
+      .createResponseAsync(serverResponse, (service, promise)
+        -> service.findEverythingAboutEncounter(id, promise))
+      .releaseAsync()
+      .future()
+      .onSuccess(HttpServerResponse::end)
+      .onFailure(throwable -> {
+
+        if (throwable instanceof ServiceException) {
+          int code = ((ServiceException) throwable).failureCode();
+          String message = throwable.getMessage();
+          ErrorFormat errorFormat = ErrorFormat.createFormat(code);
+          routingContext.put("error", message);
+          routingContext.put("code", errorFormat.getFhirErrorCode());
+          routingContext.fail(code);
+
+        } else {
+          routingContext.put("error", throwable.getMessage());
+          routingContext.put("code", "invariant");
+          routingContext.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
+        }
       });
   }
 
@@ -473,35 +472,6 @@ public class FhirServer extends BaseRestInterface {
           routingContext.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
         }
       });
-
-//    fetchResource
-//      .future()
-//      //if the last updated patient has tag DELETED in meta, it still succedes
-//      .onSuccess(jsonObject -> {
-//        String newVersionId = UUID.randomUUID().toString();
-//        Metadata meta = Json.decodeValue(jsonObject.getJsonObject("meta").encode(), Metadata.class)
-//          .setLastUpdated(Instant.now())
-//          .setVersionId(newVersionId)
-//          .addNewTag(FhirUtils.DELETED);
-//        jsonObject.put("meta", JsonObject.mapFrom(meta));
-//
-//      }).onFailure(throwable -> {
-//      if (throwable instanceof ServiceException) {
-//
-//        int code = ((ServiceException) throwable).failureCode();
-//        String message = throwable.getMessage();
-//        ErrorFormat errorFormat = ErrorFormat.createFormat(code);
-//        routingContext.put("error", message);
-//        routingContext.put("code", errorFormat.getFhirErrorCode());
-//        routingContext.fail(code);
-//      } else {
-//        routingContext.put("error", throwable.getMessage());
-//        routingContext.put("code", "invariant");
-//        routingContext.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
-//      }
-//
-//    });
-
   }
 
   private void handleResourceSearch(RoutingContext routingContext, ResourceType type) {
@@ -548,37 +518,6 @@ public class FhirServer extends BaseRestInterface {
   }
 
   private void handleBatchOperations(RoutingContext routingContext) {
-
-    JsonObject bundleJsonObject = routingContext.getBodyAsJson();
-    ValidationHandler validationHandler = ValidationHandler.createValidator();
-    boolean isValidFhirResource = validationHandler.validateAgainstJsonSchema(bundleJsonObject);
-    boolean isValidFhirClass = validationHandler.validateAgainstClass(bundleJsonObject, Bundle.class);
-    if (!isValidFhirClass || !isValidFhirResource) {
-      routingContext.put("error", "Not valid resource");
-      routingContext.put("code", "invariant");
-      routingContext.fail(HttpResponseStatus.BAD_REQUEST.code());
-    }
-    String acceptableType = routingContext.getAcceptableContentType();
-    if (acceptableType == null) {
-      acceptableType = FhirHttpHeader.APPLICATION_JSON.value();
-    }
-    FhirHttpHeader accept = FhirHttpHeader.of(FhirHttpHeader.ACCEPT, acceptableType);
-    String preferHeader = routingContext.request().headers().get(FhirHttpHeader.PREFER);
-    FhirHttpHeader prefer = FhirHttpHeader.fromPreferString(preferHeader);
-
-    Bundle bundle = Json.decodeValue(bundleJsonObject.encodePrettily(), Bundle.class);
-
-    bundle.getEntry()
-      .forEach(bundleEntry -> {
-        BundleRequest bundleRequest = bundleEntry.getRequest();
-        String method = bundleRequest.getMethod();
-        switch (method) {
-          case "GET":
-            String url = bundleRequest.getUrl();
-            String resourceType = url.split("/")[1];
-
-        }
-      });
 
   }
 }

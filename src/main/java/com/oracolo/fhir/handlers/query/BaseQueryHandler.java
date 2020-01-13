@@ -14,6 +14,8 @@ public class BaseQueryHandler implements QueryHandler {
   public final static String _id = "_id";
   public final static String _lastUpdated = "_lastUpdated";
   public final static String _text = "_text";
+  public final static String _content = "_content";
+  public final static String _code = "_code";
   protected MultiMap params;
   private List<String> ifMatchValues, ifModifiedSinceValues, ifNoneMatchValues;
 
@@ -57,11 +59,11 @@ public class BaseQueryHandler implements QueryHandler {
             .put(FhirUtils.ID, v)));
           andOperations.add(new JsonObject().put("$or", queryParametersId));
           break;
-        case _text:
-          String textSearchFinalValue = String.join(" ", params.getAll(queryName));
-          andOperations.add(new JsonObject().put("$text", new JsonObject()
-            .put("$search", textSearchFinalValue)));
-          break;
+        case _content:
+          String contentFinalValue = String.join(" ", params.getAll(queryName));
+          andOperations.add(new JsonObject()
+            .put("$text", new JsonObject()
+              .put("$search", contentFinalValue)));
         default:
           break;
 

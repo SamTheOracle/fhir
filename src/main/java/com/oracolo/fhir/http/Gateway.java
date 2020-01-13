@@ -79,7 +79,7 @@ public class Gateway extends BaseRestInterface {
 
   private void handleHttpResponseFromFhir(HttpServerResponse serverResponse, AsyncResult<HttpResponse<Buffer>> httpResponseAsyncResult) {
     if (httpResponseAsyncResult.succeeded()) {
-      HttpResponse response = httpResponseAsyncResult.result();
+      HttpResponse<Buffer> response = httpResponseAsyncResult.result();
       Buffer body = response.bodyAsBuffer();
       response.headers().forEach(header -> serverResponse.putHeader(header.getKey(), header.getValue()));
       if (body == null) {

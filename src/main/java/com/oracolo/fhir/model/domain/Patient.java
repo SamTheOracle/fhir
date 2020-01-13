@@ -197,8 +197,17 @@ public class Patient extends DomainResource {
    */
   private List<Link> link;
 
+  private List<PatientContact> contact;
 
   public Patient() {
+  }
+
+  public List<PatientContact> getContact() {
+    return contact;
+  }
+
+  public void setContact(List<PatientContact> contact) {
+    this.contact = contact;
   }
 
   @Override
