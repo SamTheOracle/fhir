@@ -2,6 +2,8 @@ package com.oracolo.fhir.database;
 
 import com.oracolo.fhir.model.backboneelements.BundleEntry;
 import com.oracolo.fhir.model.backboneelements.BundleResponse;
+import com.oracolo.fhir.model.domain.OperationOutcome;
+import com.oracolo.fhir.model.domain.OperationOutcomeIssue;
 import com.oracolo.fhir.model.elements.Metadata;
 import com.oracolo.fhir.model.resources.Bundle;
 import com.oracolo.fhir.utils.FhirUtils;
@@ -128,12 +130,15 @@ public class DatabaseServiceImpl implements DatabaseService {
                   JsonArray resources = encounterJsonObject.getJsonArray(type.getCollection());
                   if (resources != null) {
                     resources.stream().map(JsonObject::mapFrom).forEach(resource -> {
+
                       Metadata meta = Json.decodeValue(resource.getJsonObject("meta").encode(), Metadata.class);
-                      bundle.addNewEntry(new BundleEntry()
-                        .setResponse(new BundleResponse()
-                          .setEtag(meta.getVersionId())
-                          .setLastModified(meta.getLastUpdated().toString()))
-                        .setResource(resource));
+                      if (!meta.getTag().contains(FhirUtils.DELETED)) {
+                        bundle.addNewEntry(new BundleEntry()
+                          .setResponse(new BundleResponse()
+                            .setEtag(meta.getVersionId())
+                            .setLastModified(meta.getLastUpdated().toString()))
+                          .setResource(resource));
+                      }
                     });
                     encounterJsonObject.remove(type.getCollection());
                   }
@@ -237,9 +242,33 @@ public class DatabaseServiceImpl implements DatabaseService {
         result.result()
           .stream()
           .peek(jsonObject -> jsonObject.remove("_id"))
-          .map(jsonObject -> Json.decodeValue(jsonObject.encodePrettily()))
-          .forEach(object -> bundle.addNewEntry(new BundleEntry()
-            .setResource(object)));
+          .forEach(json -> {
+            Metadata meta = Json.decodeValue(json.getJsonObject("meta").encode(), Metadata.class);
+            if (meta.getTag() != null && meta.getTag().contains(FhirUtils.DELETED)) {
+              String resourceType = json.getString("resourceType");
+              String id = json.getString("id");
+              String vid = meta.getVersionId();
+              String lastModified = meta.getLastUpdated().toString();
+              bundle.addNewEntry(new BundleEntry()
+                .setResponse(new BundleResponse()
+                  .setLastModified(lastModified)
+                  .setEtag(vid)
+                  .setLocation("/" + resourceType + "/" + id + "/_history/" + vid))
+                .setResource(new OperationOutcome()
+                  .setIssue(new OperationOutcomeIssue()
+                    .setCode("deleted")
+                    .setSeverity("error")
+                    .setDiagnostics("Resource already deleted"))
+                ));
+            } else {
+              bundle.addNewEntry(new BundleEntry()
+                .setResponse(new BundleResponse()
+                  .setLastModified(meta.getLastUpdated().toString())
+                  .setEtag(meta.getVersionId()))
+                .setResource(json));
+            }
+
+          });
         handler.handle(Future.succeededFuture(JsonObject.mapFrom(bundle)));
 
       } else if (result.succeeded() && result.result() != null && result.result().size() == 0) {
