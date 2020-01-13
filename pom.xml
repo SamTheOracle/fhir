@@ -23,6 +23,8 @@
     <junit-jupiter.version>5.4.0</junit-jupiter.version>
 
     <main.verticle>com.oracolo.fhir.ApplicationBootstrap</main.verticle>
+    <exec.mainClass>com.oracolo.fhir.ApplicationBootstrap</exec.mainClass>
+
   </properties>
 
   <dependencyManagement>
