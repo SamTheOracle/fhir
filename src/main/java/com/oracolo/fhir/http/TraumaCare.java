@@ -2088,7 +2088,7 @@ public class TraumaCare extends BaseRestInterface {
         .addNewCoding(new Coding()
           .setDisplay("Injury severity score Calculated")
           .setCode("74471-4")
-          .setUserSelected(true))
+          .setSystem("https://www.loinc.org"))
         .setText("Total Iss"))
       .setId(UUID.randomUUID().toString())
       .setValueInteger(totalIssScore)
@@ -2141,7 +2141,7 @@ public class TraumaCare extends BaseRestInterface {
                   .addNewCoding(new Coding()
                     .setDisplay("Injury severity score Calculated")
                     .setCode("74471-4")
-                    .setUserSelected(true))
+                    .setSystem("https://www.loinc.org"))
                   .setText(entryGroup.getKey() + " iss score"))
                 .setValueInteger((Integer) entryGroup.getValue()));
 
@@ -2152,7 +2152,7 @@ public class TraumaCare extends BaseRestInterface {
                   .addNewCoding(new Coding()
                     .setDisplay("Injury severity score Calculated")
                     .setCode("74471-4")
-                    .setUserSelected(true))
+                    .setSystem("https://www.loinc.org"))
                   .setText("Group Total Iss " + entry.getKey() + " iss score"))
                 .setValueInteger((Integer) entryGroup.getValue()));
 
