@@ -3,6 +3,7 @@ package com.oracolo.fhir.http;
 import com.oracolo.fhir.BaseRestInterface;
 import com.oracolo.fhir.database.DatabaseService;
 import com.oracolo.fhir.model.Resource;
+import com.oracolo.fhir.model.aggregations.AggregationType;
 import com.oracolo.fhir.model.backboneelements.*;
 import com.oracolo.fhir.model.datatypes.Coding;
 import com.oracolo.fhir.model.datatypes.HumanName;
@@ -31,27 +32,24 @@ import java.util.UUID;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-public class T4CRestInterface extends BaseRestInterface {
+public class TraumaCare extends BaseRestInterface {
   private static final Logger LOGGER = Logger.getLogger(FhirServer.class.getName());
-  private DatabaseService databaseService;
-  private Reference patientReference;
 
 
   @Override
   public void start(Promise<Void> startPromise) throws Exception {
     Router t4cRouter = Router.router(vertx);
     t4cRouter.route().handler(BodyHandler.create());
-    t4cRouter.get("/" + FhirUtils.T4CINTERFACE_MAIN_ROOT + "/welcome").handler(this::handleWelcome);
-    t4cRouter.post("/" + FhirUtils.T4CINTERFACE_MAIN_ROOT + "/reports").handler(this::handleReports);
+    t4cRouter.get("/" + FhirUtils.TRAUMACARE_BASE + "/welcome").handler(this::handleWelcome);
+    t4cRouter.post("/" + FhirUtils.TRAUMACARE_BASE + "/reports").handler(this::handleReports);
 
     createAPIServer(0, t4cRouter)
       .compose(httpServer -> {
         int port = httpServer.actualPort();
         LOGGER.info("T4C interface listening at " + port);
-        return publishHTTPEndPoint(port, FhirUtils.T4CSERVICE, FhirUtils.LOCALHOST, FhirUtils.T4CINTERFACE_MAIN_ROOT);
+        return publishHTTPEndPoint(port, FhirUtils.T4CSERVICE, FhirUtils.LOCALHOST, FhirUtils.TRAUMACARE_BASE);
       }).setHandler(publishSuccessful -> {
       if (publishSuccessful.succeeded()) {
-        this.databaseService = DatabaseService.createProxy(vertx, FhirUtils.DATABASE_SERVICE_ADDRESS);
         startPromise.complete();
       } else {
         startPromise.fail(publishSuccessful.cause());
@@ -192,6 +190,8 @@ public class T4CRestInterface extends BaseRestInterface {
     if (traumaInfo != null) {
       addTraumaInformation(traumaInfo, encounterPreh, encounterShock, encounterAll, traumaCondition, domainResources);
     }
+    Reference patientReference = encounterPreh.getPatient();
+
 
     JsonObject majorTraumaCriteria = reportJson.getJsonObject("majorTraumaCriteria");
     if (majorTraumaCriteria != null) {
@@ -221,7 +221,7 @@ public class T4CRestInterface extends BaseRestInterface {
     }
     JsonArray vitalSignsObservations = reportJson.getJsonArray("vitalSignsObservations");
     if (vitalSignsObservations != null && vitalSignsObservations.size() > 0) {
-      addVitalSignsObservations(vitalSignsObservations, encounterShock, domainResources);
+      addVitalSignsObservations(vitalSignsObservations, encounterShock, domainResources, patientReference);
     }
 
 
@@ -257,81 +257,136 @@ public class T4CRestInterface extends BaseRestInterface {
       encounterShock.getDiagnosis().forEach(encounterAll::addNewDiagnosis);
     }
 
+    encounterAll.setPatient(patientReference);
+    encounterAll.setMeta(new Metadata()
+      .setVersionId(UUID.randomUUID().toString())
+      .setLastUpdated(Instant.now()));
 
-    domainResources.add(encounterAll.setPatient(encounterPreh.getPatient()));
-    domainResources.add(encounterShock.setPatient(encounterPreh.getPatient()));
+    domainResources.add(encounterShock.setPatient(patientReference));
     domainResources.add(encounterPreh);
 
+    Promise<JsonObject> aggregationEncounterPromise = Promise.promise();
+    List<JsonObject> resourceToAggregate = domainResources
+      .stream()
+      .map(JsonObject::mapFrom)
+      .peek(json -> json.put("meta", JsonObject.mapFrom(new Metadata()
+        .setLastUpdated(Instant.now())
+        .setVersionId(UUID.randomUUID().toString()))))
+      .collect(Collectors.toList());
+    DatabaseService service = DatabaseService.createProxy(vertx, FhirUtils.DATABASE_SERVICE_ADDRESS);
 
-    List<JsonObject> observations = domainResources
-      .stream()
-      .filter(resource -> ResourceType.valueOf(resource.getResourceType().toUpperCase()).equals(ResourceType.OBSERVATION))
-      .map(JsonObject::mapFrom)
-      .peek(json -> json.put("subject", JsonObject.mapFrom(patientReference)))
-      .peek(json -> json.put("meta", JsonObject.mapFrom(new Metadata()
-        .setLastUpdated(Instant.now())
-        .setVersionId(UUID.randomUUID().toString()))))
-      .collect(Collectors.toList());
-    List<JsonObject> procedures = domainResources
-      .stream()
-      .filter(resource -> ResourceType.valueOf(resource.getResourceType().toUpperCase()).equals(ResourceType.PROCEDURE))
-      .map(JsonObject::mapFrom)
-      .peek(json -> json.put("subject", JsonObject.mapFrom(patientReference)))
-      .peek(json -> json.put("meta", JsonObject.mapFrom(new Metadata()
-        .setLastUpdated(Instant.now())
-        .setVersionId(UUID.randomUUID().toString()))))
-      .collect(Collectors.toList());
-    List<JsonObject> encounters = domainResources
-      .stream()
-      .filter(resource -> ResourceType.valueOf(resource.getResourceType().toUpperCase()).equals(ResourceType.ENCOUNTER))
-      .map(JsonObject::mapFrom)
-      .peek(json -> json.put("patient", JsonObject.mapFrom(patientReference)))
-      .peek(json -> json.put("meta", JsonObject.mapFrom(new Metadata()
-        .setLastUpdated(Instant.now())
-        .setVersionId(UUID.randomUUID().toString()))))
-      .collect(Collectors.toList());
-    List<JsonObject> conditions = domainResources
-      .stream()
-      .filter(resource -> ResourceType.valueOf(resource.getResourceType().toUpperCase()).equals(ResourceType.CONDITION))
-      .map(JsonObject::mapFrom)
-      .peek(json -> json.put("meta", JsonObject.mapFrom(new Metadata()
-        .setLastUpdated(Instant.now())
-        .setVersionId(UUID.randomUUID().toString()))))
-      .peek(json -> json.put("subject", JsonObject.mapFrom(patientReference)))
-      .collect(Collectors.toList());
-    Promise<JsonObject> encountersBulkOperationsPromise = Promise.promise();
-    Promise<JsonObject> procedureBulkOperationsPromise = Promise.promise();
-    Promise<JsonObject> observationsBulkOperationsPromise = Promise.promise();
-    Promise<JsonObject> conditionsBulkOperationsPromise = Promise.promise();
+    service.createAggregationResource(AggregationType.ENCOUNTER, JsonObject.mapFrom(encounterAll), resourceToAggregate, aggregationEncounterPromise);
 
-    DatabaseService.createProxy(vertx, FhirUtils.DATABASE_SERVICE_ADDRESS)
-      .executeWriteBulkOperations(ResourceType.ENCOUNTER.getCollection(), encounters, encountersBulkOperationsPromise)
-      .executeWriteBulkOperations(ResourceType.OBSERVATION.getCollection(), observations, observationsBulkOperationsPromise)
-      .executeWriteBulkOperations(ResourceType.CONDITION.getCollection(), conditions, conditionsBulkOperationsPromise)
-      .executeWriteBulkOperations(ResourceType.PROCEDURE.getCollection(), procedures, procedureBulkOperationsPromise);
+    domainResources.add(encounterAll);
 
-    CompositeFuture.all(encountersBulkOperationsPromise.future(),
-      procedureBulkOperationsPromise.future(),
-      observationsBulkOperationsPromise.future(), conditionsBulkOperationsPromise
-        .future()).setHandler(handler -> {
-      if (handler.succeeded()) {
+
+    addResourcesOnDatabase(service, domainResources, patientReference);
+
+    aggregationEncounterPromise
+      .future()
+      .onSuccess(aggregationEncounterJson -> {
         routingContext.response()
           .putHeader(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON)
           .setStatusCode(HttpResponseStatus.CREATED.code()).end(new JsonObject()
           .put("encounterAllId", encounterAll.getId())
           .put("encounterShockId", encounterShock.getId())
           .put("encounterPrehId", encounterPreh.getId())
+          .put("aggregatedEncounter", aggregationEncounterJson)
           .toBuffer());
-      } else {
-        routingContext.response().setStatusCode(HttpResponseStatus.BAD_REQUEST.code()).end();
-      }
-    });
-
+      }).onFailure(throwable -> routingContext.response()
+      .putHeader(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON)
+      .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
+      .end(JsonObject.mapFrom(new OperationOutcome()
+        .setIssue(new OperationOutcomeIssue()
+          .setCode("error")
+          .setDiagnostics(throwable.getMessage()))).toBuffer()));
   }
 
-  private void addVitalSignsObservations(JsonArray vitalSignsObservations, Encounter encounterShock, List<Resource> domainResources) {
+  private void addResourcesOnDatabase(DatabaseService databaseService, List<Resource> domainResources, Reference patientReference) {
+    List<JsonObject> observationsJson = domainResources
+      .stream()
+      .filter(resource -> ResourceType.valueOf(resource.getResourceType().toUpperCase()).equals(ResourceType.OBSERVATION))
+      .map(JsonObject::mapFrom)
+      .peek(json -> json.put("subject", JsonObject.mapFrom(patientReference)))
+//      .peek(json -> json.put("meta", JsonObject.mapFrom(new Metadata()
+//        .setLastUpdated(Instant.now())
+//        .setVersionId(UUID.randomUUID().toString()))))
+      .collect(Collectors.toList());
+    List<JsonObject> proceduresJson = domainResources
+      .stream()
+      .filter(resource -> ResourceType.valueOf(resource.getResourceType().toUpperCase()).equals(ResourceType.PROCEDURE))
+      .map(JsonObject::mapFrom)
+      .peek(json -> json.put("subject", JsonObject.mapFrom(patientReference)))
+//      .peek(json -> json.put("meta", JsonObject.mapFrom(new Metadata()
+//        .setLastUpdated(Instant.now())
+//        .setVersionId(UUID.randomUUID().toString()))))
+      .collect(Collectors.toList());
+    List<JsonObject> encountersJson = domainResources
+      .stream()
+      .filter(resource -> ResourceType.valueOf(resource.getResourceType().toUpperCase()).equals(ResourceType.ENCOUNTER))
+      .map(JsonObject::mapFrom)
+      .peek(json -> json.put("patient", JsonObject.mapFrom(patientReference)))
+//      .peek(json -> json.put("meta", JsonObject.mapFrom(new Metadata()
+//        .setLastUpdated(Instant.now())
+//        .setVersionId(UUID.randomUUID().toString()))))
+      .collect(Collectors.toList());
+    List<JsonObject> conditionsJson = domainResources
+      .stream()
+      .filter(resource -> ResourceType.valueOf(resource.getResourceType().toUpperCase()).equals(ResourceType.CONDITION))
+      .map(JsonObject::mapFrom)
+//      .peek(json -> json.put("meta", JsonObject.mapFrom(new Metadata()
+//        .setLastUpdated(Instant.now())
+//        .setVersionId(UUID.randomUUID().toString()))))
+      .peek(json -> json.put("subject", JsonObject.mapFrom(patientReference)))
+      .collect(Collectors.toList());
+
+
+    Promise<JsonObject> encountersBulkOperationsPromise = Promise.promise();
+    Promise<JsonObject> procedureBulkOperationsPromise = Promise.promise();
+    Promise<JsonObject> observationsBulkOperationsPromise = Promise.promise();
+    Promise<JsonObject> conditionsBulkOperationsPromise = Promise.promise();
+    databaseService
+      .executeWriteBulkOperations(ResourceType.ENCOUNTER.getCollection(), encountersJson, encountersBulkOperationsPromise)
+      .executeWriteBulkOperations(ResourceType.OBSERVATION.getCollection(), observationsJson, observationsBulkOperationsPromise)
+      .executeWriteBulkOperations(ResourceType.CONDITION.getCollection(), conditionsJson, conditionsBulkOperationsPromise)
+      .executeWriteBulkOperations(ResourceType.PROCEDURE.getCollection(), proceduresJson, procedureBulkOperationsPromise);
+
+
+    //put each resource in every single collection
+    CompositeFuture.all(encountersBulkOperationsPromise.future(),
+      procedureBulkOperationsPromise.future(),
+      observationsBulkOperationsPromise.future(), conditionsBulkOperationsPromise
+        .future()).setHandler(handler -> {
+      if (handler.failed()) {
+        handler.cause().printStackTrace();
+      }
+    });
+  }
+
+  private void addVitalSignsObservations(JsonArray vitalSignsObservations, Encounter encounterShock, List<Resource> domainResources, Reference patientReference) {
     vitalSignsObservations.forEach(entry -> {
       JsonObject vitalSignObservation = JsonObject.mapFrom(entry);
+      String timestamp = vitalSignObservation.getString("timestamp");
+      String source = vitalSignObservation.getString("source");
+      JsonArray vitalsigns = vitalSignObservation.getJsonArray("vitalsigns");
+      vitalsigns.forEach(vitalSignMeasurementObject -> {
+        JsonObject measurementJson = JsonObject.mapFrom(vitalSignMeasurementObject);
+        String uom = measurementJson.getString("uom");
+        String type = measurementJson.getString("type");
+        String value = measurementJson.getString("value");
+        Observation measurementObservation = new Observation()
+          .setId(UUID.randomUUID().toString())
+          .setCode(new CodeableConcept()
+            .setText(type))
+          .setValueQuantity(new Quantity()
+            .setValue(Double.parseDouble(value))
+            .setUnit(uom))
+          .setEncounter(new Reference()
+            .setDisplay("Encounter shock room")
+            .setReference("#" + encounterShock.getId()))
+          .setSubject(patientReference);
+        encounterShock.addNewContained(measurementObservation);
+      });
     });
   }
 
@@ -479,8 +534,16 @@ public class T4CRestInterface extends BaseRestInterface {
 
           break;
         case "drug":
-          break;
         case "blood-product":
+          MedicationAdministration medicationAdministration = new MedicationAdministration()
+            .setId(UUID.randomUUID().toString());
+          String bloodProductId = content.getString("bloodProductId");
+          String bloodProductDescription = content.getString("bloodProductDescription");
+          medicationAdministration
+            .setMedicationCodeableConcept(new CodeableConcept()
+              .setText(bloodProductId))
+            .addNewNote(new Annotation()
+              .setText(bloodProductDescription));
           break;
         case "vital-signs-mon":
           Observation vitalSignObservationContainer = new Observation()
@@ -602,7 +665,8 @@ public class T4CRestInterface extends BaseRestInterface {
     });
   }
 
-  private void addPatientInitialCondition(JsonObject patientInitialConditionJsonObject, Encounter encounterShock, Condition patientInitialCondition, List<Resource> domainResources) {
+  private void addPatientInitialCondition(JsonObject patientInitialConditionJsonObject, Encounter encounterShock,
+                                          Condition patientInitialCondition, List<Resource> domainResources) {
     JsonObject clinicalPicture = patientInitialConditionJsonObject.getJsonObject("clinicalPicture");
     JsonObject vitalSigns = patientInitialConditionJsonObject.getJsonObject("vitalSigns");
 
@@ -1547,7 +1611,7 @@ public class T4CRestInterface extends BaseRestInterface {
             .setCode("89063-2")
             .setDisplay("Type of anticoagulant medication used")
             .setSystem("https://loinc.org/"))
-          .setText("Use of anti-platelets"))
+          .setText("Use of anticoagulants"))
         .setValueBoolean(anticoagulants)
         .setEncounter(new Reference()
           .setType(ResourceType.ENCOUNTER.typeName())
@@ -1988,10 +2052,10 @@ public class T4CRestInterface extends BaseRestInterface {
 
     resources.add(patient);
 
-    this.patientReference = new Reference()
+    encounterPreh.setPatient(new Reference()
       .setReference("/#" + patient.getId())
       .setDisplay(name + " " + surname + " età " + age)
-      .setType(ResourceType.PATIENT.typeName());
+      .setType(ResourceType.PATIENT.typeName()));
 
   }
 

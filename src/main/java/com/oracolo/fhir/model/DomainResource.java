@@ -28,7 +28,7 @@ public abstract class DomainResource extends FhirResourceAbstract implements Res
    * These are anonymous resources that don't have an existence outside the transaction scope
    * <p>Cardinality: 0..*</p>
    */
-  protected List<DomainResource> contained;
+  protected List<Object> contained;
   /**
    * May be used to represent additional information that is not part of the basic definition of the resource.
    * To make the use of extensions safe and manageable, there is a strict set of governance applied to the definition and use
@@ -62,11 +62,11 @@ public abstract class DomainResource extends FhirResourceAbstract implements Res
     this.text = text;
   }
 
-  public List<DomainResource> getContained() {
+  public List<Object> getContained() {
     return contained;
   }
 
-  public void setContained(List<DomainResource> contained) {
+  public void setContained(List<Object> contained) {
     this.contained = contained;
   }
 

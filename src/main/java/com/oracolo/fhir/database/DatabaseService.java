@@ -1,5 +1,6 @@
 package com.oracolo.fhir.database;
 
+import com.oracolo.fhir.model.aggregations.AggregationType;
 import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.ProxyGen;
 import io.vertx.codegen.annotations.VertxGen;
@@ -43,4 +44,10 @@ public interface DatabaseService {
 
   @Fluent
   DatabaseService findEverythingAboutEncounter(String encounterId, Handler<AsyncResult<JsonObject>> handler);
+
+  @Fluent
+  DatabaseService createAggregationResource(AggregationType aggregationType, JsonObject mainResource, List<JsonObject> resources, Handler<AsyncResult<JsonObject>> handler);
+
+  @Fluent
+  DatabaseService findAggregationResource(AggregationType aggregationType, JsonObject query, Handler<AsyncResult<JsonObject>> handler);
 }

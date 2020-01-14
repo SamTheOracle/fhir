@@ -70,8 +70,9 @@ public class Annotation {
     return text;
   }
 
-  public void setText(String text) {
+  public Annotation setText(String text) {
     this.text = text;
+    return this;
   }
 
   public Extension get_text() {

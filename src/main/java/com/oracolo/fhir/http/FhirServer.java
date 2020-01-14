@@ -6,6 +6,7 @@ import com.oracolo.fhir.handlers.query.QueryHandler;
 import com.oracolo.fhir.handlers.response.ResponseHandler;
 import com.oracolo.fhir.handlers.response.format.BaseFormatHandler;
 import com.oracolo.fhir.handlers.validator.ValidationHandler;
+import com.oracolo.fhir.model.aggregations.AggregationType;
 import com.oracolo.fhir.model.domain.Encounter;
 import com.oracolo.fhir.model.domain.OperationOutcome;
 import com.oracolo.fhir.model.domain.OperationOutcomeIssue;
@@ -77,8 +78,6 @@ public class FhirServer extends BaseRestInterface {
       }
     });
   }
-
-
 
 
   private void loadRoutes(Router restApi) {
@@ -229,7 +228,8 @@ public class FhirServer extends BaseRestInterface {
       .withFormatHandler(new BaseFormatHandler()
         .withAcceptHeader(acceptableType))
       .createResponseAsync(serverResponse, (service, promise)
-        -> service.findEverythingAboutEncounter(id, promise))
+        -> service.findAggregationResource(AggregationType.ENCOUNTER, new JsonObject()
+        .put("mainEncounter.id", id), promise))
       .releaseAsync()
       .future()
       .onSuccess(HttpServerResponse::end)

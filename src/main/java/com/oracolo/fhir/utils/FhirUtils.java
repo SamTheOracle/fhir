@@ -12,7 +12,7 @@ public class FhirUtils {
   public static final String FORMAT = "_format";
   public static final String SUMMARY = "_summary";
   public static final String ELEMENTS = "_elements";
-  public static final String T4CINTERFACE_MAIN_ROOT = "t4cinterface";
+  public static final String TRAUMACARE_BASE = "traumacare";
   public static final DateTimeFormatter fullDateTime = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'hh:mm:ssZZZZZ");
   public static final String ID = "id";
   public static final String HISTORY = "_history";
@@ -25,6 +25,7 @@ public class FhirUtils {
   public static final String DATABASE_SERVICE_ADDRESS = "database_service";
   public static final String DELETED = "DELETED";
   public static final int MONGODB_CONNECTION_FAIL = 12;
+  public static final String AGGREGATION_SERVICE_ADDRESS = "aggregation-service";
 
 
   public static MongoClient createFhirMongoDbConnection(Vertx vertx) {
