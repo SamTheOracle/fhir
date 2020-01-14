@@ -11,8 +11,9 @@ public class SimpleQuantity {
     return decimal;
   }
 
-  public void setDecimal(double decimal) {
+  public SimpleQuantity setDecimal(double decimal) {
     this.decimal = decimal;
+    return this;
   }
 
   public String getCurrency() {

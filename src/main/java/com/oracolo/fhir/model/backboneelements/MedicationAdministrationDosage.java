@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.oracolo.fhir.model.BackboneElement;
 import com.oracolo.fhir.model.datatypes.SimpleQuantity;
 import com.oracolo.fhir.model.elements.CodeableConcept;
+import com.oracolo.fhir.model.elements.Quantity;
 import com.oracolo.fhir.model.elements.Ratio;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -11,7 +12,7 @@ import com.oracolo.fhir.model.elements.Ratio;
 public class MedicationAdministrationDosage extends BackboneElement {
   private String text;
   private CodeableConcept site, route, method;
-  private SimpleQuantity dose;
+  private Quantity dose;
   private Ratio rateRatio;
   private SimpleQuantity rateQuantity;
 
@@ -47,12 +48,13 @@ public class MedicationAdministrationDosage extends BackboneElement {
     this.method = method;
   }
 
-  public SimpleQuantity getDose() {
+  public Quantity getDose() {
     return dose;
   }
 
-  public void setDose(SimpleQuantity dose) {
+  public MedicationAdministrationDosage setDose(Quantity dose) {
     this.dose = dose;
+    return this;
   }
 
   public Ratio getRateRatio() {

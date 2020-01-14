@@ -68,7 +68,7 @@ public class TraumaCare extends BaseRestInterface {
       .setId(UUID.randomUUID().toString())
       .setPartOf(new Reference()
         .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterAll.getId()));
-    Encounter encounterShock = new Encounter()
+    Encounter encounterIntervention = new Encounter()
       //patient initial condition, vital signs
       .setId(UUID.randomUUID().toString())
       .setPartOf(new Reference()
@@ -89,7 +89,7 @@ public class TraumaCare extends BaseRestInterface {
         .setDisplay("Ospedale Bufalini"));
 
 
-    encounterShock.setServiceType(new CodeableConcept()
+    encounterIntervention.setServiceType(new CodeableConcept()
       .addNewCoding(new Coding()
         .setCode("117")
         .setDisplay("Emergency Medical"))
@@ -140,11 +140,11 @@ public class TraumaCare extends BaseRestInterface {
       .setEncounter(new Reference()
         .setDisplay("Encounter shock room")
         .setType(ResourceType.ENCOUNTER.typeName())
-        .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()));
+        .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterIntervention.getId()));
 
     domainResources.add(patientInitialCondition);
 
-    encounterShock.addNewDiagnosis(
+    encounterIntervention.addNewDiagnosis(
       new EncounterDiagnosis()
         .setUse(new CodeableConcept()
           .addNewCoding(new Coding()
@@ -164,7 +164,7 @@ public class TraumaCare extends BaseRestInterface {
 
     addParticipant(reportJson, encounterPreh);
     addParticipant(reportJson, encounterAll);
-    addParticipant(reportJson, encounterShock);
+    addParticipant(reportJson, encounterIntervention);
 
     String startDate = reportJson.getString("startDate");
     String startTime = reportJson.getString("startTime");
@@ -178,7 +178,7 @@ public class TraumaCare extends BaseRestInterface {
     Condition issCondition = new Condition()
       .setId(UUID.randomUUID().toString());
     if (iss != null) {
-      addIssToEncounterShock(iss, encounterShock, issCondition, domainResources);
+      addIssToEncounterShock(iss, encounterIntervention, issCondition, domainResources);
     }
 
     //aggiunta della final destination del encounter all
@@ -188,7 +188,7 @@ public class TraumaCare extends BaseRestInterface {
         .setDisplay(finalDestination)));
 
     if (traumaInfo != null) {
-      addTraumaInformation(traumaInfo, encounterPreh, encounterShock, encounterAll, traumaCondition, domainResources);
+      addTraumaInformation(traumaInfo, encounterPreh, encounterIntervention, encounterAll, traumaCondition, domainResources);
     }
     Reference patientReference = encounterPreh.getPatient();
 
@@ -212,16 +212,16 @@ public class TraumaCare extends BaseRestInterface {
     }
     JsonObject patientInitialConditionJsonObject = reportJson.getJsonObject("patientInitialCondition");
     if (patientInitialConditionJsonObject != null) {
-      addPatientInitialCondition(patientInitialConditionJsonObject, encounterShock, patientInitialCondition, domainResources);
+      addPatientInitialCondition(patientInitialConditionJsonObject, encounterIntervention, patientInitialCondition, domainResources);
     }
 
     JsonArray events = reportJson.getJsonArray("events");
     if (events != null && events.size() > 0) {
-      addEventsToEncounters(events, encounterShock, encounterPreh, domainResources);
+      addEventsToEncounters(events, encounterIntervention, encounterPreh, domainResources);
     }
     JsonArray vitalSignsObservations = reportJson.getJsonArray("vitalSignsObservations");
     if (vitalSignsObservations != null && vitalSignsObservations.size() > 0) {
-      addVitalSignsObservations(vitalSignsObservations, encounterShock, domainResources, patientReference);
+      addVitalSignsObservations(vitalSignsObservations, encounterIntervention, domainResources, patientReference);
     }
 
 
@@ -247,14 +247,14 @@ public class TraumaCare extends BaseRestInterface {
     if (encounterPreh.getLocation() != null) {
       encounterPreh.getLocation().forEach(encounterAll::addNewLocation);
     }
-    if (encounterShock.getLocation() != null) {
-      encounterShock.getLocation().forEach(encounterAll::addNewLocation);
+    if (encounterIntervention.getLocation() != null) {
+      encounterIntervention.getLocation().forEach(encounterAll::addNewLocation);
     }
     if (encounterPreh.getDiagnosis() != null) {
       encounterPreh.getDiagnosis().forEach(encounterAll::addNewDiagnosis);
     }
-    if (encounterShock.getDiagnosis() != null) {
-      encounterShock.getDiagnosis().forEach(encounterAll::addNewDiagnosis);
+    if (encounterIntervention.getDiagnosis() != null) {
+      encounterIntervention.getDiagnosis().forEach(encounterAll::addNewDiagnosis);
     }
 
     encounterAll.setPatient(patientReference);
@@ -262,7 +262,7 @@ public class TraumaCare extends BaseRestInterface {
       .setVersionId(UUID.randomUUID().toString())
       .setLastUpdated(Instant.now()));
 
-    domainResources.add(encounterShock.setPatient(patientReference));
+    domainResources.add(encounterIntervention.setPatient(patientReference));
     domainResources.add(encounterPreh);
 
     Promise<JsonObject> aggregationEncounterPromise = Promise.promise();
@@ -275,8 +275,10 @@ public class TraumaCare extends BaseRestInterface {
       .collect(Collectors.toList());
     DatabaseService service = DatabaseService.createProxy(vertx, FhirUtils.DATABASE_SERVICE_ADDRESS);
 
-    service.createAggregationResource(AggregationType.ENCOUNTER, JsonObject.mapFrom(encounterAll), resourceToAggregate, aggregationEncounterPromise);
+    service
+      .createAggregationResource(AggregationType.ENCOUNTER, JsonObject.mapFrom(encounterAll), resourceToAggregate, aggregationEncounterPromise);
 
+    //add resource to save on db
     resourceToAggregate.add(JsonObject.mapFrom(encounterAll));
 
 
@@ -285,16 +287,14 @@ public class TraumaCare extends BaseRestInterface {
 
     aggregationEncounterPromise
       .future()
-      .onSuccess(aggregationEncounterJson -> {
-        routingContext.response()
-          .putHeader(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON)
-          .setStatusCode(HttpResponseStatus.CREATED.code()).end(new JsonObject()
+      .onSuccess(aggregationEncounterJson -> routingContext.response()
+        .putHeader(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON)
+        .setStatusCode(HttpResponseStatus.CREATED.code()).end(new JsonObject()
           .put("encounterAllId", encounterAll.getId())
-          .put("encounterShockId", encounterShock.getId())
+          .put("encounterShockId", encounterIntervention.getId())
           .put("encounterPrehId", encounterPreh.getId())
           .put("aggregatedEncounter", aggregationEncounterJson)
-          .toBuffer());
-      }).onFailure(throwable -> routingContext.response()
+          .toBuffer())).onFailure(throwable -> routingContext.response()
       .putHeader(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON)
       .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
       .end(JsonObject.mapFrom(new OperationOutcome()
@@ -379,7 +379,7 @@ public class TraumaCare extends BaseRestInterface {
     });
   }
 
-  private void addEventsToEncounters(JsonArray events, Encounter encounterShock, Encounter preH, List<Resource> domainResources) {
+  private void addEventsToEncounters(JsonArray events, Encounter shock, Encounter preH, List<Resource> domainResources) {
 
     events.forEach(entry -> {
       JsonObject fullEvent = JsonObject.mapFrom(entry);
@@ -393,7 +393,7 @@ public class TraumaCare extends BaseRestInterface {
         startT.getMinute(), startT.getSecond(), startT.getNano(), ZoneId.systemDefault());
       final String fhirDate = FhirUtils.fullDateTime.format(finalZonedStartDateTime);
       if (place != null) {
-        if (place.equalsIgnoreCase("PRE-H")) {
+        if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("Transport")) {
           preH.addNewLocation(new EncounterLocation()
             .setLocation(new Reference()
               .setDisplay(place))
@@ -405,7 +405,7 @@ public class TraumaCare extends BaseRestInterface {
             .setPeriod(new Period()
               .setStart(fhirDate)));
         } else {
-          encounterShock.addNewLocation(new EncounterLocation()
+          shock.addNewLocation(new EncounterLocation()
             .setLocation(new Reference()
               .setDisplay(place))
             .setPhysicalType(new CodeableConcept()
@@ -435,11 +435,17 @@ public class TraumaCare extends BaseRestInterface {
             procedure
               .setLocation(new Reference()
                 .setDisplay(place));
-            if (place.equalsIgnoreCase("PRE-H")) {
-              preH.addNewContained(procedure);
+            if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("Transport")) {
+              preH.addNewContained(procedure.setEncounter(new Reference()
+                .setType(ResourceType.ENCOUNTER.typeName())
+                .setDisplay("Encounter pre ospedalizzazione")
+                .setReference("#" + preH)));
 
             } else {
-              encounterShock.addNewContained(procedure);
+              shock.addNewContained(procedure.setEncounter(new Reference()
+                .setType(ResourceType.ENCOUNTER.typeName())
+                .setDisplay("Encounter shock room")
+                .setReference("#" + shock)));
             }
           }
           if (procedureId != null) {
@@ -520,19 +526,123 @@ public class TraumaCare extends BaseRestInterface {
 
           break;
         case "diagnostic":
+          String diagnosticId = content.getString("diagnosticId");
+          String diagnosticDescription = content.getString("diagnosticDescription");
+          JsonObject abg = content.getJsonObject(diagnosticDescription);
+          JsonObject rotem = content.getJsonObject("rotem");
+          DiagnosticReport diagnosticReport = new DiagnosticReport();
+          if (place != null) {
+
+            if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("Transport")) {
+              preH.addNewContained(diagnosticReport.setEncounter(new Reference()
+                .setType(ResourceType.ENCOUNTER.typeName())
+                .setDisplay("Encounter pre ospedalizzazione")
+                .setReference("#" + preH)));
+
+            } else {
+              shock.addNewContained(diagnosticReport.setEncounter(new Reference()
+                .setType(ResourceType.ENCOUNTER.typeName())
+                .setDisplay("Encounter shock room")
+                .setReference("#" + shock)));
+            }
+          }
+
 
           break;
         case "drug":
+          MedicationAdministration drugAdministration = new MedicationAdministration()
+            .setId(UUID.randomUUID().toString());
+          String drugId = content.getString("drugId");
+          String drugDescription = content.getString("drugDescription");
+          Double drugQty = content.getDouble("qty");
+          String drugAdministrationType = content.getString("administrationType");
+          String drugUnit = content.getString("unit");
+          String event = content.getString("start");
+          drugAdministration
+            .setMedicationCodeableConcept(new CodeableConcept()
+              .setText(drugId))
+            .addNewNote(new Annotation()
+              .setText(drugDescription));
+          if (event.equalsIgnoreCase("stop")) {
+            drugAdministration.setStatus("stopped");
+          } else {
+            drugAdministration.setStatus("in progress");
+          }
+          MedicationAdministrationDosage drugDosage = new MedicationAdministrationDosage();
+          if (drugQty != null && drugUnit != null) {
+            drugDosage
+              .setDose(new Quantity()
+                .setValue(drugQty)
+                .setUnit(drugUnit));
+          }
+          if (drugAdministrationType != null) {
+            drugDosage.setMethod(new CodeableConcept()
+              .setText(drugAdministrationType));
+          }
+
+          drugAdministration.setDosage(drugDosage);
+          if (place != null) {
+            if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("Transport")) {
+              preH.addNewContained(drugAdministration
+                .setContext(new Reference()
+                  .setReference("#" + preH.getId())
+                  .setDisplay("Encounter pre ospedalizzazione")
+                  .setType(ResourceType.ENCOUNTER.typeName())));
+
+            } else {
+              shock.addNewContained(drugAdministration
+                .setContext(new Reference()
+                  .setReference("#" + shock.getId())
+                  .setDisplay("Encounter shock room")
+                  .setType(ResourceType.ENCOUNTER.typeName())));
+            }
+          }
+          break;
         case "blood-product":
           MedicationAdministration medicationAdministration = new MedicationAdministration()
             .setId(UUID.randomUUID().toString());
           String bloodProductId = content.getString("bloodProductId");
           String bloodProductDescription = content.getString("bloodProductDescription");
+          Double qty = content.getDouble("qty");
+          String administrationType = content.getString("administrationType");
+          String unit = content.getString("unit");
+          String bagCode = content.getString("bagCode");
           medicationAdministration
             .setMedicationCodeableConcept(new CodeableConcept()
               .setText(bloodProductId))
             .addNewNote(new Annotation()
               .setText(bloodProductDescription));
+          MedicationAdministrationDosage dosage = new MedicationAdministrationDosage();
+          if (qty != null && unit != null) {
+            dosage
+              .setDose(new Quantity()
+                .setValue(qty)
+                .setUnit(unit));
+          }
+          if (administrationType != null) {
+            dosage.setMethod(new CodeableConcept()
+              .setText(administrationType));
+          }
+          if (bagCode != null) {
+            dosage.setText(bagCode);
+          }
+          medicationAdministration.setDosage(dosage);
+          if (place != null) {
+            if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("Transport")) {
+              preH.addNewContained(medicationAdministration
+                .setContext(new Reference()
+                  .setReference("#" + preH.getId())
+                  .setDisplay("Encounter pre ospedalizzazione")
+                  .setType(ResourceType.ENCOUNTER.typeName())));
+
+            } else {
+              shock.addNewContained(medicationAdministration
+                .setContext(new Reference()
+                  .setReference("#" + shock.getId())
+                  .setDisplay("Encounter shock room")
+                  .setType(ResourceType.ENCOUNTER.typeName())));
+            }
+          }
           break;
         case "vital-signs-mon":
           Observation vitalSignObservationContainer = new Observation()
@@ -558,15 +668,15 @@ public class TraumaCare extends BaseRestInterface {
                 .setEncounter(new Reference()
                   .setDisplay("Encounter shock room")
                   .setType(ResourceType.ENCOUNTER.typeName())
-                  .setReference("#" + encounterShock.getId()));
-              encounterShock.addNewContained(vitalSignObservationContainer);
+                  .setReference("#" + shock.getId()));
+              shock.addNewContained(vitalSignObservationContainer);
             }
           }
           content.forEach(vitalSignEntry -> {
             Object value = vitalSignEntry.getValue();
             String name = vitalSignEntry.getKey();
             Observation observation = new Observation()
-              .setSubject(encounterShock.getPatient())
+              .setSubject(shock.getPatient())
               .setId(UUID.randomUUID().toString())
               .setValueQuantity(new Quantity()
                 .setValue((Double) value))
@@ -588,6 +698,7 @@ public class TraumaCare extends BaseRestInterface {
         case "clinical-variation":
           break;
         case "trauma-leader":
+//          String
           break;
         case "room-in":
         case "room-out":
@@ -606,10 +717,10 @@ public class TraumaCare extends BaseRestInterface {
 
             } else {
               procedureRoomIn.setEncounter(new Reference()
-                .setReference("#" + encounterShock.getId())
+                .setReference("#" + shock.getId())
                 .setType(ResourceType.ENCOUNTER.typeName())
                 .setDisplay("Encounter shock room"));
-              encounterShock.addNewContained(procedureRoomIn);
+              shock.addNewContained(procedureRoomIn);
             }
           }
           procedureRoomIn
@@ -630,7 +741,7 @@ public class TraumaCare extends BaseRestInterface {
               preH.addNewContained(procedureAcceptance);
 
             } else {
-              encounterShock.addNewContained(procedureAcceptance);
+              shock.addNewContained(procedureAcceptance);
             }
           }
           procedureAcceptance

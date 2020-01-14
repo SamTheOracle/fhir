@@ -414,10 +414,11 @@ public class DatabaseServiceImpl implements DatabaseService {
           });
         Metadata meta = Json.decodeValue(aggregationJsonObject.getJsonObject("mainEncounter").getJsonObject("meta").encode(), Metadata.class);
         bundle.addNewEntry(new BundleEntry()
+          .setResource(aggregationJsonObject)
           .setResponse(new BundleResponse()
             .setEtag(meta.getVersionId())
             .setLastModified(meta.getLastUpdated().toString())
-            .setLocation("/" + ResourceType.ENCOUNTER + "/" + aggregationJsonObject.getString("id"))
+            .setLocation("/" + ResourceType.ENCOUNTER.typeName() + "/" + aggregationJsonObject.getJsonObject("mainEncounter").getString("id"))
           ));
         bundle.setTotal(bundle.getEntry().size());
         handler.handle(Future.succeededFuture(JsonObject.mapFrom(bundle)));

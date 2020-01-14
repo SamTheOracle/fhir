@@ -130,8 +130,9 @@ public class MedicationAdministration extends DomainResource {
     return context;
   }
 
-  public void setContext(Reference context) {
+  public MedicationAdministration setContext(Reference context) {
     this.context = context;
+    return this;
   }
 
   public Reference getSupportingInformation() {
