@@ -36,7 +36,7 @@ public class Coding {
    * Indicates that this coding was chosen by a user directly - e.g. off a pick list of available items (codes or displays).
    * <p>Cardinality: 0..1</p>
    */
-  private boolean userSelected;
+  private Boolean userSelected;
 
   /**
    * The identification of the code system that defines the meaning of the symbol in the code, via uri.
@@ -98,7 +98,7 @@ public class Coding {
     return this;
   }
 
-  public boolean isUserSelected() {
+  public Boolean isUserSelected() {
     return userSelected;
   }
 
