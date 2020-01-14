@@ -123,16 +123,18 @@ public class ObservationComponent extends BackboneElement {
     return code;
   }
 
-  public void setCode(CodeableConcept code) {
+  public ObservationComponent setCode(CodeableConcept code) {
     this.code = code;
+    return this;
   }
 
   public Quantity getValueQuantity() {
     return valueQuantity;
   }
 
-  public void setValueQuantity(Quantity valueQuantity) {
+  public ObservationComponent setValueQuantity(Quantity valueQuantity) {
     this.valueQuantity = valueQuantity;
+    return this;
   }
 
   public CodeableConcept getValueCodeableConcept() {
@@ -147,8 +149,9 @@ public class ObservationComponent extends BackboneElement {
     return valueString;
   }
 
-  public void setValueString(String valueString) {
+  public ObservationComponent setValueString(String valueString) {
     this.valueString = valueString;
+    return this;
   }
 
   public Extension get_valueString() {
@@ -179,8 +182,9 @@ public class ObservationComponent extends BackboneElement {
     return valueInteger;
   }
 
-  public void setValueInteger(int valueInteger) {
+  public ObservationComponent setValueInteger(int valueInteger) {
     this.valueInteger = valueInteger;
+    return this;
   }
 
   public Extension get_valueInteger() {

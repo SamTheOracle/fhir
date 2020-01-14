@@ -14,10 +14,10 @@ import io.vertx.core.json.JsonObject;
 import java.nio.charset.Charset;
 import java.util.function.BiConsumer;
 
-public class ReadWriteResponseHandler extends BaseResponseHandler implements ResponseHandler {
+public class ReadResponseHandler extends BaseResponseHandler implements ResponseHandler {
 
 
-  public ReadWriteResponseHandler() {
+  public ReadResponseHandler() {
   }
 
 
@@ -42,7 +42,7 @@ public class ReadWriteResponseHandler extends BaseResponseHandler implements Res
           .putHeader(HttpHeaderNames.LOCATION, FhirUtils.BASE + "/" + resourceType + "/" + id + "/_history/" + versionId)
           .putHeader(HttpHeaderNames.ETAG, versionId)
           .putHeader(HttpHeaderNames.LAST_MODIFIED, lastModified)
-          .setStatusCode(HttpResponseStatus.CREATED.code())
+          .setStatusCode(HttpResponseStatus.OK.code())
           .putHeader(HttpHeaderNames.CONTENT_LENGTH, length)
           .putHeader(HttpHeaderNames.CONTENT_TYPE, contentType)
           .write(response);

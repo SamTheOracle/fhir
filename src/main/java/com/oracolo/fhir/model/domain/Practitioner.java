@@ -6,6 +6,7 @@ import com.oracolo.fhir.model.backboneelements.PractitionerQualification;
 import com.oracolo.fhir.model.datatypes.*;
 import com.oracolo.fhir.model.elements.CodeableConcept;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -49,8 +50,9 @@ public class Practitioner extends DomainResource {
     return active;
   }
 
-  public void setActive(Boolean active) {
+  public Practitioner setActive(Boolean active) {
     this.active = active;
+    return this;
   }
 
   public List<HumanName> getName() {
@@ -118,7 +120,21 @@ public class Practitioner extends DomainResource {
   }
 
   @Override
+  public Practitioner setId(String id) {
+    this.id = id;
+    return this;
+  }
+
+  @Override
   public String getResourceType() {
     return resourceType;
+  }
+
+  public Practitioner addNewIdentifier(Identifier identifier) {
+    if (this.identifier == null) {
+      this.identifier = new ArrayList<>();
+    }
+    this.identifier.add(identifier);
+    return this;
   }
 }

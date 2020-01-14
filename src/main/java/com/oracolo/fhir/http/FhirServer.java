@@ -21,6 +21,7 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.MultiMap;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
@@ -158,6 +159,50 @@ public class FhirServer extends BaseRestInterface {
       .end(JsonObject.mapFrom(operationOutcome).encodePrettily());
   }
 
+  private void handleEncounterEverything(RoutingContext routingContext) {
+    String id = routingContext.pathParam(FhirUtils.ID);
+    MultiMap headers = routingContext.request().headers();
+    MultiMap queryParams = routingContext.request().params();
+    String acceptableType = routingContext.getAcceptableContentType();
+    if (acceptableType == null) {
+      acceptableType = FhirHttpHeader.APPLICATION_JSON.value();
+    }
+
+
+    HttpServerResponse serverResponse = routingContext.response();
+    ResponseHandler
+      .createSearchResponseHandler()
+      .withService(databaseService)
+      .withFormatHandler(new BaseFormatHandler()
+        .withAcceptHeader(acceptableType))
+      .createResponseAsync(serverResponse, (service, promise)
+        -> service.findAggregationResource(AggregationType.ENCOUNTER, new JsonObject()
+        .put("$or", new JsonArray()
+          .add(new JsonObject()
+            .put("ids", id))
+          .add(new JsonObject()
+            .put("mainEncounter.id", id))), promise))
+      .releaseAsync()
+      .future()
+      .onSuccess(HttpServerResponse::end)
+      .onFailure(throwable -> {
+
+        if (throwable instanceof ServiceException) {
+          int code = ((ServiceException) throwable).failureCode();
+          String message = throwable.getMessage();
+          ErrorFormat errorFormat = ErrorFormat.createFormat(code);
+          routingContext.put("error", message);
+          routingContext.put("code", errorFormat.getFhirErrorCode());
+          routingContext.fail(code);
+
+        } else {
+          routingContext.put("error", throwable.getMessage());
+          routingContext.put("code", "invariant");
+          routingContext.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
+        }
+      });
+  }
+
   private void handleResourceRead(RoutingContext routingContext, ResourceType type) {
     String id = routingContext.pathParam(FhirUtils.ID);
     MultiMap headers = routingContext.request().headers();
@@ -180,7 +225,7 @@ public class FhirServer extends BaseRestInterface {
     }
     String collection = type.getCollection();
     ResponseHandler
-      .createReadCreateContentHandler()
+      .createReadResponseHandler()
       .withService(databaseService)
       .withFormatHandler(new BaseFormatHandler()
         .withAcceptHeader(acceptableType))
@@ -211,46 +256,6 @@ public class FhirServer extends BaseRestInterface {
       });
   }
 
-  private void handleEncounterEverything(RoutingContext routingContext) {
-    String id = routingContext.pathParam(FhirUtils.ID);
-    MultiMap headers = routingContext.request().headers();
-    MultiMap queryParams = routingContext.request().params();
-    String acceptableType = routingContext.getAcceptableContentType();
-    if (acceptableType == null) {
-      acceptableType = FhirHttpHeader.APPLICATION_JSON.value();
-    }
-
-
-    HttpServerResponse serverResponse = routingContext.response();
-    ResponseHandler
-      .createSearchOperationHandler()
-      .withService(databaseService)
-      .withFormatHandler(new BaseFormatHandler()
-        .withAcceptHeader(acceptableType))
-      .createResponseAsync(serverResponse, (service, promise)
-        -> service.findAggregationResource(AggregationType.ENCOUNTER, new JsonObject()
-        .put("mainEncounter.id", id), promise))
-      .releaseAsync()
-      .future()
-      .onSuccess(HttpServerResponse::end)
-      .onFailure(throwable -> {
-
-        if (throwable instanceof ServiceException) {
-          int code = ((ServiceException) throwable).failureCode();
-          String message = throwable.getMessage();
-          ErrorFormat errorFormat = ErrorFormat.createFormat(code);
-          routingContext.put("error", message);
-          routingContext.put("code", errorFormat.getFhirErrorCode());
-          routingContext.fail(code);
-
-        } else {
-          routingContext.put("error", throwable.getMessage());
-          routingContext.put("code", "invariant");
-          routingContext.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
-        }
-      });
-  }
-
   private void handleResourceVersionRead(RoutingContext routingContext, ResourceType type) {
     String id = routingContext.pathParam(FhirUtils.ID);
     String vId = routingContext.pathParam(FhirUtils.PATH_VERSIONID);
@@ -273,7 +278,7 @@ public class FhirServer extends BaseRestInterface {
       .put("id", id)
       .put("meta.versionId", vId);
     ResponseHandler
-      .createReadCreateContentHandler()
+      .createReadResponseHandler()
       .withService(databaseService)
       .withFormatHandler(new BaseFormatHandler()
         .withAcceptHeader(acceptableType))
@@ -340,7 +345,7 @@ public class FhirServer extends BaseRestInterface {
       routingContext.fail(HttpResponseStatus.BAD_REQUEST.code());
     } else {
       ResponseHandler
-        .createReadCreateContentHandler()
+        .createUpdateCreateResponseHandler()
         .withService(databaseService)
         .withFormatHandler(new BaseFormatHandler()
           .withAcceptHeader(acceptableType)
@@ -408,7 +413,7 @@ public class FhirServer extends BaseRestInterface {
         routingContext.fail(HttpResponseStatus.BAD_REQUEST.code());
       } else {
         ResponseHandler
-          .createReadCreateContentHandler()
+          .createUpdateCreateResponseHandler()
           .withService(databaseService)
           .withFormatHandler(new BaseFormatHandler()
             .withAcceptHeader(acceptableType)
@@ -450,7 +455,7 @@ public class FhirServer extends BaseRestInterface {
 
     HttpServerResponse serverResponse = routingContext.response();
     ResponseHandler
-      .createDeleteOperationHandler()
+      .createDeleteResponseHandler()
       .withService(databaseService)
       .createResponseAsync(serverResponse, (service, promise) ->
         service.createDeletedResource(collection, query, promise))
@@ -490,7 +495,7 @@ public class FhirServer extends BaseRestInterface {
       .createMongoDbQuery();
     HttpServerResponse serverResponse = routingContext.response();
     ResponseHandler
-      .createSearchOperationHandler()
+      .createSearchResponseHandler()
       .withService(databaseService)
       .withFormatHandler(new BaseFormatHandler()
         .withAcceptHeader(acceptableType))

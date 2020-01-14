@@ -481,7 +481,7 @@ public class Encounter extends DomainResource {
     return this;
   }
 
-  public Encounter addNewContained(DomainResource resource) {
+  public Encounter addNewContained(Object resource) {
     if (contained == null) {
       contained = new ArrayList<>();
     }

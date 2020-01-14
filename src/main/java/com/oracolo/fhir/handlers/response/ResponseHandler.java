@@ -11,16 +11,20 @@ import java.util.function.BiConsumer;
 public interface ResponseHandler {
 
 
-  static ResponseHandler createDeleteOperationHandler() {
+  static ResponseHandler createDeleteResponseHandler() {
     return new DeleteResponseHandler();
   }
 
-  static ResponseHandler createSearchOperationHandler() {
+  static ResponseHandler createSearchResponseHandler() {
     return new SearchResponseHandler();
   }
 
-  static ResponseHandler createReadCreateContentHandler() {
-    return new ReadWriteResponseHandler();
+  static ResponseHandler createUpdateCreateResponseHandler() {
+    return new CreateUpdateResponseHandler();
+  }
+
+  static ResponseHandler createReadResponseHandler() {
+    return new ReadResponseHandler();
   }
 
 

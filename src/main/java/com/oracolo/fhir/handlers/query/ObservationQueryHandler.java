@@ -15,7 +15,17 @@ public class ObservationQueryHandler extends BaseQueryHandler {
     JsonArray baseQueryOperations = baseQuery.getJsonArray("$and");
     String encounterReference = params.get(encounter);
     if (encounterReference != null) {
-      baseQueryOperations.add(new JsonObject().put("encounter.reference", encounterReference));
+      baseQueryOperations.add(new JsonObject()
+        .put("$or", new JsonArray()
+          .add(new JsonObject()
+            .put("encounter.reference", new JsonObject()
+              .put("$regex", encounterReference)
+              .put("$options", "i")))
+          .add(new JsonObject()
+            .put("encounter.display", new JsonObject()
+              .put("$regex", encounterReference)
+              .put("$options", "i")))
+        ));
     }
     String code = params.get(ObservationQueryHandler.code);
     if (code != null) {

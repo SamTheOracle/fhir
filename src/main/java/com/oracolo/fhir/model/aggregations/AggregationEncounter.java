@@ -10,6 +10,13 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AggregationEncounter implements AggregationResource {
 
+  private List<String> ids;
+
+
+  public void setResourceType(String resourceType) {
+    this.resourceType = resourceType;
+  }
+
   private String resourceType = "AggregationEncounter";
 
   private Encounter mainEncounter;
@@ -125,4 +132,22 @@ public class AggregationEncounter implements AggregationResource {
     }
     return resources;
   }
+
+  public AggregationEncounter addNewId(String id) {
+    if (this.ids == null) {
+      ids = new ArrayList<>();
+    }
+    ids.add(id);
+    return this;
+  }
+
+  public List<String> getIds() {
+    return ids;
+  }
+
+  public AggregationEncounter setIds(List<String> ids) {
+    this.ids = ids;
+    return this;
+  }
+
 }

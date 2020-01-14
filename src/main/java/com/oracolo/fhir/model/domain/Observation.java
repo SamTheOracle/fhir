@@ -196,7 +196,7 @@ public class Observation extends DomainResource {
    * The information determined as a result of making the observation, if the information has a simple value.
    * <p>Cardinality: 0..1</p>
    */
-  private Boolean valueBoolean;
+  private Boolean valueBoolean = null;
   /**
    * Extension for valueBoolean
    * <p>Cardinality: 0..1</p>
@@ -206,7 +206,7 @@ public class Observation extends DomainResource {
    * The information determined as a result of making the observation, if the information has a simple value.
    * <p>Cardinality: 0..1</p>
    */
-  private int valueInteger;
+  private Integer valueInteger = null;
   /**
    * Extension for valueInteger
    * <p>Cardinality: 0..1</p>
@@ -524,7 +524,7 @@ public class Observation extends DomainResource {
     this._valueBoolean = _valueBoolean;
   }
 
-  public int getValueInteger() {
+  public Integer getValueInteger() {
     return valueInteger;
   }
 
@@ -669,10 +669,34 @@ public class Observation extends DomainResource {
     return this;
   }
 
-  public Observation addNewContained(Observation observation) {
+  public Observation addNewContained(Object observation) {
     if (contained == null) {
       contained = new ArrayList<>();
     }
+    return this;
+  }
+
+  public Observation addNewObservationComponent(ObservationComponent observationComponent) {
+    if (component == null) {
+      component = new ArrayList<>();
+    }
+    component.add(observationComponent);
+    return this;
+  }
+
+  public Observation addNewIdentifier(Identifier identifier) {
+    if (this.identifier == null) {
+      this.identifier = new ArrayList<>();
+    }
+    this.identifier.add(identifier);
+    return this;
+  }
+
+  public Observation addNewNote(Annotation annotation) {
+    if (note == null) {
+      note = new ArrayList<>();
+    }
+    note.add(annotation);
     return this;
   }
 }

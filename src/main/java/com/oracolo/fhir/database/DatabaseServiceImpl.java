@@ -311,7 +311,6 @@ public class DatabaseServiceImpl implements DatabaseService {
           .filter(jsonObject -> jsonObject.getString("resourceType").equals(ResourceType.OBSERVATION.typeName()))
           .map(json -> Json.decodeValue(json.encode(), Observation.class))
           .collect(Collectors.toList());
-        JsonObject debug = new JsonObject().put("items", new JsonArray(observations.stream().map(JsonObject::mapFrom).collect(Collectors.toList())));
         List<Condition> conditions = resources
           .stream()
           .filter(jsonObject -> jsonObject.getString("resourceType").equals(ResourceType.CONDITION.typeName()))
@@ -332,7 +331,9 @@ public class DatabaseServiceImpl implements DatabaseService {
           .filter(jsonObject -> jsonObject.getString("resourceType").equals(ResourceType.PRACTITIONER.typeName()))
           .map(json -> Json.decodeValue(json.encode(), Practitioner.class))
           .collect(Collectors.toList());
+
         AggregationEncounter aggregationEncounter = new AggregationEncounter()
+          .setIds(encounters.stream().map(Encounter::getId).collect(Collectors.toList()))
           .setMainEncounter(Json.decodeValue(mainResource.encode(), Encounter.class))
           .setSubEncounters(encounters)
           .setObservations(observations)
@@ -340,6 +341,7 @@ public class DatabaseServiceImpl implements DatabaseService {
           .setPractitioners(practitioners)
           .setConditions(conditions);
         JsonObject aggregationJson = JsonObject.mapFrom(aggregationEncounter);
+
         mongoClient.insert("aggregations", aggregationJson, res -> {
           if (res.succeeded()) {
             handler.handle(Future.succeededFuture(aggregationJson));
@@ -414,7 +416,7 @@ public class DatabaseServiceImpl implements DatabaseService {
           });
         Metadata meta = Json.decodeValue(aggregationJsonObject.getJsonObject("mainEncounter").getJsonObject("meta").encode(), Metadata.class);
         bundle.addNewEntry(new BundleEntry()
-          .setResource(aggregationJsonObject)
+          .setResource(aggregationJsonObject.getJsonObject("mainEncounter"))
           .setResponse(new BundleResponse()
             .setEtag(meta.getVersionId())
             .setLastModified(meta.getLastUpdated().toString())
@@ -422,6 +424,11 @@ public class DatabaseServiceImpl implements DatabaseService {
           ));
         bundle.setTotal(bundle.getEntry().size());
         handler.handle(Future.succeededFuture(JsonObject.mapFrom(bundle)));
+      } else if (res.succeeded()) {
+        handler.handle(ServiceException.fail(HttpResponseStatus.NOT_FOUND.code(), "No resource found"));
+      } else {
+        handler.handle(ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), res.cause().getMessage()));
+
       }
     });
 
