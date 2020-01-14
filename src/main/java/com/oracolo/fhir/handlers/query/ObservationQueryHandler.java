@@ -5,8 +5,9 @@ import io.vertx.core.json.JsonObject;
 
 public class ObservationQueryHandler extends BaseQueryHandler {
 
-  private final String encounter = "encounter";
-  private final String code = "code";
+  static final String encounter = "encounter";
+  static final String code = "code";
+  static final String subject = "subject";
 
   @Override
   public JsonObject createMongoDbQuery() {
@@ -16,7 +17,7 @@ public class ObservationQueryHandler extends BaseQueryHandler {
     if (encounterReference != null) {
       baseQueryOperations.add(new JsonObject().put("encounter.reference", encounterReference));
     }
-    String code = params.get(this.code);
+    String code = params.get(ObservationQueryHandler.code);
     if (code != null) {
       baseQueryOperations.add(new JsonObject()
         .put("$or", new JsonArray()
@@ -31,6 +32,19 @@ public class ObservationQueryHandler extends BaseQueryHandler {
           .add(new JsonObject()
             .put("code.coding.code", new JsonObject()
               .put("$regex", code)
+              .put("$options", "i")))));
+    }
+    String subject = params.get(ObservationQueryHandler.subject);
+    if (subject != null) {
+      baseQueryOperations.add(new JsonObject()
+        .put("$or", new JsonArray()
+          .add(new JsonObject()
+            .put("subject.reference", new JsonObject()
+              .put("$regex", subject)
+              .put("$options", "i")))
+          .add(new JsonObject()
+            .put("subject.display", new JsonObject()
+              .put("$regex", subject)
               .put("$options", "i")))));
     }
     return baseQuery;

@@ -277,10 +277,11 @@ public class TraumaCare extends BaseRestInterface {
 
     service.createAggregationResource(AggregationType.ENCOUNTER, JsonObject.mapFrom(encounterAll), resourceToAggregate, aggregationEncounterPromise);
 
-    domainResources.add(encounterAll);
+    resourceToAggregate.add(JsonObject.mapFrom(encounterAll));
 
 
-    addResourcesOnDatabase(service, domainResources, patientReference);
+    patientReference.setReference("/" + ResourceType.ENCOUNTER.typeName() + "#" + encounterAll.getId());
+    addResourcesOnDatabase(service, resourceToAggregate, patientReference);
 
     aggregationEncounterPromise
       .future()
@@ -302,41 +303,29 @@ public class TraumaCare extends BaseRestInterface {
           .setDiagnostics(throwable.getMessage()))).toBuffer()));
   }
 
-  private void addResourcesOnDatabase(DatabaseService databaseService, List<Resource> domainResources, Reference patientReference) {
+  private void addResourcesOnDatabase(DatabaseService databaseService, List<JsonObject> domainResources, Reference patientReference) {
     List<JsonObject> observationsJson = domainResources
       .stream()
-      .filter(resource -> ResourceType.valueOf(resource.getResourceType().toUpperCase()).equals(ResourceType.OBSERVATION))
-      .map(JsonObject::mapFrom)
       .peek(json -> json.put("subject", JsonObject.mapFrom(patientReference)))
-//      .peek(json -> json.put("meta", JsonObject.mapFrom(new Metadata()
-//        .setLastUpdated(Instant.now())
-//        .setVersionId(UUID.randomUUID().toString()))))
+      .filter(resource -> resource.getString("resourceType").equals(ResourceType.OBSERVATION.typeName()))
+      .map(JsonObject::mapFrom)
       .collect(Collectors.toList());
     List<JsonObject> proceduresJson = domainResources
       .stream()
-      .filter(resource -> ResourceType.valueOf(resource.getResourceType().toUpperCase()).equals(ResourceType.PROCEDURE))
+      .filter(resource -> resource.getString("resourceType").equals(ResourceType.PROCEDURE.typeName()))
       .map(JsonObject::mapFrom)
       .peek(json -> json.put("subject", JsonObject.mapFrom(patientReference)))
-//      .peek(json -> json.put("meta", JsonObject.mapFrom(new Metadata()
-//        .setLastUpdated(Instant.now())
-//        .setVersionId(UUID.randomUUID().toString()))))
       .collect(Collectors.toList());
     List<JsonObject> encountersJson = domainResources
       .stream()
-      .filter(resource -> ResourceType.valueOf(resource.getResourceType().toUpperCase()).equals(ResourceType.ENCOUNTER))
+      .filter(resource -> resource.getString("resourceType").equals(ResourceType.ENCOUNTER.typeName()))
       .map(JsonObject::mapFrom)
       .peek(json -> json.put("patient", JsonObject.mapFrom(patientReference)))
-//      .peek(json -> json.put("meta", JsonObject.mapFrom(new Metadata()
-//        .setLastUpdated(Instant.now())
-//        .setVersionId(UUID.randomUUID().toString()))))
       .collect(Collectors.toList());
     List<JsonObject> conditionsJson = domainResources
       .stream()
-      .filter(resource -> ResourceType.valueOf(resource.getResourceType().toUpperCase()).equals(ResourceType.CONDITION))
+      .filter(resource -> resource.getString("resourceType").equals(ResourceType.CONDITION.typeName()))
       .map(JsonObject::mapFrom)
-//      .peek(json -> json.put("meta", JsonObject.mapFrom(new Metadata()
-//        .setLastUpdated(Instant.now())
-//        .setVersionId(UUID.randomUUID().toString()))))
       .peek(json -> json.put("subject", JsonObject.mapFrom(patientReference)))
       .collect(Collectors.toList());
 
@@ -1379,7 +1368,7 @@ public class TraumaCare extends BaseRestInterface {
 
     }
     //osservazioni
-    if (dAnisocoria != null && dAnisocoria) {
+    if (dAnisocoria != null) {
       Observation observationAnisocoria = new Observation();
       observationAnisocoria
         .setId(UUID.randomUUID().toString())
@@ -1390,7 +1379,7 @@ public class TraumaCare extends BaseRestInterface {
             .setDisplay("Anisocoria (disorder)"))
           .setText("Anisocoria"))
         .setStatus("final")
-        .setValueBoolean(true)
+        .setValueBoolean(dAnisocoria)
         .setEncounter(new Reference()
           .setDisplay("Encounter pre ospedalizzazione")
           .setType(ResourceType.ENCOUNTER.typeName())
@@ -1406,7 +1395,7 @@ public class TraumaCare extends BaseRestInterface {
           .addNewDetail(new Reference()
             .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + observationAnisocoria.getId())));
     }
-    if (dMidriasi != null && dMidriasi) {
+    if (dMidriasi != null) {
       Observation observationMidriasi = new Observation();
       observationMidriasi
         .setId(UUID.randomUUID().toString())
@@ -1417,7 +1406,7 @@ public class TraumaCare extends BaseRestInterface {
             .setDisplay("Traumatic mydriasis (disorder)"))
           .setText("Mydriasis"))
         .setStatus("final")
-        .setValueBoolean(true)
+        .setValueBoolean(dMidriasi)
         .setEncounter(new Reference()
           .setDisplay("Encounter pre ospedalizzazione")
           .setType(ResourceType.ENCOUNTER.typeName())
@@ -1433,7 +1422,7 @@ public class TraumaCare extends BaseRestInterface {
           .addNewDetail(new Reference()
             .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + observationMidriasi.getId())));
     }
-    if (eMotility != null && eMotility) {
+    if (eMotility != null) {
       Observation observationMotility = new Observation();
       observationMotility
         .setId(UUID.randomUUID().toString())
@@ -1444,7 +1433,7 @@ public class TraumaCare extends BaseRestInterface {
             .setDisplay("Motility (observable entity)"))
           .setText("Motility"))
         .setStatus("final")
-        .setValueBoolean(true)
+        .setValueBoolean(eMotility)
         .setEncounter(new Reference()
           .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()))
         .setSubject(encounterPreh.getPatient());
@@ -2051,9 +2040,9 @@ public class TraumaCare extends BaseRestInterface {
     }
 
     resources.add(patient);
-
+    encounterPreh.addNewContained(patient);
     encounterPreh.setPatient(new Reference()
-      .setReference("/#" + patient.getId())
+      .setReference("#" + patient.getId())
       .setDisplay(name + " " + surname + " età " + age)
       .setType(ResourceType.PATIENT.typeName()));
 

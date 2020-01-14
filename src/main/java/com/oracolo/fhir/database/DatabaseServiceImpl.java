@@ -163,8 +163,11 @@ public class DatabaseServiceImpl implements DatabaseService {
             handler.handle(ServiceException.fail(FhirUtils.MONGODB_CONNECTION_FAIL, res.cause().getMessage()));
           }
         });
+      } else if (subEncounterRes.result() != null) {
+        handler.handle(ServiceException.fail(HttpResponseStatus.NOT_FOUND.code(), "Resources not found"));
       } else {
         handler.handle(ServiceException.fail(FhirUtils.MONGODB_CONNECTION_FAIL, subEncounterRes.cause().getMessage()));
+
       }
 
     });
@@ -361,15 +364,32 @@ public class DatabaseServiceImpl implements DatabaseService {
         aggregationJsonObject.remove("_id");
         Bundle bundle = new Bundle()
           .setType("searchset");
-        AggregationEncounter aggregationEncounter = Json.decodeValue(res.result().encode(), AggregationEncounter.class);
-        aggregationEncounter.resources()
+        List<Object> allResource = new ArrayList<>();
+        JsonArray subEncounters = aggregationJsonObject.getJsonArray("subEncounters");
+        JsonArray observations = aggregationJsonObject.getJsonArray("observations");
+        JsonArray procedures = aggregationJsonObject.getJsonArray("procedures");
+        JsonArray conditions = aggregationJsonObject.getJsonArray("conditions");
+        if (subEncounters != null) {
+          allResource.addAll(subEncounters.getList());
+        }
+        if (observations != null) {
+          allResource.addAll(observations.getList());
+        }
+        if (procedures != null) {
+          allResource.addAll(procedures.getList());
+        }
+        if (conditions != null) {
+          allResource.addAll(conditions.getList());
+        }
+        allResource
           .stream()
           .map(JsonObject::mapFrom)
           .forEach(json -> {
+            String resourceType = json.getString("resourceType");
+            String id = json.getString("id");
             Metadata meta = Json.decodeValue(json.getJsonObject("meta").encode(), Metadata.class);
             if (meta.getTag() != null && meta.getTag().contains(FhirUtils.DELETED)) {
-              String resourceType = json.getString("resourceType");
-              String id = json.getString("id");
+
               String vid = meta.getVersionId();
               String lastModified = meta.getLastUpdated().toString();
               bundle.addNewEntry(new BundleEntry()
@@ -387,10 +407,18 @@ public class DatabaseServiceImpl implements DatabaseService {
               bundle.addNewEntry(new BundleEntry()
                 .setResponse(new BundleResponse()
                   .setLastModified(meta.getLastUpdated().toString())
-                  .setEtag(meta.getVersionId()))
+                  .setEtag(meta.getVersionId())
+                  .setLocation("/" + resourceType + "/" + id))
                 .setResource(json));
             }
           });
+        Metadata meta = Json.decodeValue(aggregationJsonObject.getJsonObject("mainEncounter").getJsonObject("meta").encode(), Metadata.class);
+        bundle.addNewEntry(new BundleEntry()
+          .setResponse(new BundleResponse()
+            .setEtag(meta.getVersionId())
+            .setLastModified(meta.getLastUpdated().toString())
+            .setLocation("/" + ResourceType.ENCOUNTER + "/" + aggregationJsonObject.getString("id"))
+          ));
         bundle.setTotal(bundle.getEntry().size());
         handler.handle(Future.succeededFuture(JsonObject.mapFrom(bundle)));
       }
