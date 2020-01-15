@@ -90,7 +90,7 @@ public class Encounter extends DomainResource {
    * The patient or group present at the encounter.
    * <p>Cardinality: 0..1</p>
    */
-  private Reference patient;
+  private Reference subject;
   /**
    * Where a specific encounter should be classified as a part of a specific episode(s) of care this field
    * should be used. This association can facilitate grouping of related encounters together for a specific purpose,
@@ -170,11 +170,6 @@ public class Encounter extends DomainResource {
    */
   private Reference partOf;
 
-  /**
-   * The subject this encounter refers to
-   * <p>Cardinality 0..1</p>
-   */
-  private Reference subject;
 
 
   public Encounter addNewParticipant(EncounterParticipant encounterParticipant) {
@@ -203,14 +198,7 @@ public class Encounter extends DomainResource {
     return this;
   }
 
-  public Reference getSubject() {
-    return subject;
-  }
 
-  public Encounter setSubject(Reference subject) {
-    this.subject = subject;
-    return this;
-  }
 
   public Extension get_status() {
     return _status;
@@ -271,12 +259,12 @@ public class Encounter extends DomainResource {
     return this;
   }
 
-  public Reference getPatient() {
-    return patient;
+  public Reference getSubject() {
+    return subject;
   }
 
-  public Encounter setPatient(Reference patient) {
-    this.patient = patient;
+  public Encounter setSubject(Reference subject) {
+    this.subject = subject;
     return this;
   }
 

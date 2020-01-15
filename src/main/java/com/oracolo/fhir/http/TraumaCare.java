@@ -191,7 +191,7 @@ public class TraumaCare extends BaseRestInterface {
     if (traumaInfo != null) {
       patient = addTraumaInformation(traumaInfo, encounterPreh, encounterIntervention, traumaCondition, domainResources);
     }
-    Reference patientReference = encounterPreh.getPatient();
+    Reference patientReference = encounterPreh.getSubject();
 
 
     JsonObject majorTraumaCriteria = reportJson.getJsonObject("majorTraumaCriteria");
@@ -264,12 +264,12 @@ public class TraumaCare extends BaseRestInterface {
     if (encounterPreh.getContained() != null) {
       encounterPreh.getContained().forEach(encounterAll::addNewContained);
     }
-    encounterAll.setPatient(patientReference);
+    encounterAll.setSubject(patientReference);
     encounterAll.setMeta(new Metadata()
       .setVersionId(UUID.randomUUID().toString())
       .setLastUpdated(Instant.now()));
 
-    domainResources.add(encounterIntervention.setPatient(patientReference));
+    domainResources.add(encounterIntervention.setSubject(patientReference));
     domainResources.add(encounterPreh);
 
     Promise<JsonObject> aggregationEncounterPromise = Promise.promise();
@@ -618,7 +618,7 @@ public class TraumaCare extends BaseRestInterface {
           }
           if (lactates != null) {
             Observation observationLactates = new Observation()
-              .setSubject(intervention.getPatient())
+              .setSubject(intervention.getSubject())
               .setId(UUID.randomUUID().toString())
               .setValueQuantity(new Quantity()
                 .setValue(lactates))
@@ -635,7 +635,7 @@ public class TraumaCare extends BaseRestInterface {
           }
           if (be != null) {
             Observation observationBe = new Observation()
-              .setSubject(intervention.getPatient())
+              .setSubject(intervention.getSubject())
               .setId(UUID.randomUUID().toString())
               .setValueQuantity(new Quantity()
                 .setValue(be))
@@ -652,7 +652,7 @@ public class TraumaCare extends BaseRestInterface {
           }
           if (ph != null) {
             Observation phObservation = new Observation()
-              .setSubject(intervention.getPatient())
+              .setSubject(intervention.getSubject())
               .setId(UUID.randomUUID().toString())
               .setValueQuantity(new Quantity()
                 .setValue(ph))
@@ -669,7 +669,7 @@ public class TraumaCare extends BaseRestInterface {
           }
           if (hb != null) {
             Observation hbObservation = new Observation()
-              .setSubject(intervention.getPatient())
+              .setSubject(intervention.getSubject())
               .setId(UUID.randomUUID().toString())
               .setValueQuantity(new Quantity()
                 .setValue(hb))
@@ -686,7 +686,7 @@ public class TraumaCare extends BaseRestInterface {
           }
           if (fibtem != null) {
             Observation fibtemObservation = new Observation()
-              .setSubject(intervention.getPatient())
+              .setSubject(intervention.getSubject())
               .setId(UUID.randomUUID().toString())
               .setValueString(fibtem)
               .setStatus("final")
@@ -702,7 +702,7 @@ public class TraumaCare extends BaseRestInterface {
           }
           if (extem != null) {
             Observation extemObservation = new Observation()
-              .setSubject(intervention.getPatient())
+              .setSubject(intervention.getSubject())
               .setId(UUID.randomUUID().toString())
               .setValueString(extem)
               .setStatus("final")
@@ -718,7 +718,7 @@ public class TraumaCare extends BaseRestInterface {
           }
           if (hyperfibrinolysis != null) {
             Observation hyperfibrinolysisObservation = new Observation()
-              .setSubject(intervention.getPatient())
+              .setSubject(intervention.getSubject())
               .setId(UUID.randomUUID().toString())
               .setValueBoolean(hyperfibrinolysis)
               .setStatus("final")
@@ -862,7 +862,7 @@ public class TraumaCare extends BaseRestInterface {
             Object value = vitalSignEntry.getValue();
             String name = vitalSignEntry.getKey();
             Observation observation = new Observation()
-              .setSubject(intervention.getPatient())
+              .setSubject(intervention.getSubject())
               .setId(UUID.randomUUID().toString())
               .setValueQuantity(new Quantity()
                 .setValue((Double) value))
@@ -915,7 +915,7 @@ public class TraumaCare extends BaseRestInterface {
           break;
         case "trauma-leader":
           Procedure traumaLeaderProcedure = new Procedure()
-            .setSubject(intervention.getPatient())
+            .setSubject(intervention.getSubject())
             .setStatus("completed")
             .setCode(new CodeableConcept()
               .addNewCoding(new Coding()
@@ -996,7 +996,7 @@ public class TraumaCare extends BaseRestInterface {
                 .setSystem("http://www.snomed.org/"))
               .setText(type))
             .setStatus("completed")
-            .setSubject(intervention.getPatient());
+            .setSubject(intervention.getSubject());
 
 
           break;
@@ -1062,7 +1062,7 @@ public class TraumaCare extends BaseRestInterface {
           .setType(ResourceType.ENCOUNTER.typeName())
           .setDisplay("Encounter intervention")
           .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
-        .setSubject(encounterShock.getPatient());
+        .setSubject(encounterShock.getSubject());
 
       domainResources.add(vitalSignObservationContainer);
 
@@ -1175,7 +1175,7 @@ public class TraumaCare extends BaseRestInterface {
             .setDisplay("Encounter intervention")
             .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
 
-          .setSubject(encounterShock.getPatient());
+          .setSubject(encounterShock.getSubject());
         patientInitialCondition
           .addNewConditionEvidence(new ConditionEvidence()
             .addNewCode(new CodeableConcept()
@@ -1201,7 +1201,7 @@ public class TraumaCare extends BaseRestInterface {
             .setType(ResourceType.ENCOUNTER.typeName())
             .setDisplay("Encounter intervention")
             .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
-          .setSubject(encounterShock.getPatient());
+          .setSubject(encounterShock.getSubject());
 
         patientInitialCondition
           .addNewConditionEvidence(new ConditionEvidence()
@@ -1228,7 +1228,7 @@ public class TraumaCare extends BaseRestInterface {
             .setType(ResourceType.ENCOUNTER.typeName())
             .setDisplay("Encounter intervention")
             .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
-          .setSubject(encounterShock.getPatient());
+          .setSubject(encounterShock.getSubject());
 
         domainResources.add(observation);
 
@@ -1257,7 +1257,7 @@ public class TraumaCare extends BaseRestInterface {
             .setType(ResourceType.ENCOUNTER.typeName())
             .setDisplay("Encounter intervention")
             .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
-          .setSubject(encounterShock.getPatient());
+          .setSubject(encounterShock.getSubject());
 
 
         domainResources.add(observation);
@@ -1286,7 +1286,7 @@ public class TraumaCare extends BaseRestInterface {
             .setType(ResourceType.ENCOUNTER.typeName())
             .setDisplay("Encounter intervention")
             .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
-          .setSubject(encounterShock.getPatient());
+          .setSubject(encounterShock.getSubject());
 
 
         domainResources.add(observation);
@@ -1314,7 +1314,7 @@ public class TraumaCare extends BaseRestInterface {
             .setType(ResourceType.ENCOUNTER.typeName())
             .setDisplay("Encounter intevention")
             .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
-          .setSubject(encounterShock.getPatient());
+          .setSubject(encounterShock.getSubject());
 
 
         domainResources.add(observation);
@@ -1343,7 +1343,7 @@ public class TraumaCare extends BaseRestInterface {
             .setType(ResourceType.ENCOUNTER.typeName())
             .setDisplay("Encounter intervention")
             .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
-          .setSubject(encounterShock.getPatient());
+          .setSubject(encounterShock.getSubject());
 
 
         domainResources.add(observation);
@@ -1368,7 +1368,7 @@ public class TraumaCare extends BaseRestInterface {
             .setType(ResourceType.ENCOUNTER.typeName())
             .setDisplay("Encounter intervention")
             .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
-          .setSubject(encounterShock.getPatient());
+          .setSubject(encounterShock.getSubject());
 
 
         domainResources.add(observation);
@@ -1409,7 +1409,7 @@ public class TraumaCare extends BaseRestInterface {
             .setType(ResourceType.ENCOUNTER.typeName())
             .setDisplay("Encounter intervention")
             .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
-          .setSubject(encounterShock.getPatient());
+          .setSubject(encounterShock.getSubject());
 
         domainResources.add(intubationFailedProcedure);
 
@@ -1438,7 +1438,7 @@ public class TraumaCare extends BaseRestInterface {
             .setType(ResourceType.ENCOUNTER.typeName())
             .setDisplay("Encounter intervention")
             .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
-          .setSubject(encounterShock.getPatient());
+          .setSubject(encounterShock.getSubject());
 
 
         domainResources.add(chestTubeObservation);
@@ -1467,7 +1467,7 @@ public class TraumaCare extends BaseRestInterface {
             .setType(ResourceType.ENCOUNTER.typeName())
             .setDisplay("Encounter intervention")
             .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
-          .setSubject(encounterShock.getPatient());
+          .setSubject(encounterShock.getSubject());
 
         domainResources.add(oxygenPercentageObservation);
         patientInitialCondition
@@ -1494,7 +1494,7 @@ public class TraumaCare extends BaseRestInterface {
             .setType(ResourceType.ENCOUNTER.typeName())
             .setDisplay("Encounter intervention")
             .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
-          .setSubject(encounterShock.getPatient());
+          .setSubject(encounterShock.getSubject());
 
 
         domainResources.add(hemorrhageObservation);
@@ -1522,7 +1522,7 @@ public class TraumaCare extends BaseRestInterface {
             .setType(ResourceType.ENCOUNTER.typeName())
             .setDisplay("Encounter intervention")
             .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
-          .setSubject(encounterShock.getPatient());
+          .setSubject(encounterShock.getSubject());
 
 
         domainResources.add(limbsFractureObservation);
@@ -1551,7 +1551,7 @@ public class TraumaCare extends BaseRestInterface {
             .setType(ResourceType.ENCOUNTER.typeName())
             .setDisplay("Encounter intervention")
             .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
-          .setSubject(encounterShock.getPatient());
+          .setSubject(encounterShock.getSubject());
 
 
         domainResources.add(fractureExpositionObservation);
@@ -1579,7 +1579,7 @@ public class TraumaCare extends BaseRestInterface {
             .setType(ResourceType.ENCOUNTER.typeName())
             .setDisplay("Encounter intervention")
             .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
-          .setSubject(encounterShock.getPatient());
+          .setSubject(encounterShock.getSubject());
 
         domainResources.add(burnObservation);
         patientInitialCondition
@@ -1656,7 +1656,7 @@ public class TraumaCare extends BaseRestInterface {
           .setType(ResourceType.ENCOUNTER.typeName())
           .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()))
         .setSubject(new Reference()
-          .setReference(encounterPreh.getPatient().getReference()));
+          .setReference(encounterPreh.getSubject().getReference()));
 
       domainResources.add(procedure);
       traumaCondition
@@ -1679,7 +1679,7 @@ public class TraumaCare extends BaseRestInterface {
           .setDisplay("Encounter pre ospedalizzazione")
           .setType(ResourceType.ENCOUNTER.typeName())
           .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()))
-        .setSubject(encounterPreh.getPatient());
+        .setSubject(encounterPreh.getSubject());
 
       domainResources.add(procedure);
       traumaCondition
@@ -1704,7 +1704,7 @@ public class TraumaCare extends BaseRestInterface {
           .setDisplay("Encounter pre ospedalizzazione")
           .setType(ResourceType.ENCOUNTER.typeName())
           .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()))
-        .setSubject(encounterPreh.getPatient());
+        .setSubject(encounterPreh.getSubject());
 
       domainResources.add(procedure);
 
@@ -1731,7 +1731,7 @@ public class TraumaCare extends BaseRestInterface {
           .setDisplay("Encounter pre ospedalizzazione")
           .setType(ResourceType.ENCOUNTER.typeName())
           .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()))
-        .setSubject(encounterPreh.getPatient());
+        .setSubject(encounterPreh.getSubject());
 
       domainResources.add(observationAnisocoria);
 
@@ -1758,7 +1758,7 @@ public class TraumaCare extends BaseRestInterface {
           .setDisplay("Encounter pre ospedalizzazione")
           .setType(ResourceType.ENCOUNTER.typeName())
           .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()))
-        .setSubject(encounterPreh.getPatient());
+        .setSubject(encounterPreh.getSubject());
 
       domainResources.add(observationMidriasi);
 
@@ -1783,7 +1783,7 @@ public class TraumaCare extends BaseRestInterface {
         .setValueBoolean(eMotility)
         .setEncounter(new Reference()
           .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()))
-        .setSubject(encounterPreh.getPatient());
+        .setSubject(encounterPreh.getSubject());
       domainResources.add(observationMotility);
       traumaCondition
         .addNewConditionEvidence(new ConditionEvidence()
@@ -1807,7 +1807,7 @@ public class TraumaCare extends BaseRestInterface {
           .setDisplay("Encounter pre ospedalizzazione")
           .setType(ResourceType.ENCOUNTER.typeName())
           .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()))
-        .setSubject(encounterPreh.getPatient());
+        .setSubject(encounterPreh.getSubject());
       domainResources.add(dGcs);
       traumaCondition
         .addNewConditionEvidence(new ConditionEvidence()
@@ -1837,7 +1837,7 @@ public class TraumaCare extends BaseRestInterface {
           .setDisplay("Encounter pre ospedalizzazione")
           .setType(ResourceType.ENCOUNTER.typeName())
           .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()))
-        .setSubject(encounterPreh.getPatient());
+        .setSubject(encounterPreh.getSubject());
 
       traumaCondition
         .addNewConditionEvidence(new ConditionEvidence()
@@ -1866,7 +1866,7 @@ public class TraumaCare extends BaseRestInterface {
           .setDisplay("Encounter pre ospedalizzazione")
           .setType(ResourceType.ENCOUNTER.typeName())
           .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()))
-        .setSubject(encounterPreh.getPatient());
+        .setSubject(encounterPreh.getSubject());
       domainResources.add(worstRespiratoryRateObservation);
 
       traumaCondition
@@ -1893,7 +1893,7 @@ public class TraumaCare extends BaseRestInterface {
         .setText("Anamnesis")
       ).setStatus("completed")
       .setId(UUID.randomUUID().toString())
-      .setSubject(encounter.getPatient())
+      .setSubject(encounter.getSubject())
       .setEncounter(new Reference()
         .setDisplay("Encounter pre ospedalizzazione")
         .setType(ResourceType.ENCOUNTER.typeName())
@@ -2106,7 +2106,7 @@ public class TraumaCare extends BaseRestInterface {
           .setCode("active")
           .setDisplay("Active")
           .setSystem("http://terminology.hl7.org/CodeSystem/condition-clinicalversion4.0.1")))
-      .setSubject(encounter.getPatient());
+      .setSubject(encounter.getSubject());
 
     Integer totalIssScore = iss.getInteger("totalIss");
     Observation totalIssObservation = new Observation();
@@ -2201,7 +2201,7 @@ public class TraumaCare extends BaseRestInterface {
       encounterPreh.addNewLocation(new EncounterLocation()
         .setLocation(new Reference()
           .setDisplay(vehicle))
-        .setStatus("Completed")
+        .setStatus("completed")
         .setPhysicalType(new CodeableConcept()
           .addNewCoding(new Coding()
             .setCode("ve")
@@ -2281,7 +2281,7 @@ public class TraumaCare extends BaseRestInterface {
         .setEncounter(new Reference()
           .setDisplay("Encounter pre ospedalizzazione")
           .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterPreh.getId()))
-        .setSubject(encounterPreh.getPatient())
+        .setSubject(encounterPreh.getSubject())
         .setStatus("final")
         .setValueString(accidentType);
 
@@ -2357,7 +2357,7 @@ public class TraumaCare extends BaseRestInterface {
 
     resources.add(patient);
     encounterPreh.addNewContained(patient);
-    encounterPreh.setPatient(new Reference()
+    encounterPreh.setSubject(new Reference()
       .setReference("#" + patient.getId())
       .setDisplay(name + " " + surname + " età " + age)
       .setType(ResourceType.PATIENT.typeName()));

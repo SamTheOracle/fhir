@@ -335,6 +335,8 @@ public class FhirServer extends BaseRestInterface {
     }
     //validation
     ValidationHandler validationHandler = ValidationHandler.createValidator();
+    JsonArray containedResources = resourceJson.getJsonArray("contained");
+    resourceJson.remove("contained");
     boolean isValidFhirResource = validationHandler.validateAgainstJsonSchema(resourceJson);
     boolean isValidFhirClass = validationHandler.validateAgainstClass(resourceJson, type.getResourceClass());
     //if is not valid
@@ -344,6 +346,7 @@ public class FhirServer extends BaseRestInterface {
       routingContext.put("code", "invariant");
       routingContext.fail(HttpResponseStatus.BAD_REQUEST.code());
     } else {
+      resourceJson.put("contained", containedResources);
       ResponseHandler
         .createUpdateCreateResponseHandler()
         .withService(databaseService)
@@ -402,16 +405,20 @@ public class FhirServer extends BaseRestInterface {
       if (acceptableType == null) {
         acceptableType = FhirHttpHeader.APPLICATION_JSON.value();
       }
+      //validation
       ValidationHandler validationHandler = ValidationHandler.createValidator();
+      JsonArray containedResources = resourceJson.getJsonArray("contained");
+      resourceJson.remove("contained");
       boolean isValidFhirResource = validationHandler.validateAgainstJsonSchema(resourceJson);
       boolean isValidFhirClass = validationHandler.validateAgainstClass(resourceJson, type.getResourceClass());
-      HttpServerResponse serverResponse = routingContext.response();
       //if is not valid
+      HttpServerResponse serverResponse = routingContext.response();
       if (!isValidFhirClass || !isValidFhirResource) {
         routingContext.put("error", "Not valid resource");
         routingContext.put("code", "invariant");
         routingContext.fail(HttpResponseStatus.BAD_REQUEST.code());
       } else {
+        resourceJson.put("contained", containedResources);
         ResponseHandler
           .createUpdateCreateResponseHandler()
           .withService(databaseService)
