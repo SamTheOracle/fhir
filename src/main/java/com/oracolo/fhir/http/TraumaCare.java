@@ -56,6 +56,7 @@ public class TraumaCare extends BaseRestInterface {
   }
 
   private void handleReports(RoutingContext routingContext) {
+    LOGGER.info("handling reports");
     List<Resource> domainResources = new ArrayList<>();
     //Main json
     JsonObject reportJson = routingContext.getBodyAsJson();
@@ -121,7 +122,8 @@ public class TraumaCare extends BaseRestInterface {
           .addNewCoding(new Coding()
             .setSystem("https://www.hl7.org/fhir/codesystem-diagnosis-role.html")
             .setDisplay("Admission diagnosis")
-            .setCode("AD")))
+            .setCode("AD"))
+          .setText("Trauma Condition"))
         .setCondition(new Reference()
           .setType(ResourceType.CONDITION.typeName())
           .setReference("/" + ResourceType.CONDITION.typeName() + "/" + traumaCondition.getId()))
@@ -185,8 +187,9 @@ public class TraumaCare extends BaseRestInterface {
       .setDestination(new Reference()
         .setDisplay(finalDestination)));
 
+    Patient patient = null;
     if (traumaInfo != null) {
-      addTraumaInformation(traumaInfo, encounterPreh, encounterIntervention, traumaCondition, domainResources);
+      patient = addTraumaInformation(traumaInfo, encounterPreh, encounterIntervention, traumaCondition, domainResources);
     }
     Reference patientReference = encounterPreh.getPatient();
 
@@ -286,8 +289,7 @@ public class TraumaCare extends BaseRestInterface {
     resourceToAggregate.add(JsonObject.mapFrom(encounterAll));
 
 
-    patientReference.setReference("/" + ResourceType.ENCOUNTER.typeName() + "#" + encounterAll.getId());
-    addResourcesOnDatabase(service, resourceToAggregate, patientReference);
+    addResourcesOnDatabase(service, resourceToAggregate, patientReference, patient);
 
     aggregationEncounterPromise
       .future()
@@ -307,11 +309,20 @@ public class TraumaCare extends BaseRestInterface {
           .setDiagnostics(throwable.getMessage()))).toBuffer()));
   }
 
-  private void addResourcesOnDatabase(DatabaseService databaseService, List<JsonObject> domainResources, Reference patientReference) {
+  private void addResourcesOnDatabase(DatabaseService databaseService, List<JsonObject> domainResources, Reference patientReference, Patient patient) {
+    JsonObject patientJson = JsonObject.mapFrom(patient);
     List<JsonObject> observationsJson = domainResources
       .stream()
-      .peek(json -> json.put("subject", JsonObject.mapFrom(patientReference)))
       .filter(resource -> resource.getString("resourceType").equals(ResourceType.OBSERVATION.typeName()))
+      .peek(json -> json.put("subject", JsonObject.mapFrom(patientReference)))
+      .peek(json -> {
+        JsonArray contained = json.getJsonArray("contained");
+        if (contained != null) {
+          contained.add(patientJson);
+        } else {
+          json.put("contained", new JsonArray().add(patientJson));
+        }
+      })
       .map(JsonObject::mapFrom)
       .collect(Collectors.toList());
     List<JsonObject> proceduresJson = domainResources
@@ -319,19 +330,41 @@ public class TraumaCare extends BaseRestInterface {
       .filter(resource -> resource.getString("resourceType").equals(ResourceType.PROCEDURE.typeName()))
       .map(JsonObject::mapFrom)
       .peek(json -> json.put("subject", JsonObject.mapFrom(patientReference)))
-      .collect(Collectors.toList());
+      .peek(json -> {
+        JsonArray contained = json.getJsonArray("contained");
+        if (contained != null) {
+          contained.add(patientJson);
+        } else {
+          json.put("contained", new JsonArray().add(JsonObject.mapFrom(patientJson)));
+        }
+      }).collect(Collectors.toList());
     List<JsonObject> encountersJson = domainResources
       .stream()
       .filter(resource -> resource.getString("resourceType").equals(ResourceType.ENCOUNTER.typeName()))
       .map(JsonObject::mapFrom)
-      .peek(json -> json.put("patient", JsonObject.mapFrom(patientReference)))
+      .peek(json -> json.put("subject", JsonObject.mapFrom(patientReference)))
+      .peek(json -> {
+        JsonArray contained = json.getJsonArray("contained");
+        if (contained != null) {
+          contained.add(patientJson);
+        } else {
+          json.put("contained", new JsonArray().add(JsonObject.mapFrom(patientJson)));
+        }
+      })
       .collect(Collectors.toList());
     List<JsonObject> conditionsJson = domainResources
       .stream()
       .filter(resource -> resource.getString("resourceType").equals(ResourceType.CONDITION.typeName()))
       .map(JsonObject::mapFrom)
       .peek(json -> json.put("subject", JsonObject.mapFrom(patientReference)))
-      .collect(Collectors.toList());
+      .peek(json -> {
+        JsonArray contained = json.getJsonArray("contained");
+        if (contained != null) {
+          contained.add(patientJson);
+        } else {
+          json.put("contained", new JsonArray().add(JsonObject.mapFrom(patientJson)));
+        }
+      }).collect(Collectors.toList());
 
 
     Promise<JsonObject> encountersBulkOperationsPromise = Promise.promise();
@@ -574,13 +607,13 @@ public class TraumaCare extends BaseRestInterface {
               preH.addNewContained(diagnosticReport.setEncounter(new Reference()
                 .setType(ResourceType.ENCOUNTER.typeName())
                 .setDisplay("Encounter pre ospedalizzazione")
-                .setReference("#" + preH)));
+                .setReference("#" + preH.getId())));
 
             } else {
               intervention.addNewContained(diagnosticReport.setEncounter(new Reference()
                 .setType(ResourceType.ENCOUNTER.typeName())
                 .setDisplay("Encounter intervention")
-                .setReference("#" + intervention)));
+                .setReference("#" + intervention.getId())));
             }
           }
           if (lactates != null) {
@@ -1043,6 +1076,7 @@ public class TraumaCare extends BaseRestInterface {
             .setText("Patient Initial Condition Vital Sign"))
           .addNewDetail(new Reference()
             .setType(ResourceType.OBSERVATION.typeName())
+            .setDisplay("Initial Vital Signs")
             .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + vitalSignObservationContainer.getId())));
 
 
@@ -1867,6 +1901,10 @@ public class TraumaCare extends BaseRestInterface {
     if (anticoagulants != null || nao != null || antiplatelets != null) {
       traumaCondition.addNewConditionEvidence(new ConditionEvidence()
         .addNewCode(new CodeableConcept()
+          .addNewCoding(new Coding()
+            .setSystem("http://www.snomed.org/")
+            .setDisplay("Information gathering (procedure)")
+            .setCode("311791003"))
           .setText("Anamnesis evidence"))
         .addNewDetail(new Reference()
           .setType(ResourceType.PROCEDURE.typeName())
@@ -1893,16 +1931,6 @@ public class TraumaCare extends BaseRestInterface {
           .setType(ResourceType.PROCEDURE.typeName())
           .setReference("/" + ResourceType.PROCEDURE.typeName() + "/" + anamnesisProcedure.getId()));
       domainResources.add(observation);
-//      String documentReferenceUUid = UUID.randomUUID().toString();
-//      documentReference
-//        .setId(documentReferenceUUid)
-//        .addNewDocumentContent(new DocumentReferenceContent()
-//          .setAttachment(new Attachment()
-//            .setContentType("text/plain")
-//            .setLanguage("it")
-//            .setData("Anti-aggreganti utilizzati")
-//            .setTitle("Anamnesis")
-//            .setCreation(LocalDate.now().toString())));
     }
     if (anticoagulants != null) {
       Observation observation = new Observation()
@@ -2027,7 +2055,7 @@ public class TraumaCare extends BaseRestInterface {
         .setText("Trauma Leader"))
         .setIndividual(new Reference()
           .setReference("#" + practitioner.getId())
-          //need to create a fhir resource
+          .setType(ResourceType.PRACTITIONER.typeName())
           .setDisplay(startOperatorDescription));
       encounter.addNewEncounterParticipant(encounterParticipant)
         .addNewContained(practitioner);
@@ -2046,9 +2074,9 @@ public class TraumaCare extends BaseRestInterface {
               .setSystem("http://terminology.hl7.org/CodeSystem/v3-ParticipationType")
               .setCode("SPRF")
               .setDisplay("secondary performer"))
-            .addNewCoding(new Coding()
-              .setDisplay("traumaTeamMembers")))
+            .setText("Trauma team members"))
             .setIndividual(new Reference()
+              .setType(ResourceType.PRACTITIONER.typeName())
               .setDisplay(traumaMemberString));
           encounter.addNewEncounterParticipant(encounterParticipant);
         });
@@ -2164,21 +2192,22 @@ public class TraumaCare extends BaseRestInterface {
 
   }
 
-  private void addTraumaInformation(JsonObject traumaInfo, Encounter encounterPreh, Encounter encounterShock, Condition traumaCondition, List<Resource> domainResources) {
+  private Patient addTraumaInformation(JsonObject traumaInfo, Encounter encounterPreh, Encounter encounterShock, Condition traumaCondition, List<Resource> domainResources) {
 
     EncounterHospitalization encounterHospitalization = new EncounterHospitalization();
     String vehicle = traumaInfo.getString("vehicle");
     if (vehicle != null) {
       //It is possible to add a list of all the locations (building, roads etc.) the patient has been
       encounterPreh.addNewLocation(new EncounterLocation()
-        .setLocation(new Reference().setReference(traumaInfo.getString("vehicle")))
+        .setLocation(new Reference()
+          .setDisplay(vehicle))
         .setStatus("Completed")
         .setPhysicalType(new CodeableConcept()
           .addNewCoding(new Coding()
             .setCode("ve")
             .setDisplay("Vehicle")
             .setSystem("https://www.hl7.org/fhir/valueset-location-physical-type.html"))
-          .setText(vehicle)));
+          .setText("Trasporto con " + vehicle)));
     }
 
     String code = traumaInfo.getString("code");
@@ -2193,7 +2222,6 @@ public class TraumaCare extends BaseRestInterface {
     String dob = traumaInfo.getString("dob");
     Integer age = traumaInfo.getInteger("age");
 
-    createPatient(name, surname, gender, age, dob, erDeceased, encounterPreh, domainResources);
 
     String accidentDate = traumaInfo.getString("accidentDate");
     String accidentTime = traumaInfo.getString("accidentTime");
@@ -2289,10 +2317,11 @@ public class TraumaCare extends BaseRestInterface {
     encounterPreh.setHospitalization(encounterHospitalization);
 
 
+    return createPatient(name, surname, gender, age, dob, erDeceased, encounterPreh, domainResources);
   }
 
-  private void createPatient(String name, String surname, String gender, int age, String dob, Boolean erDeceased, Encounter encounterPreh,
-                             List<Resource> resources) {
+  private Patient createPatient(String name, String surname, String gender, int age, String dob, Boolean erDeceased, Encounter encounterPreh,
+                                List<Resource> resources) {
 
 
     surname = surname == null ? "" : surname;
@@ -2333,6 +2362,7 @@ public class TraumaCare extends BaseRestInterface {
       .setDisplay(name + " " + surname + " età " + age)
       .setType(ResourceType.PATIENT.typeName()));
 
+    return patient;
   }
 
   private void handleWelcome(RoutingContext routingContext) {

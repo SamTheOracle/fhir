@@ -12,10 +12,10 @@ import java.util.List;
  */
 public class BaseQueryHandler implements QueryHandler {
   public final static String _id = "_id";
-  public final static String _lastUpdated = "_lastUpdated";
-  public final static String _text = "_text";
+  //  public final static String _lastUpdated = "_lastUpdated";
+//  public final static String _text = "_text";
   public final static String _content = "_content";
-  public final static String _code = "_code";
+  //  public final static String _code = "_code";
   protected MultiMap params;
   private List<String> ifMatchValues, ifModifiedSinceValues, ifNoneMatchValues;
 

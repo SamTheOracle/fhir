@@ -43,7 +43,7 @@ public class ObservationComponent extends BackboneElement {
    * The information determined as a result of making the observation, if the information has a simple value.
    * <p>Cardinality: 0..1</p>
    */
-  private boolean valueBoolean;
+  private Boolean valueBoolean;
   /**
    * Extension for valueBoolean
    * <p>Cardinality: 0..1</p>
@@ -162,11 +162,11 @@ public class ObservationComponent extends BackboneElement {
     this._valueString = _valueString;
   }
 
-  public boolean isValueBoolean() {
+  public Boolean isValueBoolean() {
     return valueBoolean;
   }
 
-  public void setValueBoolean(boolean valueBoolean) {
+  public void setValueBoolean(Boolean valueBoolean) {
     this.valueBoolean = valueBoolean;
   }
 

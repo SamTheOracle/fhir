@@ -62,7 +62,7 @@ public class Patient extends DomainResource {
    * such as those that have not been seen for a period of time based on an organization's business rules.
    * <p>Cardinality: 0..1</p>
    */
-  private boolean active;
+  private Boolean active;
   /**
    * Extension for active
    * <p>Cardinality: 0..1</p>
@@ -111,7 +111,7 @@ public class Patient extends DomainResource {
    * Deceased status
    * <p>Cardinality: 0..1</p>
    */
-  private boolean deceasedBoolean;
+  private Boolean deceasedBoolean;
   /**
    * Extension for deceasedBoolean
    * <p>Cardinality: 0..1</p>
@@ -145,7 +145,7 @@ public class Patient extends DomainResource {
    * Indicates whether the patient is part of a multiple (boolean) or indicates the actual birth order (integer).
    * <p>Cardinality: 0..1</p>
    */
-  private boolean multipleBirthBoolean;
+  private Boolean multipleBirthBoolean;
   /**
    * Extension for multipleBirthBoolean
    * <p>Cardinality: 0..1</p>
@@ -155,7 +155,7 @@ public class Patient extends DomainResource {
    * Indicates whether the patient is part of a multiple (boolean) or indicates the actual birth order (integer).
    * <p>Cardinality: 0..1</p>
    */
-  private int multipleBirthInteger;
+  private Integer multipleBirthInteger;
   /**
    * Extension for multipleBirthInteger
    * <p>Cardinality: 0..1</p>
@@ -230,7 +230,7 @@ public class Patient extends DomainResource {
     this.identifier = identifier;
   }
 
-  public boolean isActive() {
+  public Boolean isActive() {
     return active;
   }
 
@@ -242,7 +242,7 @@ public class Patient extends DomainResource {
     this.telecom = telecom;
   }
 
-  public void setActive(boolean active) {
+  public void setActive(Boolean active) {
     this.active = active;
   }
 
@@ -336,11 +336,11 @@ public class Patient extends DomainResource {
     return this;
   }
 
-  public boolean isDeceasedBoolean() {
+  public Boolean isDeceasedBoolean() {
     return deceasedBoolean;
   }
 
-  public Patient setDeceasedBoolean(boolean deceasedBoolean) {
+  public Patient setDeceasedBoolean(Boolean deceasedBoolean) {
     this.deceasedBoolean = deceasedBoolean;
     return this;
   }
@@ -369,19 +369,19 @@ public class Patient extends DomainResource {
     this.maritalStatus = maritalStatus;
   }
 
-  public boolean isMultipleBirthBoolean() {
+  public Boolean isMultipleBirthBoolean() {
     return multipleBirthBoolean;
   }
 
-  public void setMultipleBirthBoolean(boolean multipleBirthBoolean) {
+  public void setMultipleBirthBoolean(Boolean multipleBirthBoolean) {
     this.multipleBirthBoolean = multipleBirthBoolean;
   }
 
-  public int getMultipleBirthInteger() {
+  public Integer getMultipleBirthInteger() {
     return multipleBirthInteger;
   }
 
-  public void setMultipleBirthInteger(int multipleBirthInteger) {
+  public void setMultipleBirthInteger(Integer multipleBirthInteger) {
     this.multipleBirthInteger = multipleBirthInteger;
   }
 

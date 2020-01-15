@@ -30,7 +30,7 @@ public class EncounterDiagnosis extends BackboneElement {
    * <p>Must be a positive int</p>
    * <p>Cardinality: 0..1</p>
    */
-  private int rank;
+  private Integer rank;
   /**
    * Extension for rank
    * <p>Cardinality: 0..1</p>
@@ -63,11 +63,11 @@ public class EncounterDiagnosis extends BackboneElement {
     return this;
   }
 
-  public int getRank() {
+  public Integer getRank() {
     return rank;
   }
 
-  public void setRank(int rank) {
+  public void setRank(Integer rank) {
     this.rank = rank;
   }
 }
