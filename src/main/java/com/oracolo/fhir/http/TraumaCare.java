@@ -125,6 +125,7 @@ public class TraumaCare extends BaseRestInterface {
             .setCode("AD"))
           .setText("Trauma Condition"))
         .setCondition(new Reference()
+          .setDisplay("Trauma Condition")
           .setType(ResourceType.CONDITION.typeName())
           .setReference("/" + ResourceType.CONDITION.typeName() + "/" + traumaCondition.getId()))
     );
@@ -454,26 +455,16 @@ public class TraumaCare extends BaseRestInterface {
         startT.getMinute(), startT.getSecond(), startT.getNano(), ZoneId.systemDefault());
       final String fhirDate = FhirUtils.fullDateTime.format(finalZonedStartDateTime);
       if (place != null) {
-        if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("Transport")) {
+        if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("Trasporto")) {
           preH.addNewLocation(new EncounterLocation()
             .setLocation(new Reference()
               .setDisplay(place))
-            .setPhysicalType(new CodeableConcept()
-              .addNewCoding(new Coding()
-                .setCode("ro")
-                .setDisplay("Room")
-                .setSystem("https://www.hl7.org/fhir/codesystem-location-physical-type.html")))
             .setPeriod(new Period()
               .setStart(fhirDate)));
         } else {
           intervention.addNewLocation(new EncounterLocation()
             .setLocation(new Reference()
               .setDisplay(place))
-            .setPhysicalType(new CodeableConcept()
-              .addNewCoding(new Coding()
-                .setCode("ro")
-                .setDisplay("Room")
-                .setSystem("https://www.hl7.org/fhir/codesystem-location-physical-type.html")))
             .setPeriod(new Period()
               .setStart(fhirDate)));
         }
@@ -495,7 +486,7 @@ public class TraumaCare extends BaseRestInterface {
             procedure
               .setLocation(new Reference()
                 .setDisplay(place));
-            if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("Transport")) {
+            if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("trasporto")) {
               preH.addNewContained(procedure.setEncounter(new Reference()
                 .setType(ResourceType.ENCOUNTER.typeName())
                 .setDisplay("Encounter pre ospedalizzazione")
@@ -603,7 +594,7 @@ public class TraumaCare extends BaseRestInterface {
             .setConclusion(diagnosticDescription);
           if (place != null) {
 
-            if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("Transport")) {
+            if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("trasporto")) {
               preH.addNewContained(diagnosticReport.setEncounter(new Reference()
                 .setType(ResourceType.ENCOUNTER.typeName())
                 .setDisplay("Encounter pre ospedalizzazione")
@@ -767,7 +758,7 @@ public class TraumaCare extends BaseRestInterface {
 
           drugAdministration.setDosage(drugDosage);
           if (place != null) {
-            if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("Transport")) {
+            if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("trasporto")) {
               preH.addNewContained(drugAdministration
                 .setContext(new Reference()
                   .setReference("#" + preH.getId())
@@ -813,7 +804,7 @@ public class TraumaCare extends BaseRestInterface {
           }
           medicationAdministration.setDosage(dosage);
           if (place != null) {
-            if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("Transport")) {
+            if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("trasporto")) {
               preH.addNewContained(medicationAdministration
                 .setContext(new Reference()
                   .setReference("#" + preH.getId())
@@ -928,7 +919,7 @@ public class TraumaCare extends BaseRestInterface {
             traumaLeaderProcedure
               .setLocation(new Reference()
                 .setDisplay(place));
-            if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("Transport")) {
+            if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("trasport")) {
               preH.addNewContained(traumaLeaderProcedure.setEncounter(new Reference()
                 .setType(ResourceType.ENCOUNTER.typeName())
                 .setDisplay("Encounter pre ospedalizzazione")
@@ -950,7 +941,7 @@ public class TraumaCare extends BaseRestInterface {
             procedureRoomIn
               .setLocation(new Reference()
                 .setDisplay(place));
-            if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("Transport")) {
+            if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("TRASPORTO")) {
               procedureRoomIn.setEncounter(new Reference()
                 .setReference("#" + preH.getId())
                 .setType(ResourceType.ENCOUNTER.typeName())
@@ -979,7 +970,7 @@ public class TraumaCare extends BaseRestInterface {
             procedureAcceptance
               .setLocation(new Reference()
                 .setDisplay(place));
-            if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("Transport")) {
+            if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("trasporto")) {
               preH.addNewContained(procedureAcceptance);
 
             } else {
@@ -1022,7 +1013,7 @@ public class TraumaCare extends BaseRestInterface {
 
           if (place != null) {
 
-            if (place.equalsIgnoreCase("PRE-H")) {
+            if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("trasporto")) {
               media.setEncounter(new Reference()
                 .setReference("#" + preH.getId())
                 .setDisplay("Encounter per ospedalizzazione")

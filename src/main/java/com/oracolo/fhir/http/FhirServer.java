@@ -316,7 +316,15 @@ public class FhirServer extends BaseRestInterface {
     String pretty = queryParams.get(FhirUtils.PRETTY);
     String summary = queryParams.get(FhirUtils.SUMMARY);
     String element = queryParams.get(FhirUtils.ELEMENTS);
-    JsonObject resourceJson = routingContext.getBodyAsJson();
+    JsonObject resourceJson = new JsonObject();
+    try {
+      resourceJson = routingContext.getBodyAsJson() == null ? new JsonObject() : routingContext.getBodyAsJson();
+    } catch (Exception e) {
+      routingContext.put("code", "exception");
+      routingContext.put("error", "Malformed body");
+      routingContext.fail(HttpResponseStatus.BAD_REQUEST.code());
+    }
+
 
     String newId = UUID.randomUUID().toString();
     String newVersionId = UUID.randomUUID().toString();
@@ -337,6 +345,7 @@ public class FhirServer extends BaseRestInterface {
     ValidationHandler validationHandler = ValidationHandler.createValidator();
     JsonArray containedResources = resourceJson.getJsonArray("contained");
     resourceJson.remove("contained");
+
     boolean isValidFhirResource = validationHandler.validateAgainstJsonSchema(resourceJson);
     boolean isValidFhirClass = validationHandler.validateAgainstClass(resourceJson, type.getResourceClass());
     //if is not valid
@@ -347,13 +356,14 @@ public class FhirServer extends BaseRestInterface {
       routingContext.fail(HttpResponseStatus.BAD_REQUEST.code());
     } else {
       resourceJson.put("contained", containedResources);
+      JsonObject finalResourceJson = resourceJson;
       ResponseHandler
         .createUpdateCreateResponseHandler()
         .withService(databaseService)
         .withFormatHandler(new BaseFormatHandler()
           .withAcceptHeader(acceptableType)
           .withPreferHeader(preferHeader))
-        .createResponseAsync(serverResponse, (service, promise) -> service.createUpdateResource(collection, resourceJson, promise))
+        .createResponseAsync(serverResponse, (service, promise) -> service.createUpdateResource(collection, finalResourceJson, promise))
         .releaseAsync()
         .future()
         .onSuccess(HttpServerResponse::end)
@@ -381,7 +391,14 @@ public class FhirServer extends BaseRestInterface {
     //The request body SHALL be a Resource with an id element that has an identical value to the [id] in the URL
     //If no id element is provided, or the id disagrees with the id in the URL, the server SHALL respond with an HTTP 400 error code,
     // and SHOULD provide an OperationOutcome identifying the issue.
-    JsonObject resourceJson = routingContext.getBodyAsJson();
+    JsonObject resourceJson = new JsonObject();
+    try {
+      resourceJson = routingContext.getBodyAsJson();
+    } catch (Exception e) {
+      routingContext.put("code", "exception");
+      routingContext.put("error", "Malformed body");
+      routingContext.fail(HttpResponseStatus.BAD_REQUEST.code());
+    }
     String id = resourceJson.getString(FhirUtils.ID);
     String pathId = routingContext.pathParam(FhirUtils.ID);
     if (id != null && id.equals(pathId)) {
@@ -419,6 +436,7 @@ public class FhirServer extends BaseRestInterface {
         routingContext.fail(HttpResponseStatus.BAD_REQUEST.code());
       } else {
         resourceJson.put("contained", containedResources);
+        JsonObject finalResourceJson = resourceJson;
         ResponseHandler
           .createUpdateCreateResponseHandler()
           .withService(databaseService)
@@ -426,7 +444,7 @@ public class FhirServer extends BaseRestInterface {
             .withAcceptHeader(acceptableType)
             .withPreferHeader(preferHeader))
           .createResponseAsync(serverResponse, (service, promise)
-            -> service.createUpdateResource(collection, resourceJson, promise))
+            -> service.createUpdateResource(collection, finalResourceJson, promise))
           .releaseAsync()
           .future()
           .onSuccess(HttpServerResponse::end)
