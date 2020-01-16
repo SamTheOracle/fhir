@@ -945,13 +945,12 @@ public class TraumaCare extends BaseRestInterface {
           break;
         case "room-in":
         case "room-out":
-          Procedure procedureRoomIn = new Procedure().setId(String.valueOf(eventId));
-          procedureRoomIn.setPerformedDateTime(fhirDate);
+          Procedure procedureRoomIn = new Procedure();
           if (place != null) {
             procedureRoomIn
               .setLocation(new Reference()
                 .setDisplay(place));
-            if (place.equalsIgnoreCase("PRE-H")) {
+            if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("Transport")) {
               procedureRoomIn.setEncounter(new Reference()
                 .setReference("#" + preH.getId())
                 .setType(ResourceType.ENCOUNTER.typeName())
@@ -970,17 +969,17 @@ public class TraumaCare extends BaseRestInterface {
             .setId(String.valueOf(eventId))
             .setCode(new CodeableConcept()
               .setText(type))
-            .setStatus("completed");
+            .setStatus("completed")
+            .setPerformedDateTime(fhirDate);
           break;
         case "patient-accepted":
 
-          Procedure procedureAcceptance = new Procedure().setId(String.valueOf(eventId));
-          procedureAcceptance.setPerformedDateTime(fhirDate);
+          Procedure procedureAcceptance = new Procedure();
           if (place != null) {
             procedureAcceptance
               .setLocation(new Reference()
                 .setDisplay(place));
-            if (place.equalsIgnoreCase("PRE-H")) {
+            if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("Transport")) {
               preH.addNewContained(procedureAcceptance);
 
             } else {
@@ -996,7 +995,8 @@ public class TraumaCare extends BaseRestInterface {
                 .setSystem("http://www.snomed.org/"))
               .setText(type))
             .setStatus("completed")
-            .setSubject(intervention.getSubject());
+            .setSubject(intervention.getSubject())
+            .setPerformedDateTime(fhirDate);
 
 
           break;
