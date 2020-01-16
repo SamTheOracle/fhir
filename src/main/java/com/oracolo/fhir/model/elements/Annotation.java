@@ -1,10 +1,13 @@
 package com.oracolo.fhir.model.elements;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.util.Date;
 
 /**
  * A text note which also contains information about who made the statement and when.
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Annotation {
   /**
    * The individual responsible for making the annotation.

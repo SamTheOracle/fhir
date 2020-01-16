@@ -1168,7 +1168,6 @@ public class TraumaCare extends BaseRestInterface {
               .setCode("35088-4")
               .setSystem("https://loinc.org/"))
             .setText("Glasgow Coma Scale Totale"))
-
           .setEncounter(new Reference()
             .setType(ResourceType.ENCOUNTER.typeName())
             .setType(ResourceType.ENCOUNTER.typeName())
@@ -1184,92 +1183,44 @@ public class TraumaCare extends BaseRestInterface {
               .setType(ResourceType.OBSERVATION.typeName())
               .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + observation.getId())));
         domainResources.add(observation);
-      }
-      String gcsMotor = clinicalPicture.getString("gcsMotor");
-      if (gcsMotor != null) {
-        Observation observation = new Observation()
-          .setId(UUID.randomUUID().toString())
-          .setStatus("final")
-          .setValueString(gcsMotor)
-          .setCode(new CodeableConcept()
-            .addNewCoding(new Coding()
-              .setDisplay("Glasgow coma score motor")
-              .setCode("9268-4")
-              .setSystem("https://loinc.org/"))
-            .setText("Glasgow Coma Scale Motor"))
-          .setEncounter(new Reference()
-            .setType(ResourceType.ENCOUNTER.typeName())
-            .setDisplay("Encounter intervention")
-            .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
-          .setSubject(encounterShock.getSubject());
-
-        patientInitialCondition
-          .addNewConditionEvidence(new ConditionEvidence()
-            .addNewCode(new CodeableConcept()
+        String gcsMotor = clinicalPicture.getString("gcsMotor");
+        if (gcsMotor != null) {
+          observation.addNewObservationComponent(new ObservationComponent()
+            .setCode(new CodeableConcept()
+              .addNewCoding(new Coding()
+                .setDisplay("Glasgow coma score motor")
+                .setCode("9268-4")
+                .setSystem("https://loinc.org/"))
               .setText("Glasgow Coma Scale Motor"))
-            .addNewDetail(new Reference()
-              .setType(ResourceType.OBSERVATION.typeName())
-              .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + observation.getId())));
-        domainResources.add(observation);
-      }
-      String gcsVerbal = clinicalPicture.getString("gcsVerbal");
-      if (gcsVerbal != null) {
-        Observation observation = new Observation()
-          .setId(UUID.randomUUID().toString())
-          .setStatus("final")
-          .setValueString(gcsVerbal)
-          .setCode(new CodeableConcept()
-            .addNewCoding(new Coding()
-              .setDisplay("Glasgow coma score verbal")
-              .setCode("9270-0")
-              .setSystem("https://loinc.org/"))
-            .setText("Glasgow Coma Scale Verbal"))
-          .setEncounter(new Reference()
-            .setType(ResourceType.ENCOUNTER.typeName())
-            .setDisplay("Encounter intervention")
-            .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
-          .setSubject(encounterShock.getSubject());
+            .setValueString(gcsMotor));
+        }
+        String gcsVerbal = clinicalPicture.getString("gcsVerbal");
+        if (gcsVerbal != null) {
 
-        domainResources.add(observation);
-
-        patientInitialCondition
-          .addNewConditionEvidence(new ConditionEvidence()
-            .addNewCode(new CodeableConcept()
+          observation.addNewObservationComponent(new ObservationComponent()
+            .setCode(new CodeableConcept()
+              .addNewCoding(new Coding()
+                .setDisplay("Glasgow coma score verbal")
+                .setCode("9270-0")
+                .setSystem("https://loinc.org/"))
               .setText("Glasgow Coma Scale Verbal"))
-            .addNewDetail(new Reference()
-              .setType(ResourceType.OBSERVATION.typeName())
-              .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + observation.getId())));
+            .setValueString(gcsVerbal));
 
+        }
+        String gcsEyes = clinicalPicture.getString("gcsEyes");
+        if (gcsEyes != null) {
+          observation
+            .addNewObservationComponent(new ObservationComponent()
+              .setCode(new CodeableConcept()
+                .addNewCoding(new Coding()
+                  .setDisplay("Glasgow coma score eye opening")
+                  .setCode("9267-6")
+                  .setSystem("https://loinc.org/"))
+                .setText("Glasgow Coma Scale Eyes"))
+              .setValueString(gcsEyes));
+        }
       }
-      String gcsEyes = clinicalPicture.getString("gcsEyes");
-      if (gcsEyes != null) {
-        Observation observation = new Observation()
-          .setId(UUID.randomUUID().toString())
-          .setStatus("final")
-          .setValueString(gcsEyes)
-          .setCode(new CodeableConcept()
-            .addNewCoding(new Coding()
-              .setDisplay("Glasgow coma score eye opening")
-              .setCode("9267-6")
-              .setSystem("https://loinc.org/"))
-            .setText("Glasgow Coma Scale Eyes"))
-          .setEncounter(new Reference()
-            .setType(ResourceType.ENCOUNTER.typeName())
-            .setDisplay("Encounter intervention")
-            .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterShock.getId()))
-          .setSubject(encounterShock.getSubject());
 
-
-        domainResources.add(observation);
-
-        patientInitialCondition
-          .addNewConditionEvidence(new ConditionEvidence()
-            .addNewCode(new CodeableConcept()
-              .setText("Glasgow Coma Scale Eyes"))
-            .addNewDetail(new Reference()
-              .setType(ResourceType.OBSERVATION.typeName())
-              .setReference("/" + ResourceType.OBSERVATION.typeName() + "/" + observation.getId())));
-      }
       Boolean sedated = clinicalPicture.getBoolean("sedated");
       if (sedated != null) {
         Observation observation = new Observation()
