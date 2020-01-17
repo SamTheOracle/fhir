@@ -22,6 +22,8 @@ public interface QueryHandler {
         return new ObservationQueryHandler();
       case ENCOUNTER:
         return new EncounterQueryHandler();
+      case PROCEDURE:
+        return new ProcedureQueryHandler();
       default:
         return new BaseQueryHandler();
     }

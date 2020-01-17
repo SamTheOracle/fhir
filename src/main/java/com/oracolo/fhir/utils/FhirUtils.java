@@ -12,7 +12,7 @@ public class FhirUtils {
   public static final String FORMAT = "_format";
   public static final String SUMMARY = "_summary";
   public static final String ELEMENTS = "_elements";
-  public static final String TRAUMACARE_BASE = "traumacare";
+  public static final String TRAUMATRACKER_BASE = "traumatracker";
   public static final DateTimeFormatter fullDateTime = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'hh:mm:ssZZZZZ");
   public static final String ID = "id";
   public static final String HISTORY = "_history";

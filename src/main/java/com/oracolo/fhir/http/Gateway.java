@@ -32,7 +32,7 @@ public class Gateway extends BaseRestInterface {
     gatewayRouter.route().handler(BodyHandler.create());
     gatewayRouter.route("/" + FhirUtils.BASE + "/*")
       .handler(routingContext -> rerouteToService(routingContext, FhirUtils.FHIR_SERVICE));
-    gatewayRouter.route("/" + FhirUtils.TRAUMACARE_BASE + "/*")
+    gatewayRouter.route("/" + FhirUtils.TRAUMATRACKER_BASE + "/*")
       .handler(routingContext -> rerouteToService(routingContext, FhirUtils.T4CSERVICE));
 
 

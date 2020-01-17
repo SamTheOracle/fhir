@@ -10,12 +10,11 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AggregationEncounter implements AggregationResource {
 
-  private List<String> ids;
-
-
   public void setResourceType(String resourceType) {
     this.resourceType = resourceType;
   }
+
+  private List<String> ids;
 
   private String resourceType = "AggregationEncounter";
 

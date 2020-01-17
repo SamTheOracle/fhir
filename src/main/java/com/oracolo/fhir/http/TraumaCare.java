@@ -38,14 +38,14 @@ public class TraumaCare extends BaseRestInterface {
   public void start(Promise<Void> startPromise) throws Exception {
     Router t4cRouter = Router.router(vertx);
     t4cRouter.route().handler(BodyHandler.create());
-    t4cRouter.get("/" + FhirUtils.TRAUMACARE_BASE + "/welcome").handler(this::handleWelcome);
-    t4cRouter.post("/" + FhirUtils.TRAUMACARE_BASE + "/reports").handler(this::handleReports);
+    t4cRouter.get("/" + FhirUtils.TRAUMATRACKER_BASE + "/welcome").handler(this::handleWelcome);
+    t4cRouter.post("/" + FhirUtils.TRAUMATRACKER_BASE + "/reports").handler(this::handleReports);
 
     createAPIServer(0, t4cRouter)
       .compose(httpServer -> {
         int port = httpServer.actualPort();
         LOGGER.info("T4C interface listening at " + port);
-        return publishHTTPEndPoint(port, FhirUtils.T4CSERVICE, FhirUtils.LOCALHOST, FhirUtils.TRAUMACARE_BASE);
+        return publishHTTPEndPoint(port, FhirUtils.T4CSERVICE, FhirUtils.LOCALHOST, FhirUtils.TRAUMATRACKER_BASE);
       }).setHandler(publishSuccessful -> {
       if (publishSuccessful.succeeded()) {
         startPromise.complete();
@@ -1048,7 +1048,8 @@ public class TraumaCare extends BaseRestInterface {
           .addNewCoding(new Coding()
             .setSystem("http://loinc.org")
             .setDisplay("Vital Signs")
-            .setCode("85353-1")))
+            .setCode("85353-1"))
+          .setText("Vital Signs"))
         .setEncounter(new Reference()
           .setType(ResourceType.ENCOUNTER.typeName())
           .setDisplay("Encounter intervention")
