@@ -1,5 +1,8 @@
 package com.oracolo.fhir.handlers.query;
 
+import com.oracolo.fhir.handlers.query.parser.prefix.Prefix;
+import com.oracolo.fhir.handlers.query.parser.prefix.QueryPrefixHandler;
+import com.oracolo.fhir.handlers.query.parser.prefix.QueryPrefixResult;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
@@ -8,6 +11,10 @@ public class ObservationQueryHandler extends BaseQueryHandler {
   static final String encounter = "encounter";
   static final String code = "code";
   static final String subject = "subject";
+  //capability statement allows to implement custom search parameter for resource with SearchParameter (https://www.hl7.org/fhir/searchparameter.html)
+  static final String valueInteger = "valueInteger";
+  static final String valueBoolean = "valueBoolean";
+  //valore
 
   @Override
   public JsonObject createMongoDbQuery() {
@@ -56,6 +63,22 @@ public class ObservationQueryHandler extends BaseQueryHandler {
             .put("subject.display", new JsonObject()
               .put("$regex", subject)
               .put("$options", "i")))));
+    }
+
+    String value = params.get(ObservationQueryHandler.valueInteger);
+    if (value != null) {
+      QueryPrefixResult queryPrefixResult = QueryPrefixHandler.parsePrefix(value);
+      if (queryPrefixResult != null) {
+        Prefix prefix = queryPrefixResult.prefix();
+        String parsedValue = queryPrefixResult.parsedValue();
+        Integer valueInteger = Integer.parseInt(parsedValue);
+        baseQueryOperations
+          .add(new JsonObject()
+            .put("valueInteger", new JsonObject().put(prefix.operator(), valueInteger)));
+      }
+    }
+    if (baseQueryOperations.size() < 1) {
+      baseQueryOperations.add(new JsonObject());
     }
     return baseQuery;
   }

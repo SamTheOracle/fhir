@@ -8,6 +8,7 @@ public class ConditionQueryHandler extends BaseQueryHandler {
   private final String code = "code";
   private final String subject = "subject";
   private final String encounter = "encounter";
+  private final String assessment = "assessment";
 
   @Override
   public JsonObject createMongoDbQuery() {

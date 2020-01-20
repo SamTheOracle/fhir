@@ -30,7 +30,7 @@ import java.util.UUID;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-public class TraumaCare extends BaseRestInterface {
+public class TraumaTracker extends BaseRestInterface {
   private static final Logger LOGGER = Logger.getLogger(FhirServer.class.getName());
 
 
