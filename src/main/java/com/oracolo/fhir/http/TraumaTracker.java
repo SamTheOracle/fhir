@@ -595,16 +595,16 @@ public class TraumaTracker extends BaseRestInterface {
           if (place != null) {
 
             if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("trasporto")) {
-              preH.addNewContained(diagnosticReport.setEncounter(new Reference()
+              diagnosticReport.setEncounter(new Reference()
                 .setType(ResourceType.ENCOUNTER.typeName())
                 .setDisplay("Encounter pre ospedalizzazione")
-                .setReference("#" + preH.getId())));
+                .setReference("/" + ResourceType.ENCOUNTER.typeName() + preH.getId()));
 
             } else {
-              intervention.addNewContained(diagnosticReport.setEncounter(new Reference()
+              diagnosticReport.setEncounter(new Reference()
                 .setType(ResourceType.ENCOUNTER.typeName())
                 .setDisplay("Encounter intervention")
-                .setReference("#" + intervention.getId())));
+                .setReference("/" + ResourceType.ENCOUNTER.typeName() + intervention.getId()));
             }
           }
           if (lactates != null) {
@@ -617,12 +617,27 @@ public class TraumaTracker extends BaseRestInterface {
               .setCode(new CodeableConcept()
                 .setText("lactates"))
               .setEffectiveDateTime(fhirDate);
-            diagnosticReport.addNewResult(new Reference()
-              .setReference("#" + observationLactates.getId())
-              .setDisplay("Observation lactates")
-              .setType(ResourceType.OBSERVATION.typeName()))
-              .addNewContained(observationLactates);
 
+            diagnosticReport.addNewResult(new Reference()
+              .setReference("/" + ResourceType.OBSERVATION.typeName() + observationLactates.getId())
+              .setDisplay("Observation lactates")
+              .setType(ResourceType.OBSERVATION.typeName()));
+
+            if (place != null) {
+
+              if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("trasporto")) {
+                observationLactates.setEncounter(new Reference()
+                  .setType(ResourceType.ENCOUNTER.typeName())
+                  .setDisplay("Encounter pre ospedalizzazione")
+                  .setReference("/" + ResourceType.ENCOUNTER.typeName() + preH.getId()));
+
+              } else {
+                observationLactates.setEncounter(new Reference()
+                  .setType(ResourceType.ENCOUNTER.typeName())
+                  .setDisplay("Encounter intervention")
+                  .setReference("/" + ResourceType.ENCOUNTER.typeName() + intervention.getId()));
+              }
+            }
           }
           if (be != null) {
             Observation observationBe = new Observation()
@@ -635,11 +650,24 @@ public class TraumaTracker extends BaseRestInterface {
                 .setText("be"))
               .setEffectiveDateTime(fhirDate);
             diagnosticReport.addNewResult(new Reference()
-              .setReference("#" + observationBe.getId())
+              .setReference("/" + ResourceType.OBSERVATION.typeName() + observationBe.getId())
               .setDisplay("Observation be")
-              .setType(ResourceType.OBSERVATION.typeName()))
-              .addNewContained(observationBe);
+              .setType(ResourceType.OBSERVATION.typeName()));
+            if (place != null) {
 
+              if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("trasporto")) {
+                observationBe.setEncounter(new Reference()
+                  .setType(ResourceType.ENCOUNTER.typeName())
+                  .setDisplay("Encounter pre ospedalizzazione")
+                  .setReference("/" + ResourceType.ENCOUNTER.typeName() + preH.getId()));
+
+              } else {
+                observationBe.setEncounter(new Reference()
+                  .setType(ResourceType.ENCOUNTER.typeName())
+                  .setDisplay("Encounter intervention")
+                  .setReference("/" + ResourceType.ENCOUNTER.typeName() + intervention.getId()));
+              }
+            }
           }
           if (ph != null) {
             Observation phObservation = new Observation()
@@ -652,10 +680,25 @@ public class TraumaTracker extends BaseRestInterface {
                 .setText("ph"))
               .setEffectiveDateTime(fhirDate);
             diagnosticReport.addNewResult(new Reference()
-              .setReference("#" + phObservation.getId())
-              .setDisplay("Observation ph")
-              .setType(ResourceType.OBSERVATION.typeName()))
-              .addNewContained(phObservation);
+              .setReference("/" + ResourceType.OBSERVATION.typeName() + phObservation.getId())
+              .setDisplay("Observation be")
+              .setType(ResourceType.OBSERVATION.typeName()));
+
+            if (place != null) {
+
+              if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("trasporto")) {
+                phObservation.setEncounter(new Reference()
+                  .setType(ResourceType.ENCOUNTER.typeName())
+                  .setDisplay("Encounter pre ospedalizzazione")
+                  .setReference("/" + ResourceType.ENCOUNTER.typeName() + preH.getId()));
+
+              } else {
+                phObservation.setEncounter(new Reference()
+                  .setType(ResourceType.ENCOUNTER.typeName())
+                  .setDisplay("Encounter intervention")
+                  .setReference("/" + ResourceType.ENCOUNTER.typeName() + intervention.getId()));
+              }
+            }
 
           }
           if (hb != null) {
@@ -669,10 +712,24 @@ public class TraumaTracker extends BaseRestInterface {
                 .setText("hb"))
               .setEffectiveDateTime(fhirDate);
             diagnosticReport.addNewResult(new Reference()
-              .setReference("#" + hbObservation.getId())
+              .setReference("/" + ResourceType.OBSERVATION.typeName() + hbObservation.getId())
               .setDisplay("Observation hb")
-              .setType(ResourceType.OBSERVATION.typeName()))
-              .addNewContained(hbObservation);
+              .setType(ResourceType.OBSERVATION.typeName()));
+            if (place != null) {
+
+              if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("trasporto")) {
+                hbObservation.setEncounter(new Reference()
+                  .setType(ResourceType.ENCOUNTER.typeName())
+                  .setDisplay("Encounter pre ospedalizzazione")
+                  .setReference("/" + ResourceType.ENCOUNTER.typeName() + preH.getId()));
+
+              } else {
+                hbObservation.setEncounter(new Reference()
+                  .setType(ResourceType.ENCOUNTER.typeName())
+                  .setDisplay("Encounter intervention")
+                  .setReference("/" + ResourceType.ENCOUNTER.typeName() + intervention.getId()));
+              }
+            }
 
           }
           if (fibtem != null) {
@@ -685,11 +742,24 @@ public class TraumaTracker extends BaseRestInterface {
                 .setText("fibtem"))
               .setEffectiveDateTime(fhirDate);
             diagnosticReport.addNewResult(new Reference()
-              .setReference("#" + fibtemObservation.getId())
+              .setReference("/" + ResourceType.OBSERVATION.typeName() + fibtemObservation.getId())
               .setDisplay("Observation fibtem")
-              .setType(ResourceType.OBSERVATION.typeName()))
-              .addNewContained(fibtemObservation);
+              .setType(ResourceType.OBSERVATION.typeName()));
+            if (place != null) {
 
+              if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("trasporto")) {
+                fibtemObservation.setEncounter(new Reference()
+                  .setType(ResourceType.ENCOUNTER.typeName())
+                  .setDisplay("Encounter pre ospedalizzazione")
+                  .setReference("/" + ResourceType.ENCOUNTER.typeName() + preH.getId()));
+
+              } else {
+                fibtemObservation.setEncounter(new Reference()
+                  .setType(ResourceType.ENCOUNTER.typeName())
+                  .setDisplay("Encounter intervention")
+                  .setReference("/" + ResourceType.ENCOUNTER.typeName() + intervention.getId()));
+              }
+            }
           }
           if (extem != null) {
             Observation extemObservation = new Observation()
@@ -701,10 +771,24 @@ public class TraumaTracker extends BaseRestInterface {
                 .setText("extem"))
               .setEffectiveDateTime(fhirDate);
             diagnosticReport.addNewResult(new Reference()
-              .setReference("#" + extemObservation.getId())
+              .setReference("/" + ResourceType.OBSERVATION.typeName() + extemObservation.getId())
               .setDisplay("Observation extem")
-              .setType(ResourceType.OBSERVATION.typeName()))
-              .addNewContained(extemObservation);
+              .setType(ResourceType.OBSERVATION.typeName()));
+            if (place != null) {
+
+              if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("trasporto")) {
+                extemObservation.setEncounter(new Reference()
+                  .setType(ResourceType.ENCOUNTER.typeName())
+                  .setDisplay("Encounter pre ospedalizzazione")
+                  .setReference("/" + ResourceType.ENCOUNTER.typeName() + preH.getId()));
+
+              } else {
+                extemObservation.setEncounter(new Reference()
+                  .setType(ResourceType.ENCOUNTER.typeName())
+                  .setDisplay("Encounter intervention")
+                  .setReference("/" + ResourceType.ENCOUNTER.typeName() + intervention.getId()));
+              }
+            }
 
           }
           if (hyperfibrinolysis != null) {
@@ -717,11 +801,24 @@ public class TraumaTracker extends BaseRestInterface {
                 .setText("hyperfibrinolysis"))
               .setEffectiveDateTime(fhirDate);
             diagnosticReport.addNewResult(new Reference()
-              .setReference("#" + hyperfibrinolysisObservation.getId())
+              .setReference("/" + ResourceType.OBSERVATION.typeName() + hyperfibrinolysisObservation.getId())
               .setDisplay("Observation hyperfibrinolysis")
-              .setType(ResourceType.OBSERVATION.typeName()))
-              .addNewContained(hyperfibrinolysisObservation);
+              .setType(ResourceType.OBSERVATION.typeName()));
+            if (place != null) {
 
+              if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("trasporto")) {
+                hyperfibrinolysisObservation.setEncounter(new Reference()
+                  .setType(ResourceType.ENCOUNTER.typeName())
+                  .setDisplay("Encounter pre ospedalizzazione")
+                  .setReference("/" + ResourceType.ENCOUNTER.typeName() + preH.getId()));
+
+              } else {
+                hyperfibrinolysisObservation.setEncounter(new Reference()
+                  .setType(ResourceType.ENCOUNTER.typeName())
+                  .setDisplay("Encounter intervention")
+                  .setReference("/" + ResourceType.ENCOUNTER.typeName() + intervention.getId()));
+              }
+            }
           }
 
           break;
@@ -759,18 +856,18 @@ public class TraumaTracker extends BaseRestInterface {
           drugAdministration.setDosage(drugDosage);
           if (place != null) {
             if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("trasporto")) {
-              preH.addNewContained(drugAdministration
+              drugAdministration
                 .setContext(new Reference()
                   .setReference("#" + preH.getId())
                   .setDisplay("Encounter pre ospedalizzazione")
-                  .setType(ResourceType.ENCOUNTER.typeName())));
+                  .setType(ResourceType.ENCOUNTER.typeName()));
 
             } else {
-              intervention.addNewContained(drugAdministration
+              drugAdministration
                 .setContext(new Reference()
                   .setReference("#" + intervention.getId())
                   .setDisplay("Encounter intervention")
-                  .setType(ResourceType.ENCOUNTER.typeName())));
+                  .setType(ResourceType.ENCOUNTER.typeName()));
             }
           }
           break;
@@ -805,16 +902,16 @@ public class TraumaTracker extends BaseRestInterface {
           medicationAdministration.setDosage(dosage);
           if (place != null) {
             if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("trasporto")) {
-              preH.addNewContained(medicationAdministration
+              medicationAdministration
                 .setContext(new Reference()
-                  .setReference("#" + preH.getId())
+                  .setReference("/" + ResourceType.ENCOUNTER.typeName() + preH.getId())
                   .setDisplay("Encounter pre ospedalizzazione")
-                  .setType(ResourceType.ENCOUNTER.typeName())));
+                  .setType(ResourceType.ENCOUNTER.typeName()));
 
             } else {
               intervention.addNewContained(medicationAdministration
                 .setContext(new Reference()
-                  .setReference("#" + intervention.getId())
+                  .setReference("/" + ResourceType.ENCOUNTER.typeName() + preH.getId())
                   .setDisplay("Encounter intervention")
                   .setType(ResourceType.ENCOUNTER.typeName())));
             }
@@ -823,6 +920,7 @@ public class TraumaTracker extends BaseRestInterface {
         case "vital-signs-mon":
           Observation vitalSignObservationContainer = new Observation()
             .setId(String.valueOf(eventId))
+            .setEffectiveDateTime(fhirDate)
             .setCode(new CodeableConcept()
               .addNewCoding(new Coding()
                 .setSystem("http://loinc.org")
@@ -837,39 +935,27 @@ public class TraumaTracker extends BaseRestInterface {
                 .setEncounter(new Reference()
                   .setDisplay("Encounter pre-hospitalization")
                   .setType(ResourceType.ENCOUNTER.typeName())
-                  .setReference("#" + preH.getId()));
-              preH.addNewContained(vitalSignObservationContainer);
+                  .setReference("/" + ResourceType.ENCOUNTER.typeName() + preH.getId()));
 
             } else {
               vitalSignObservationContainer
                 .setEncounter(new Reference()
                   .setDisplay("Encounter intervention")
                   .setType(ResourceType.ENCOUNTER.typeName())
-                  .setReference("#" + intervention.getId()));
-              intervention.addNewContained(vitalSignObservationContainer);
+                  .setReference("/" + ResourceType.ENCOUNTER.typeName() + intervention.getId()));
             }
           }
           content.forEach(vitalSignEntry -> {
             Object value = vitalSignEntry.getValue();
             String name = vitalSignEntry.getKey();
-            Observation observation = new Observation()
-              .setSubject(intervention.getSubject())
-              .setId(UUID.randomUUID().toString())
-              .setValueQuantity(new Quantity()
-                .setValue((Double) value))
-              .setStatus("final")
-              .setCode(new CodeableConcept()
-                .setText(name))
-              .setValueQuantity(new Quantity()
-                .setValue((Double) value));
-            observation.setEffectiveDateTime(fhirDate);
+            vitalSignObservationContainer
+              .addNewObservationComponent(new ObservationComponent()
+                .setValueQuantity(new Quantity()
+                  .setValue((Double) value))
+                .setCode(new CodeableConcept()
+                  .setText(name)));
 
-            observation
-              .addNewPartOfReference(new Reference()
-                .setDisplay("Vital Signs Panel Observations")
-                .setType(ResourceType.OBSERVATION.typeName())
-                .setReference("#" + vitalSignObservationContainer.getId()));
-            vitalSignObservationContainer.addNewContained(observation);
+
           });
           break;
         case "clinical-variation":
@@ -891,16 +977,14 @@ public class TraumaTracker extends BaseRestInterface {
                 .setEncounter(new Reference()
                   .setDisplay("Encounter pre-hospitalization")
                   .setType(ResourceType.ENCOUNTER.typeName())
-                  .setReference("#" + preH.getId()));
-              preH.addNewContained(clinicalVariation);
+                  .setReference("/" + ResourceType.ENCOUNTER.typeName() + preH.getId()));
 
             } else {
               clinicalVariation
                 .setEncounter(new Reference()
                   .setDisplay("Encounter intervention")
                   .setType(ResourceType.ENCOUNTER.typeName())
-                  .setReference("#" + intervention.getId()));
-              intervention.addNewContained(clinicalVariation);
+                  .setReference("/" + ResourceType.ENCOUNTER.typeName() + intervention.getId()));
             }
           }
           break;
@@ -920,16 +1004,16 @@ public class TraumaTracker extends BaseRestInterface {
               .setLocation(new Reference()
                 .setDisplay(place));
             if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("trasport")) {
-              preH.addNewContained(traumaLeaderProcedure.setEncounter(new Reference()
+              traumaLeaderProcedure.setEncounter(new Reference()
                 .setType(ResourceType.ENCOUNTER.typeName())
                 .setDisplay("Encounter pre ospedalizzazione")
-                .setReference("#" + preH)));
+                .setReference("/" + ResourceType.ENCOUNTER.typeName() + preH.getId()));
 
             } else {
-              intervention.addNewContained(traumaLeaderProcedure.setEncounter(new Reference()
+              traumaLeaderProcedure.setEncounter(new Reference()
                 .setType(ResourceType.ENCOUNTER.typeName())
                 .setDisplay("Encounter intervention")
-                .setReference("#" + intervention)));
+                .setReference("/" + ResourceType.ENCOUNTER.typeName() + intervention.getId()));
             }
           }
 //          String
@@ -943,17 +1027,16 @@ public class TraumaTracker extends BaseRestInterface {
                 .setDisplay(place));
             if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("TRASPORTO")) {
               procedureRoomIn.setEncounter(new Reference()
-                .setReference("#" + preH.getId())
                 .setType(ResourceType.ENCOUNTER.typeName())
-                .setDisplay("Encounter pre-hospitalization"));
-              preH.addNewContained(procedureRoomIn);
+                .setDisplay("Encounter pre-hospitalization")
+                .setReference("/" + ResourceType.ENCOUNTER.typeName() + preH.getId()));
+
 
             } else {
               procedureRoomIn.setEncounter(new Reference()
-                .setReference("#" + intervention.getId())
                 .setType(ResourceType.ENCOUNTER.typeName())
-                .setDisplay("Encounter intervention"));
-              intervention.addNewContained(procedureRoomIn);
+                .setDisplay("Encounter intervention")
+                .setReference("/" + ResourceType.ENCOUNTER.typeName() + intervention.getId()));
             }
           }
           procedureRoomIn
@@ -970,11 +1053,18 @@ public class TraumaTracker extends BaseRestInterface {
             procedureAcceptance
               .setLocation(new Reference()
                 .setDisplay(place));
-            if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("trasporto")) {
-              preH.addNewContained(procedureAcceptance);
+            if (place.equalsIgnoreCase("PRE-H") || place.equalsIgnoreCase("TRASPORTO")) {
+              procedureAcceptance.setEncounter(new Reference()
+                .setType(ResourceType.ENCOUNTER.typeName())
+                .setDisplay("Encounter pre-hospitalization")
+                .setReference("/" + ResourceType.ENCOUNTER.typeName() + preH.getId()));
+
 
             } else {
-              intervention.addNewContained(procedureAcceptance);
+              procedureAcceptance.setEncounter(new Reference()
+                .setType(ResourceType.ENCOUNTER.typeName())
+                .setDisplay("Encounter intervention")
+                .setReference("/" + ResourceType.ENCOUNTER.typeName() + intervention.getId()));
             }
           }
           procedureAcceptance

@@ -355,7 +355,9 @@ public class FhirServer extends BaseRestInterface {
       routingContext.put("code", "invariant");
       routingContext.fail(HttpResponseStatus.BAD_REQUEST.code());
     } else {
-      resourceJson.put("contained", containedResources);
+      if (containedResources != null) {
+        resourceJson.put("contained", containedResources);
+      }
       JsonObject finalResourceJson = resourceJson;
       ResponseHandler
         .createUpdateCreateResponseHandler()
