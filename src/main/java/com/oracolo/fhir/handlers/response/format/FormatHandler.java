@@ -7,4 +7,8 @@ public interface FormatHandler {
   FormatHandler withPreferHeader(String value);
 
   Format createFormat(Object returnObject);
+
+  static BaseFormatHandler handler() {
+    return new BaseFormatHandler();
+  }
 }
