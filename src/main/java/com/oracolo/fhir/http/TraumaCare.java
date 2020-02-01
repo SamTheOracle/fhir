@@ -305,7 +305,7 @@ public class TraumaCare extends BaseRestInterface {
       .putHeader(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON)
       .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
       .end(JsonObject.mapFrom(new OperationOutcome()
-        .setIssue(new OperationOutcomeIssue()
+        .addNewIssue(new OperationOutcomeIssue()
           .setCode("error")
           .setDiagnostics(throwable.getMessage()))).toBuffer()));
   }

@@ -48,7 +48,7 @@ public class FhirServer extends BaseRestInterface {
       HttpServerResponse response = routingContext.response();
       String diagnostics = routingContext.get("error") == null ? HttpResponseStatus.NOT_FOUND.reasonPhrase() : routingContext.get("error");
       OperationOutcome operationOutcome = new OperationOutcome()
-        .setIssue(new OperationOutcomeIssue()
+        .addNewIssue(new OperationOutcomeIssue()
           .setSeverity("error")
           .setCode(String.valueOf(HttpResponseStatus.NOT_FOUND.code()))
           .setDiagnostics(diagnostics));
@@ -60,7 +60,7 @@ public class FhirServer extends BaseRestInterface {
     }).errorHandler(HttpResponseStatus.METHOD_NOT_ALLOWED.code(), routingContext -> {
       HttpServerResponse response = routingContext.response();
       OperationOutcome operationOutcome = new OperationOutcome()
-        .setIssue(new OperationOutcomeIssue()
+        .addNewIssue(new OperationOutcomeIssue()
           .setSeverity("error")
           .setCode(String.valueOf(HttpResponseStatus.METHOD_NOT_ALLOWED.code()))
           .setDiagnostics(HttpResponseStatus.METHOD_NOT_ALLOWED.reasonPhrase()));
@@ -72,7 +72,7 @@ public class FhirServer extends BaseRestInterface {
     }).errorHandler(HttpResponseStatus.NOT_ACCEPTABLE.code(), routingContext -> {
       HttpServerResponse response = routingContext.response();
       OperationOutcome operationOutcome = new OperationOutcome()
-        .setIssue(new OperationOutcomeIssue()
+        .addNewIssue(new OperationOutcomeIssue()
           .setSeverity("error")
           .setCode(String.valueOf(HttpResponseStatus.NOT_ACCEPTABLE.code()))
           .setDiagnostics(HttpResponseStatus.NOT_ACCEPTABLE.reasonPhrase()));
@@ -84,7 +84,7 @@ public class FhirServer extends BaseRestInterface {
     }).errorHandler(HttpResponseStatus.UNSUPPORTED_MEDIA_TYPE.code(), routingContext -> {
       HttpServerResponse response = routingContext.response();
       OperationOutcome operationOutcome = new OperationOutcome()
-        .setIssue(new OperationOutcomeIssue()
+        .addNewIssue(new OperationOutcomeIssue()
           .setSeverity("error")
           .setCode(String.valueOf(HttpResponseStatus.UNSUPPORTED_MEDIA_TYPE.code()))
           .setDiagnostics(HttpResponseStatus.UNSUPPORTED_MEDIA_TYPE.reasonPhrase()));
@@ -96,7 +96,7 @@ public class FhirServer extends BaseRestInterface {
       HttpServerResponse response = routingContext.response();
       String diagnostics = routingContext.get("error") == null ? HttpResponseStatus.BAD_REQUEST.reasonPhrase() : routingContext.get("error");
       OperationOutcome operationOutcome = new OperationOutcome()
-        .setIssue(new OperationOutcomeIssue()
+        .addNewIssue(new OperationOutcomeIssue()
           .setSeverity("error")
           .setCode(String.valueOf(HttpResponseStatus.BAD_REQUEST.code()))
           .setDiagnostics(diagnostics));
@@ -212,7 +212,7 @@ public class FhirServer extends BaseRestInterface {
     String errorMessage = routingContext.get("error");
     String code = routingContext.get("code");
     OperationOutcome operationOutcome = new OperationOutcome()
-      .setIssue(new OperationOutcomeIssue()
+      .addNewIssue(new OperationOutcomeIssue()
         .setSeverity("error")
         .setCode(code)
         .setDiagnostics(errorMessage));

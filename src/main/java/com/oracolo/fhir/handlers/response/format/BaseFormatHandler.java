@@ -49,7 +49,7 @@ public class BaseFormatHandler implements FormatHandler {
         operationOutcomeIssue.setCode("informational");
         operationOutcomeIssue.setSeverity("information")
           .setDiagnostics("Resource correctly created");
-        operationOutcome.setIssue(operationOutcomeIssue);
+        operationOutcome.addNewIssue(operationOutcomeIssue);
         //possible accept header: application/fhir+json; application/json, application/xml, */json, */xml ecc.
         if (accept != null && accept.value().contains("xml")) {
           JSONObject jsonObject = new JSONObject(domainResource.encodePrettily());
