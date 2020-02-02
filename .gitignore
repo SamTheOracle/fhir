@@ -178,17 +178,17 @@ nbdist/
 .nb-gradle/
 
 ### VisualStudioCode ###
+.vscode
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+.project
+.classpath
 
 ### Test Coverage ###
 src/main/coverage/*
 ### Resource Models ###
 /src/main/resourcemodel/*
-### Visual Studio Code ###
-.project
-.classpath
-.vscode
+
