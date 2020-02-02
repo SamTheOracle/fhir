@@ -15,6 +15,7 @@ import io.vertx.ext.web.client.HttpRequest;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.servicediscovery.ServiceDiscovery;
 import io.vertx.servicediscovery.types.HttpEndpoint;
 
@@ -30,6 +31,7 @@ public class Gateway extends BaseRestInterface {
   public void start(Promise<Void> startPromise) throws Exception {
     Router gatewayRouter = Router.router(vertx);
     gatewayRouter.route().handler(BodyHandler.create());
+    gatewayRouter.route().handler(CorsHandler.create("*"));
     gatewayRouter.route("/" + FhirUtils.BASE + "/*")
       .handler(routingContext -> rerouteToService(routingContext, FhirUtils.FHIR_SERVICE));
     gatewayRouter.route("/" + FhirUtils.TRAUMATRACKER_BASE + "/*")

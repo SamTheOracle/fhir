@@ -346,7 +346,7 @@ public class FhirServer extends BaseRestInterface {
       .withFormatHandler(new BaseFormatHandler()
         .withAcceptHeader(acceptableType))
       .createResponseAsync(serverResponse, (service, promise) ->
-        service.fetchDomainResourceWithQuery(collection, query, null, promise))
+        service.fetchDomainResourceVersion(collection, query, null, promise))
       .releaseAsync()
       .future()
       .onSuccess(HttpServerResponse::end)
