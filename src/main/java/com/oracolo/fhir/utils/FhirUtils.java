@@ -29,7 +29,7 @@ public class FhirUtils {
 
 
   public static MongoClient createFhirMongoDbConnection(Vertx vertx) {
-    String connectionString = Optional.ofNullable(System.getenv("mongo"))
+    String connectionString = Optional.ofNullable(System.getProperty("mongo"))
       .orElse("mongodb://localhost:27017");
     String fhirdb = Optional.ofNullable(System.getProperty("db")).orElse("fhir_db");
     JsonObject configs = new JsonObject().put("db_name", fhirdb)
