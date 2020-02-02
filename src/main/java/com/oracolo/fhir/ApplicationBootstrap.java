@@ -19,6 +19,7 @@ public class ApplicationBootstrap extends AbstractVerticle {
 
   @Override
   public void start(Promise<Void> startPromise) {
+
     Promise<String> dbVerticle = Promise.promise();
     vertx.deployVerticle(new DatabaseServiceVerticle(), dbVerticle);
 

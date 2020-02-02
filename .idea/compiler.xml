@@ -6,7 +6,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <option name="codegen.output" value="D:\Repos\fhir/src/main" />
+        <option name="codegen.output" value="$PROJECT_DIR$/src/main" />
         <processor name="io.vertx.codegen.CodeGenProcessor" />
         <module name="fhir" />
       </profile>

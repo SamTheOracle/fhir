@@ -19,6 +19,7 @@ import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.servicediscovery.ServiceDiscovery;
 import io.vertx.servicediscovery.types.HttpEndpoint;
 
+import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
@@ -38,7 +39,7 @@ public class Gateway extends BaseRestInterface {
       .handler(routingContext -> rerouteToService(routingContext, FhirUtils.T4CSERVICE));
 
 
-    createAPIServer(8000, gatewayRouter)
+    createAPIServer(Optional.of(Integer.getInteger("http.port")).orElse(8000), gatewayRouter)
       .setHandler(httpServerAsyncResult -> {
         if (httpServerAsyncResult.succeeded()) {
           LOGGER.info("Gateway started at port " + httpServerAsyncResult.result().actualPort());
@@ -47,7 +48,6 @@ public class Gateway extends BaseRestInterface {
           startPromise.fail(httpServerAsyncResult.cause());
         }
       });
-
 
   }
 

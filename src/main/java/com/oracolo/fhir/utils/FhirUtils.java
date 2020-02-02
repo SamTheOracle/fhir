@@ -29,9 +29,9 @@ public class FhirUtils {
 
 
   public static MongoClient createFhirMongoDbConnection(Vertx vertx) {
-    String connectionString = Optional.ofNullable(System.getenv("MONGODB_USERS_CONNECTION"))
+    String connectionString = Optional.ofNullable(System.getenv("mongo"))
       .orElse("mongodb://localhost:27017");
-    String fhirdb = Optional.ofNullable(System.getenv("MONGODB_NAME")).orElse("fhir_db");
+    String fhirdb = Optional.ofNullable(System.getProperty("db")).orElse("fhir_db");
     JsonObject configs = new JsonObject().put("db_name", fhirdb)
       .put("connection_string", connectionString);
     return MongoClient.createShared(vertx, configs, "fhir-pool");
