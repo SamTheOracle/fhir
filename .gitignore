@@ -188,3 +188,7 @@ nbdist/
 src/main/coverage/*
 ### Resource Models ###
 /src/main/resourcemodel/*
+### Visual Studio Code ###
+.project
+.classpath
+.vscode
