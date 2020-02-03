@@ -36,8 +36,7 @@ public class BaseValidator implements ValidationHandler {
     try {
       if (jsonSchema == null) {
         System.out.println("loading only once");
-        InputStream inputStream = new BufferedInputStream(new FileInputStream(Objects.requireNonNull(FhirValidationProblemHandler.class.getClassLoader()
-          .getResource("fhir.schema.json")).getFile()));
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("fhir.schema.json");
         jsonSchema = jsonValidationService.readSchema(inputStream);
       }
       InputStream json = new ByteArrayInputStream(jsonObject.encode().getBytes());
@@ -49,7 +48,7 @@ public class BaseValidator implements ValidationHandler {
       reader.readValue();
 
       validationHandler.checkProblems();
-    } catch (FileNotFoundException | NotValidFhirResourceException e) {
+    } catch (NotValidFhirResourceException e) {
       e.printStackTrace();
       return false;
     }
