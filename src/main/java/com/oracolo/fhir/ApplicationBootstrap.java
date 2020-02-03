@@ -3,7 +3,7 @@ package com.oracolo.fhir;
 import com.oracolo.fhir.database.DatabaseServiceVerticle;
 import com.oracolo.fhir.http.FhirServer;
 import com.oracolo.fhir.http.Gateway;
-import com.oracolo.fhir.http.TraumaCare;
+import com.oracolo.fhir.http.TraumaTracker;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Promise;
@@ -29,7 +29,7 @@ public class ApplicationBootstrap extends AbstractVerticle {
         .setInstances(1);
       vertx.deployVerticle(FhirServer.class, deploymentOptions, httpDeployPromise);
       vertx.deployVerticle(new Gateway());
-      vertx.deployVerticle(new TraumaCare());
+      vertx.deployVerticle(new TraumaTracker());
       return httpDeployPromise.future();
     }).setHandler(deploymentResult -> {
       if (deploymentResult.succeeded()) {

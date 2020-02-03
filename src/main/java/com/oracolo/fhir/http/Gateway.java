@@ -39,7 +39,7 @@ public class Gateway extends BaseRestInterface {
       .handler(routingContext -> rerouteToService(routingContext, FhirUtils.T4CSERVICE));
 
 
-    createAPIServer(Optional.of(Integer.getInteger("http.port")).orElse(8000), gatewayRouter)
+    createAPIServer(Optional.ofNullable(Integer.getInteger("http.port")).orElse(8000), gatewayRouter)
       .setHandler(httpServerAsyncResult -> {
         if (httpServerAsyncResult.succeeded()) {
           LOGGER.info("Gateway started at port " + httpServerAsyncResult.result().actualPort());
