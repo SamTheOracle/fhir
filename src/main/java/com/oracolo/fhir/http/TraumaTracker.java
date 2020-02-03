@@ -531,6 +531,7 @@ public class TraumaTracker extends BaseRestInterface {
                 .setCode(new CodeableConcept()
                   .setText(name))
                 .setValueBoolean((Boolean) value);
+
               procedure
                 .addNewContained(intubationObservation);
             });
