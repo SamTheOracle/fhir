@@ -1,0 +1,113 @@
+{
+  "resourceType": "Bundle",
+  "type": "searchset",
+  "timestamp": "2020-02-03T06:33:28.355348Z",
+  "total": 1,
+  "entry": [
+    {
+      "resource": {
+        "id": "6c9a2dfa-8ca9-4a2e-a597-3ecf00be5812",
+        "resourceType": "Observation",
+        "component": [
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "Group Total Iss faceGroup iss score"
+            },
+            "valueInteger": 1
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "faceAis iss score"
+            },
+            "valueInteger": 1
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "Group Total Iss externaGroup iss score"
+            },
+            "valueInteger": 1
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "externaAis iss score"
+            },
+            "valueInteger": 1
+          }
+        ],
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "https://www.loinc.org",
+              "code": "74471-4",
+              "display": "Injury severity score Calculated"
+            }
+          ],
+          "text": "Total Iss"
+        },
+        "encounter": {
+          "reference": "/Encounter/d5211236-95b1-4bdb-88da-0d7d9bfc8c1b",
+          "type": "Encounter",
+          "display": "Encounter intervention"
+        },
+        "valueInteger": 2,
+        "meta": {
+          "versionId": "24a0a32d-ea91-4b7f-9088-d107819dceaa",
+          "lastUpdated": "2020-02-03T06:32:41.231116Z"
+        },
+        "subject": {
+          "reference": "#d5ef9454-a99d-4e33-8b30-7f0944fc4472",
+          "type": "Patient",
+          "display": "  età 3"
+        },
+        "contained": [
+          {
+            "id": "d5ef9454-a99d-4e33-8b30-7f0944fc4472",
+            "resourceType": "Patient",
+            "name": [
+              {
+                "family": "",
+                "given": [
+                  ""
+                ]
+              }
+            ],
+            "gender": "M"
+          }
+        ]
+      },
+      "response": {
+        "etag": "24a0a32d-ea91-4b7f-9088-d107819dceaa",
+        "lastModified": "2020-02-03T06:32:41.231116Z"
+      }
+    }
+  ]
+}
