@@ -34,8 +34,8 @@ public class BaseValidator implements ValidationHandler {
 
     JsonValidationService jsonValidationService = JsonValidationService.newInstance();
     try {
+      //loads big json schema only once
       if (jsonSchema == null) {
-        System.out.println("loading only once");
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("fhir.schema.json");
         jsonSchema = jsonValidationService.readSchema(inputStream);
       }
