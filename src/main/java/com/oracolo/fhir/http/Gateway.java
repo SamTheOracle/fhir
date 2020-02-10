@@ -33,6 +33,10 @@ public class Gateway extends BaseRestInterface {
     Router gatewayRouter = Router.router(vertx);
     gatewayRouter.route().handler(BodyHandler.create());
     gatewayRouter.route().handler(CorsHandler.create("*"));
+    gatewayRouter.get("/").handler(routingContext->routingContext
+      .response()
+      .setStatusCode(HttpResponseStatus.OK.code())
+      .end("Welcome!"));
     gatewayRouter.route("/" + FhirUtils.BASE + "/*")
       .handler(routingContext -> rerouteToService(routingContext, FhirUtils.FHIR_SERVICE));
     gatewayRouter.route("/" + FhirUtils.TRAUMATRACKER_BASE + "/*")

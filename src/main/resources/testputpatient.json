@@ -1,13 +1,572 @@
 {
-  "resourcedType": "Patient",
-  "id": "mybeautifulid",
-  "name": {
-    "given": [
-      "Giacomo"
+  "id": "4df0961e-3ca8-4798-a413-a2fbb3c05c14",
+  "contained": [
+    {
+      "id": "78aaccaa-6b61-4267-9e0a-19fe1026d986",
+      "resourceType": "Practitioner",
+      "identifier": [
+        {
+          "value": "vanni.agnoletti"
+        },
+        {
+          "value": "Vanni Agnoletti"
+        }
+      ],
+      "active": true
+    },
+    {
+      "resourceType": "MedicationAdministration",
+      "medicationCodeableConcept": {
+        "text": "mtp"
+      },
+      "context": {
+        "reference": "/Encounter84cf810f-82ee-4403-b579-d272f0e6cb1c",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "note": [
+        {
+          "text": "Protocollo Trasfusione Massiva (P.T.M.)"
+        }
+      ],
+      "dosage": {
+        "method": {
+          "text": "blood-protocol"
+        }
+      }
+    },
+    {
+      "resourceType": "MedicationAdministration",
+      "medicationCodeableConcept": {
+        "text": "fresh-frozen-plasma"
+      },
+      "context": {
+        "reference": "/Encounter84cf810f-82ee-4403-b579-d272f0e6cb1c",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "note": [
+        {
+          "text": "Plasma Fresco Congelato"
+        }
+      ],
+      "dosage": {
+        "text": "",
+        "method": {
+          "text": "one-shot"
+        },
+        "dose": {
+          "value": 1,
+          "unit": "UI"
+        }
+      }
+    },
+    {
+      "id": "12",
+      "resourceType": "Procedure",
+      "location": {
+        "display": "Shock-Room"
+      },
+      "note": [
+        {}
+      ],
+      "category": {
+        "text": "one-shot"
+      },
+      "code": {
+        "text": "supraglottic-presidium"
+      },
+      "encounter": {
+        "reference": "#com.oracolo.fhir.model.domain.Encounter@19bffddb",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "performedDateTime": "2020-02-04T02:58:34Z"
+    },
+    {
+      "id": "13",
+      "resourceType": "Procedure",
+      "location": {
+        "display": "Shock-Room"
+      },
+      "note": [
+        {}
+      ],
+      "category": {
+        "text": "one-shot"
+      },
+      "code": {
+        "text": "intubation"
+      },
+      "encounter": {
+        "reference": "#com.oracolo.fhir.model.domain.Encounter@19bffddb",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "performedDateTime": "2020-02-04T02:58:36Z"
+    },
+    {
+      "id": "14",
+      "resourceType": "Procedure",
+      "location": {
+        "display": "Shock-Room"
+      },
+      "note": [
+        {}
+      ],
+      "category": {
+        "text": "one-shot"
+      },
+      "code": {
+        "text": "infuser"
+      },
+      "encounter": {
+        "reference": "#com.oracolo.fhir.model.domain.Encounter@19bffddb",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "performedDateTime": "2020-02-04T02:58:37Z"
+    },
+    {
+      "id": "15",
+      "resourceType": "Procedure",
+      "location": {
+        "display": "Shock-Room"
+      },
+      "note": [
+        {}
+      ],
+      "category": {
+        "text": "one-shot"
+      },
+      "code": {
+        "text": "pelvic-packing"
+      },
+      "encounter": {
+        "reference": "#com.oracolo.fhir.model.domain.Encounter@19bffddb",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "performedDateTime": "2020-02-04T02:58:39Z"
+    },
+    {
+      "id": "5604ca90-5e76-4841-bb75-926565a00b2e",
+      "resourceType": "Patient",
+      "name": [
+        {
+          "family": "Rossi",
+          "given": [
+            "Mario"
+          ]
+        }
+      ],
+      "gender": "M"
+    }
+  ],
+  "resourceType": "Encounter",
+  "status": "finished",
+  "serviceType": {
+    "coding": [
+      {
+        "code": "117",
+        "display": "Emergency Medical"
+      }
     ],
-    "family": "Zanotti"
+    "text": "Emergency intervention"
   },
-  "managingOrganization": {
-    "reference": "Organization/1"
+  "subject": {
+    "reference": "#5604ca90-5e76-4841-bb75-926565a00b2e",
+    "type": "Patient",
+    "display": "Mario Rossi età 40"
+  },
+  "participant": [
+    {
+      "type": [
+        {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+              "code": "PPRF",
+              "display": "primary performer"
+            }
+          ],
+          "text": "Trauma Leader"
+        }
+      ],
+      "individual": {
+        "reference": "#78aaccaa-6b61-4267-9e0a-19fe1026d986",
+        "type": "Practitioner",
+        "display": "Vanni Agnoletti"
+      }
+    },
+    {
+      "type": [
+        {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+              "code": "SPRF",
+              "display": "secondary performer"
+            }
+          ],
+          "text": "Trauma team members"
+        }
+      ],
+      "individual": {
+        "type": "Practitioner",
+        "display": "Medico PS"
+      }
+    },
+    {
+      "type": [
+        {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+              "code": "SPRF",
+              "display": "secondary performer"
+            }
+          ],
+          "text": "Trauma team members"
+        }
+      ],
+      "individual": {
+        "type": "Practitioner",
+        "display": "Anestesista"
+      }
+    },
+    {
+      "type": [
+        {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+              "code": "SPRF",
+              "display": "secondary performer"
+            }
+          ],
+          "text": "Trauma team members"
+        }
+      ],
+      "individual": {
+        "type": "Practitioner",
+        "display": "Radiologo"
+      }
+    },
+    {
+      "type": [
+        {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+              "code": "SPRF",
+              "display": "secondary performer"
+            }
+          ],
+          "text": "Trauma team members"
+        }
+      ],
+      "individual": {
+        "type": "Practitioner",
+        "display": "Chirurgo Urgenze"
+      }
+    },
+    {
+      "type": [
+        {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+              "code": "SPRF",
+              "display": "secondary performer"
+            }
+          ],
+          "text": "Trauma team members"
+        }
+      ],
+      "individual": {
+        "type": "Practitioner",
+        "display": "Neurochirurgo"
+      }
+    },
+    {
+      "type": [
+        {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+              "code": "SPRF",
+              "display": "secondary performer"
+            }
+          ],
+          "text": "Trauma team members"
+        }
+      ],
+      "individual": {
+        "type": "Practitioner",
+        "display": "Chirurgo Ortopedico"
+      }
+    },
+    {
+      "type": [
+        {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+              "code": "SPRF",
+              "display": "secondary performer"
+            }
+          ],
+          "text": "Trauma team members"
+        }
+      ],
+      "individual": {
+        "type": "Practitioner",
+        "display": "Maxillo-Facciale"
+      }
+    },
+    {
+      "type": [
+        {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+              "code": "SPRF",
+              "display": "secondary performer"
+            }
+          ],
+          "text": "Trauma team members"
+        }
+      ],
+      "individual": {
+        "type": "Practitioner",
+        "display": "Urologo"
+      }
+    }
+  ],
+  "diagnosis": [
+    {
+      "condition": {
+        "reference": "/Condition/579318ac-68d1-47a3-ad59-5ee18046d494",
+        "type": "Condition",
+        "display": "Patient Initial Condition"
+      },
+      "use": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/diagnosis-role",
+            "code": "pre-op",
+            "display": "pre-op diagnosis"
+          }
+        ]
+      }
+    },
+    {
+      "condition": {
+        "reference": "/fhirAPI/Condition/99386bc9-4d5c-4311-8f25-6f2027831bba",
+        "type": "Condition",
+        "display": "Injury Severity Score"
+      },
+      "use": {
+        "coding": [
+          {
+            "code": "post-op",
+            "display": "post-op diagnosis"
+          }
+        ]
+      }
+    }
+  ],
+  "location": [
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:57:59Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:58:16Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:58:17Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:58:19Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:58:20Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:58:22Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:58:23Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:58:27Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:58:28Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:58:29Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:58:34Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:58:36Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:58:37Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:58:39Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:58:41Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:58:50Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:59:01Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:59:13Z"
+      }
+    },
+    {
+      "location": {
+        "display": "TAC PS"
+      },
+      "period": {
+        "start": "2020-02-04T02:59:13Z"
+      }
+    },
+    {
+      "location": {
+        "display": "TAC PS"
+      },
+      "period": {
+        "start": "2020-02-04T02:59:24Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:59:35Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:59:48Z"
+      }
+    }
+  ],
+  "serviceProvider": {
+    "display": "Ospedale Bufalini"
+  },
+  "partOf": {
+    "reference": "/Encounter/8c7b7a77-f2da-47fa-88b7-78d04d420177"
+  },
+  "class": {
+    "code": "EMER",
+    "display": "Emergency"
+  },
+  "meta": {
+    "versionId": "c1fd2ee8-c38e-43c3-bf97-bafb09f4e5ec",
+    "lastUpdated": "2020-02-10T18:16:45.919Z"
   }
 }
