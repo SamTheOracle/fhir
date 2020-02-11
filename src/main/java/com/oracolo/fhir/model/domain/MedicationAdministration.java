@@ -37,7 +37,7 @@ public class MedicationAdministration extends DomainResource {
   private List<Reference> device;
   private List<Annotation> note;
   private MedicationAdministrationDosage dosage;
-  private Reference eventHistory;
+  private List<Reference> eventHistory;
 
   @Override
   public String getResourceType() {
@@ -218,11 +218,11 @@ public class MedicationAdministration extends DomainResource {
     this.dosage = dosage;
   }
 
-  public Reference getEventHistory() {
+  public List<Reference> getEventHistory() {
     return eventHistory;
   }
 
-  public void setEventHistory(Reference eventHistory) {
+  public void setEventHistory(List<Reference> eventHistory) {
     this.eventHistory = eventHistory;
   }
 
