@@ -1,402 +1,552 @@
 {
-  "id": "a6375c33-d97f-4f79-bc31-30f479827fd4",
-  "contained": [
+  "resourceType": "Bundle",
+  "type": "searchset",
+  "timestamp": "2020-02-11T21:56:17.853Z",
+  "total": 2,
+  "entry": [
     {
-      "id": "a3ae7c77-b7e9-4d5c-98bd-12d284872955",
-      "resourceType": "Practitioner",
-      "identifier": [
-        {
-          "value": "vanni.agnoletti"
+      "resource": {
+        "id": "46d69f8d-2561-4c92-b2af-f0bacee010d8",
+        "resourceType": "Observation",
+        "component": [
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "Group Total Iss headGroup iss score"
+            },
+            "valueInteger": 16
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "headNeckAis iss score"
+            },
+            "valueInteger": 0
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "brainAis iss score"
+            },
+            "valueInteger": 4
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "cervicalSpineAis iss score"
+            },
+            "valueInteger": 1
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "Group Total Iss faceGroup iss score"
+            },
+            "valueInteger": 0
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "faceAis iss score"
+            },
+            "valueInteger": 0
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "Group Total Iss toraxGroup iss score"
+            },
+            "valueInteger": 0
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "toraxAis iss score"
+            },
+            "valueInteger": 0
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "spineAis iss score"
+            },
+            "valueInteger": 0
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "Group Total Iss abdomenGroup iss score"
+            },
+            "valueInteger": 0
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "abdomenAis iss score"
+            },
+            "valueInteger": 0
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "lumbarSpineAis iss score"
+            },
+            "valueInteger": 0
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "Group Total Iss extremitiesGroup iss score"
+            },
+            "valueInteger": 1
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "upperExtremitiesAis iss score"
+            },
+            "valueInteger": 1
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "lowerExtremitiesAis iss score"
+            },
+            "valueInteger": 0
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "pelvicGirdleAis iss score"
+            },
+            "valueInteger": 0
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "Group Total Iss externaGroup iss score"
+            },
+            "valueInteger": 0
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "externaAis iss score"
+            },
+            "valueInteger": 0
+          }
+        ],
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "https://www.loinc.org",
+              "code": "74471-4",
+              "display": "Injury severity score Calculated"
+            }
+          ],
+          "text": "Total Iss"
         },
-        {
-          "value": "Vanni Agnoletti"
+        "encounter": {
+          "reference": "/Encounter/4d60228a-229a-457a-aa75-a9a712060a68",
+          "type": "Encounter",
+          "display": "Encounter intervention"
+        },
+        "valueInteger": 17,
+        "meta": {
+          "versionId": "f7380264-9cb9-42e7-b477-2a4c9fe52bac",
+          "lastUpdated": "2020-02-11T21:15:24.685Z"
+        },
+        "subject": {
+          "reference": "#04fc90fd-be4b-4a8f-96a2-d69448623ace",
+          "type": "Patient",
+          "display": "Mario Rossi età 40"
         }
-      ],
-      "active": true
+      },
+      "response": {
+        "etag": "f7380264-9cb9-42e7-b477-2a4c9fe52bac",
+        "lastModified": "2020-02-11T21:15:24.685Z"
+      }
     },
     {
-      "id": "cb7b2815-b14b-409c-a713-33c1379358a5",
-      "resourceType": "Patient",
-      "name": [
-        {
-          "family": "Rossi",
-          "given": [
-            "Mario"
-          ]
-        }
-      ],
-      "gender": "M"
-    },
-    {
-      "id": "0",
-      "resourceType": "Procedure",
-      "location": {
-        "display": "PRE-H"
-      },
-      "status": "completed",
-      "code": {
-        "text": "room-in"
-      },
-      "encounter": {
-        "reference": "#a6375c33-d97f-4f79-bc31-30f479827fd4",
-        "type": "Encounter",
-        "display": "Encounter pre ospedalizzazione"
-      },
-      "performedDateTime": "2020-02-04T02:56:25Z"
-    },
-    {
-      "id": "1",
-      "resourceType": "Procedure",
-      "location": {
-        "display": "PRE-H"
-      },
-      "status": "completed",
-      "code": {
-        "coding": [
+      "resource": {
+        "id": "0c71a6e2-f3fe-4c4b-93dc-00672d5ef394",
+        "resourceType": "Observation",
+        "component": [
           {
-            "system": "http://www.snomed.org/",
-            "code": "32485007",
-            "display": "Hospital admission (procedure)"
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "Group Total Iss headGroup iss score"
+            },
+            "valueInteger": 16
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "headNeckAis iss score"
+            },
+            "valueInteger": 0
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "brainAis iss score"
+            },
+            "valueInteger": 4
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "cervicalSpineAis iss score"
+            },
+            "valueInteger": 1
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "Group Total Iss faceGroup iss score"
+            },
+            "valueInteger": 0
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "faceAis iss score"
+            },
+            "valueInteger": 0
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "Group Total Iss toraxGroup iss score"
+            },
+            "valueInteger": 0
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "toraxAis iss score"
+            },
+            "valueInteger": 0
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "spineAis iss score"
+            },
+            "valueInteger": 0
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "Group Total Iss abdomenGroup iss score"
+            },
+            "valueInteger": 0
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "abdomenAis iss score"
+            },
+            "valueInteger": 0
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "lumbarSpineAis iss score"
+            },
+            "valueInteger": 0
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "Group Total Iss extremitiesGroup iss score"
+            },
+            "valueInteger": 1
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "upperExtremitiesAis iss score"
+            },
+            "valueInteger": 1
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "lowerExtremitiesAis iss score"
+            },
+            "valueInteger": 0
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "pelvicGirdleAis iss score"
+            },
+            "valueInteger": 0
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "Group Total Iss externaGroup iss score"
+            },
+            "valueInteger": 0
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "https://www.loinc.org",
+                  "code": "74471-4",
+                  "display": "Injury severity score Calculated"
+                }
+              ],
+              "text": "externaAis iss score"
+            },
+            "valueInteger": 0
           }
         ],
-        "text": "patient-accepted"
+        "status": "final",
+        "code": {
+          "coding": [
+            {
+              "system": "https://www.loinc.org",
+              "code": "74471-4",
+              "display": "Injury severity score Calculated"
+            }
+          ],
+          "text": "Total Iss"
+        },
+        "encounter": {
+          "reference": "/Encounter/3b440053-aac4-4178-9231-9ee45eb2f926",
+          "type": "Encounter",
+          "display": "Encounter intervention"
+        },
+        "valueInteger": 17,
+        "meta": {
+          "versionId": "18bf6cdf-bd68-4744-afac-3ee2f4d0a9d2",
+          "lastUpdated": "2020-02-11T21:56:11.396Z"
+        },
+        "subject": {
+          "reference": "#f470ded6-6c4c-4f33-b2fd-5da0b0ea6365",
+          "type": "Patient",
+          "display": "Mario Rossi età 40"
+        }
       },
-      "encounter": {
-        "reference": "#a6375c33-d97f-4f79-bc31-30f479827fd4",
-        "type": "Encounter",
-        "display": "Encounter pre ospedalizzazione"
-      },
-      "performedDateTime": "2020-02-04T02:57:59Z"
-    },
-    {
-      "id": "22",
-      "resourceType": "Procedure",
-      "location": {
-        "display": "Trasporto"
-      },
-      "status": "completed",
-      "code": {
-        "text": "room-in"
-      },
-      "encounter": {
-        "reference": "#a6375c33-d97f-4f79-bc31-30f479827fd4",
-        "type": "Encounter",
-        "display": "Encounter pre ospedalizzazione"
-      },
-      "performedDateTime": "2020-02-04T02:59:24Z"
-    },
-    {
-      "id": "23",
-      "resourceType": "Procedure",
-      "location": {
-        "display": "Trasporto"
-      },
-      "status": "completed",
-      "code": {
-        "text": "room-out"
-      },
-      "encounter": {
-        "reference": "#a6375c33-d97f-4f79-bc31-30f479827fd4",
-        "type": "Encounter",
-        "display": "Encounter pre ospedalizzazione"
-      },
-      "performedDateTime": "2020-02-04T02:59:35Z"
-    }
-  ],
-  "resourceType": "Encounter",
-  "status": "finished",
-  "serviceType": {
-    "coding": [
-      {
-        "code": "117",
-        "display": "Emergency Medical"
-      }
-    ],
-    "text": "Emergency intervention"
-  },
-  "priority": {
-    "coding": [
-      {
-        "system": "http://www.eena.it/",
-        "code": "Codice ROSSO",
-        "display": "Codice ammissione pronto soccorso"
-      }
-    ]
-  },
-  "subject": {
-    "reference": "#cb7b2815-b14b-409c-a713-33c1379358a5",
-    "type": "Patient",
-    "display": "Mario Rossi età 40"
-  },
-  "participant": [
-    {
-      "type": [
-        {
-          "coding": [
-            {
-              "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-              "code": "PPRF",
-              "display": "primary performer"
-            }
-          ],
-          "text": "Trauma Leader"
-        }
-      ],
-      "individual": {
-        "reference": "#a3ae7c77-b7e9-4d5c-98bd-12d284872955",
-        "type": "Practitioner",
-        "display": "Vanni Agnoletti"
-      }
-    },
-    {
-      "type": [
-        {
-          "coding": [
-            {
-              "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-              "code": "SPRF",
-              "display": "secondary performer"
-            }
-          ],
-          "text": "Trauma team members"
-        }
-      ],
-      "individual": {
-        "type": "Practitioner",
-        "display": "Medico PS"
-      }
-    },
-    {
-      "type": [
-        {
-          "coding": [
-            {
-              "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-              "code": "SPRF",
-              "display": "secondary performer"
-            }
-          ],
-          "text": "Trauma team members"
-        }
-      ],
-      "individual": {
-        "type": "Practitioner",
-        "display": "Anestesista"
-      }
-    },
-    {
-      "type": [
-        {
-          "coding": [
-            {
-              "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-              "code": "SPRF",
-              "display": "secondary performer"
-            }
-          ],
-          "text": "Trauma team members"
-        }
-      ],
-      "individual": {
-        "type": "Practitioner",
-        "display": "Radiologo"
-      }
-    },
-    {
-      "type": [
-        {
-          "coding": [
-            {
-              "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-              "code": "SPRF",
-              "display": "secondary performer"
-            }
-          ],
-          "text": "Trauma team members"
-        }
-      ],
-      "individual": {
-        "type": "Practitioner",
-        "display": "Chirurgo Urgenze"
-      }
-    },
-    {
-      "type": [
-        {
-          "coding": [
-            {
-              "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-              "code": "SPRF",
-              "display": "secondary performer"
-            }
-          ],
-          "text": "Trauma team members"
-        }
-      ],
-      "individual": {
-        "type": "Practitioner",
-        "display": "Neurochirurgo"
-      }
-    },
-    {
-      "type": [
-        {
-          "coding": [
-            {
-              "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-              "code": "SPRF",
-              "display": "secondary performer"
-            }
-          ],
-          "text": "Trauma team members"
-        }
-      ],
-      "individual": {
-        "type": "Practitioner",
-        "display": "Chirurgo Ortopedico"
-      }
-    },
-    {
-      "type": [
-        {
-          "coding": [
-            {
-              "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-              "code": "SPRF",
-              "display": "secondary performer"
-            }
-          ],
-          "text": "Trauma team members"
-        }
-      ],
-      "individual": {
-        "type": "Practitioner",
-        "display": "Maxillo-Facciale"
-      }
-    },
-    {
-      "type": [
-        {
-          "coding": [
-            {
-              "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-              "code": "SPRF",
-              "display": "secondary performer"
-            }
-          ],
-          "text": "Trauma team members"
-        }
-      ],
-      "individual": {
-        "type": "Practitioner",
-        "display": "Urologo"
+      "response": {
+        "etag": "18bf6cdf-bd68-4744-afac-3ee2f4d0a9d2",
+        "lastModified": "2020-02-11T21:56:11.396Z"
       }
     }
-  ],
-  "diagnosis": [
-    {
-      "condition": {
-        "reference": "/Condition/ca116092-b66f-4e05-81aa-00831f1d1b38",
-        "type": "Condition",
-        "display": "Trauma Condition"
-      },
-      "use": {
-        "coding": [
-          {
-            "system": "https://www.hl7.org/fhir/codesystem-diagnosis-role.html",
-            "code": "AD",
-            "display": "Admission diagnosis"
-          }
-        ],
-        "text": "Trauma Condition"
-      }
-    }
-  ],
-  "hospitalization": {
-    "preAdmissionIdentifier": {
-      "value": "123456789"
-    },
-    "dischargeDisposition": {
-      "text": "1472583690"
-    }
-  },
-  "location": [
-    {
-      "location": {
-        "display": "Elicottero"
-      },
-      "status": "completed",
-      "physicalType": {
-        "coding": [
-          {
-            "system": "https://www.hl7.org/fhir/valueset-location-physical-type.html",
-            "code": "ve",
-            "display": "Vehicle"
-          }
-        ],
-        "text": "Trasporto con Elicottero"
-      }
-    },
-    {
-      "location": {
-        "display": "Territorial Area: Cesena"
-      },
-      "physicalType": {
-        "coding": [
-          {
-            "system": "https://www.hl7.org/fhir/codesystem-location-physical-type.html",
-            "code": "si",
-            "display": "Site"
-          }
-        ],
-        "text": "Territorial Area"
-      }
-    },
-    {
-      "location": {
-        "display": "PRE-H"
-      },
-      "period": {
-        "start": "2020-02-04T02:56:25Z"
-      }
-    },
-    {
-      "location": {
-        "display": "PRE-H"
-      },
-      "period": {
-        "start": "2020-02-04T02:57:59Z"
-      }
-    },
-    {
-      "location": {
-        "display": "Trasporto"
-      },
-      "period": {
-        "start": "2020-02-04T02:59:24Z"
-      }
-    },
-    {
-      "location": {
-        "display": "Trasporto"
-      },
-      "period": {
-        "start": "2020-02-04T02:59:35Z"
-      }
-    }
-  ],
-  "serviceProvider": {
-    "display": "Ospedale Bufalini"
-  },
-  "partOf": {
-    "reference": "/Encounter/5e61f7a0-e7ba-4844-b83e-22aa51129638"
-  },
-  "class": {
-    "code": "EMER",
-    "display": "Emergency"
-  },
-  "meta": {
-    "versionId": "c7ca3d44-2535-4430-9ca4-6c0bd8babb40",
-    "lastUpdated": "2020-02-11T21:04:12.154Z"
-  }
+  ]
 }
