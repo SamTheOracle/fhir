@@ -26,7 +26,6 @@
     <exec.mainClass>com.oracolo.fhir.ApplicationBootstrap</exec.mainClass>
 
   </properties>
-
   <dependencyManagement>
     <dependencies>
       <dependency>

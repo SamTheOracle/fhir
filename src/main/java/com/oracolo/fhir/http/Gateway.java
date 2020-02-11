@@ -51,7 +51,6 @@ public class Gateway extends BaseRestInterface {
         } else {
           startPromise.fail(httpServerAsyncResult.cause());
         }
-
       });
 
   }
