@@ -1,12 +1,11 @@
 package com.oracolo.fhir.handlers.query.parser;
 
-import javax.swing.*;
-
 public enum Prefix {
   EQUAL("eq", "$eq"),
   NOTEQUAL("ne", "$ne"),
   GREATERTHAN("gt", "$gt"),
   LESSTHAN("lt", "$lt"),
+  LESSTHANEQUAL("le", "$lte"),
   GREATEREQUAL("ge", "$gte");
 
   private String value;
