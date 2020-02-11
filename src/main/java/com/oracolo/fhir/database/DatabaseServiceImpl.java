@@ -41,7 +41,7 @@ public class DatabaseServiceImpl implements DatabaseService {
       // if it is successfull, the resource is not deleted
       if (res.succeeded() && res.result() != null) {
         JsonObject resultFromFetch = res.result();
-        
+
 
         resultFromFetch.getJsonObject("meta").put("tag", new JsonArray().add(FhirUtils.DELETED)).put("lastUpdated",
             Instant.now());
@@ -301,8 +301,11 @@ public class DatabaseServiceImpl implements DatabaseService {
           .map(json -> Json.decodeValue(json.encode(), Practitioner.class)).collect(Collectors.toList());
 
       AggregationEncounter aggregationEncounter = new AggregationEncounter()
-          .setIds(encounters.stream().map(Encounter::getId).collect(Collectors.toList()))
-          .setMainEncounter(Json.decodeValue(mainResource.encode(), Encounter.class)).setSubEncounters(encounters)
+        .setIds(encounters.stream()
+          .map(Encounter::getId)
+          .collect(Collectors.toList()))
+        .setMainEncounter(Json.decodeValue(mainResource.encode(), Encounter.class))
+        .setSubEncounters(encounters)
           .setObservations(observations).setProcedures(procedures).setPractitioners(practitioners)
           .setConditions(conditions);
       JsonObject aggregationJson = JsonObject.mapFrom(aggregationEncounter);
@@ -398,7 +401,7 @@ public class DatabaseServiceImpl implements DatabaseService {
         JsonObject jsonObjectResult = result.result();
         jsonObjectResult.remove("_id");
         handler.handle(Future.succeededFuture(jsonObjectResult));
-       
+
       } else {
         handler.handle(
             ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), result.cause().getMessage()));

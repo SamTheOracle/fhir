@@ -235,6 +235,7 @@ public class DiagnosticReport extends DomainResource {
 
   @Override
   public DiagnosticReport setId(String id) {
+    this.id = id;
     return this;
   }
 

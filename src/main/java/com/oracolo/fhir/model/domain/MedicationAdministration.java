@@ -46,6 +46,7 @@ public class MedicationAdministration extends DomainResource {
 
   @Override
   public MedicationAdministration setId(String id) {
+    this.id = id;
     return this;
   }
 

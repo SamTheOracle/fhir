@@ -1,22 +1,22 @@
 {
-  "encounterAllId": "afa13934-8386-4f18-9595-06024d6bb55f",
-  "encounterShockId": "49b6fbd0-b995-4988-8677-434d6db5d0f2",
-  "encounterPrehId": "598eaa40-b93a-407a-973b-d18d1ee47c60",
+  "encounterAllId": "d8eecb1d-c254-409e-b67a-9b205a6d033a",
+  "encounterShockId": "04810b11-382b-47ec-a1b1-df9be9af572c",
+  "encounterPrehId": "a92375f9-d7f3-4530-960a-792188b09d60",
   "aggregatedEncounter": {
     "ids": [
-      "49b6fbd0-b995-4988-8677-434d6db5d0f2",
-      "598eaa40-b93a-407a-973b-d18d1ee47c60"
+      "04810b11-382b-47ec-a1b1-df9be9af572c",
+      "a92375f9-d7f3-4530-960a-792188b09d60"
     ],
     "resourceType": "AggregationEncounter",
     "mainEncounter": {
-      "id": "afa13934-8386-4f18-9595-06024d6bb55f",
+      "id": "d8eecb1d-c254-409e-b67a-9b205a6d033a",
       "meta": {
-        "versionId": "89877e70-1ec0-48ce-9556-e871e1a35660",
-        "lastUpdated": "2020-02-11T18:06:54.818Z"
+        "versionId": "08d8aa60-5301-42dd-9c3e-36bc19da5685",
+        "lastUpdated": "2020-02-11T19:15:30.104574Z"
       },
       "contained": [
         {
-          "id": "55b3dc34-40b0-467e-8e97-552bc963c776",
+          "id": "f29a1dbb-44cc-491c-bbd4-f1be1b33583c",
           "resourceType": "Practitioner",
           "identifier": [
             {
@@ -29,7 +29,7 @@
           "active": true
         },
         {
-          "id": "c839cb9a-530a-47ca-b7bf-9139b8a075ac",
+          "id": "88f28f97-248a-46cd-b8c9-dd4a11b052f1",
           "resourceType": "Practitioner",
           "identifier": [
             {
@@ -42,12 +42,82 @@
           "active": true
         },
         {
+          "id": "2",
+          "resourceType": "Procedure",
+          "location": {
+            "display": "Shock-Room"
+          },
+          "status": "completed",
+          "code": {
+            "text": "room-in"
+          },
+          "encounter": {
+            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+            "type": "Encounter",
+            "display": "Encounter intervention"
+          },
+          "performedDateTime": "2020-02-04T02:57:59+01:00"
+        },
+        {
+          "id": "3",
+          "resourceType": "MedicationAdministration",
+          "medicationCodeableConcept": {
+            "text": "crystalloid"
+          },
+          "context": {
+            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+            "type": "Encounter",
+            "display": "Encounter intervention"
+          },
+          "note": [
+            {
+              "text": "Cristalloidi"
+            }
+          ],
+          "dosage": {
+            "method": {
+              "text": "one-shot"
+            },
+            "dose": {
+              "value": 500,
+              "unit": "ml"
+            }
+          }
+        },
+        {
+          "id": "4",
+          "resourceType": "MedicationAdministration",
+          "medicationCodeableConcept": {
+            "text": "hypertonic"
+          },
+          "context": {
+            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+            "type": "Encounter",
+            "display": "Encounter intervention"
+          },
+          "note": [
+            {
+              "text": "Soluzione Ipertonica"
+            }
+          ],
+          "dosage": {
+            "method": {
+              "text": "one-shot"
+            },
+            "dose": {
+              "value": 250,
+              "unit": "ml"
+            }
+          }
+        },
+        {
+          "id": "5",
           "resourceType": "MedicationAdministration",
           "medicationCodeableConcept": {
             "text": "mtp"
           },
           "context": {
-            "reference": "/Encounter598eaa40-b93a-407a-973b-d18d1ee47c60",
+            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
             "type": "Encounter",
             "display": "Encounter intervention"
           },
@@ -63,12 +133,13 @@
           }
         },
         {
+          "id": "6",
           "resourceType": "MedicationAdministration",
           "medicationCodeableConcept": {
             "text": "fresh-frozen-plasma"
           },
           "context": {
-            "reference": "/Encounter598eaa40-b93a-407a-973b-d18d1ee47c60",
+            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
             "type": "Encounter",
             "display": "Encounter intervention"
           },
@@ -89,6 +160,80 @@
           }
         },
         {
+          "id": "9",
+          "resourceType": "MedicationAdministration",
+          "medicationCodeableConcept": {
+            "text": "ketamine"
+          },
+          "context": {
+            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+            "type": "Encounter",
+            "display": "Encounter intervention"
+          },
+          "note": [
+            {
+              "text": "Ketamina"
+            }
+          ],
+          "dosage": {
+            "method": {
+              "text": "one-shot"
+            },
+            "dose": {
+              "value": 25,
+              "unit": "mg"
+            }
+          }
+        },
+        {
+          "id": "10",
+          "resourceType": "MedicationAdministration",
+          "medicationCodeableConcept": {
+            "text": "tranex"
+          },
+          "context": {
+            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+            "type": "Encounter",
+            "display": "Encounter intervention"
+          },
+          "note": [
+            {
+              "text": "Acido Tranexamico"
+            }
+          ],
+          "dosage": {
+            "method": {
+              "text": "one-shot"
+            },
+            "dose": {
+              "value": 1,
+              "unit": "g"
+            }
+          }
+        },
+        {
+          "id": "11",
+          "resourceType": "MedicationAdministration",
+          "medicationCodeableConcept": {
+            "text": "antibiotic-prophylaxis"
+          },
+          "context": {
+            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+            "type": "Encounter",
+            "display": "Encounter intervention"
+          },
+          "note": [
+            {
+              "text": "Profilassi ABT"
+            }
+          ],
+          "dosage": {
+            "method": {
+              "text": "drug-protocol"
+            }
+          }
+        },
+        {
           "id": "12",
           "resourceType": "Procedure",
           "location": {
@@ -104,11 +249,11 @@
             "text": "supraglottic-presidium"
           },
           "encounter": {
-            "reference": "#com.oracolo.fhir.model.domain.Encounter@14e8aa2",
+            "reference": "#com.oracolo.fhir.model.domain.Encounter@192bb98a",
             "type": "Encounter",
             "display": "Encounter intervention"
           },
-          "performedDateTime": "2020-02-04T02:58:34Z"
+          "performedDateTime": "2020-02-04T02:58:34+01:00"
         },
         {
           "id": "13",
@@ -126,11 +271,11 @@
             "text": "intubation"
           },
           "encounter": {
-            "reference": "#com.oracolo.fhir.model.domain.Encounter@14e8aa2",
+            "reference": "#com.oracolo.fhir.model.domain.Encounter@192bb98a",
             "type": "Encounter",
             "display": "Encounter intervention"
           },
-          "performedDateTime": "2020-02-04T02:58:36Z"
+          "performedDateTime": "2020-02-04T02:58:36+01:00"
         },
         {
           "id": "14",
@@ -148,11 +293,11 @@
             "text": "infuser"
           },
           "encounter": {
-            "reference": "#com.oracolo.fhir.model.domain.Encounter@14e8aa2",
+            "reference": "#com.oracolo.fhir.model.domain.Encounter@192bb98a",
             "type": "Encounter",
             "display": "Encounter intervention"
           },
-          "performedDateTime": "2020-02-04T02:58:37Z"
+          "performedDateTime": "2020-02-04T02:58:37+01:00"
         },
         {
           "id": "15",
@@ -170,14 +315,212 @@
             "text": "pelvic-packing"
           },
           "encounter": {
-            "reference": "#com.oracolo.fhir.model.domain.Encounter@14e8aa2",
+            "reference": "#com.oracolo.fhir.model.domain.Encounter@192bb98a",
             "type": "Encounter",
             "display": "Encounter intervention"
           },
-          "performedDateTime": "2020-02-04T02:58:39Z"
+          "performedDateTime": "2020-02-04T02:58:39+01:00"
         },
         {
-          "id": "b3f33670-0e90-4610-859e-a333c66a1bbe",
+          "id": "a302ea96-9da2-4f53-9fe7-8afc1b01807f",
+          "resourceType": "Observation",
+          "status": "final",
+          "code": {
+            "text": "lactates"
+          },
+          "encounter": {
+            "reference": "#com.oracolo.fhir.model.domain.Encounter@192bb98a",
+            "type": "Encounter",
+            "display": "Encounter intervention"
+          },
+          "effectiveDateTime": "2020-02-04T02:58:50+01:00",
+          "valueQuantity": {
+            "value": 25
+          }
+        },
+        {
+          "id": "e2a2a736-4be1-49e5-b641-a1d30b0c78ed",
+          "resourceType": "Observation",
+          "status": "final",
+          "code": {
+            "text": "be"
+          },
+          "encounter": {
+            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+            "type": "Encounter",
+            "display": "Encounter intervention"
+          },
+          "effectiveDateTime": "2020-02-04T02:58:50+01:00",
+          "valueQuantity": {
+            "value": 3
+          }
+        },
+        {
+          "id": "14d35425-bfc2-4bbd-82a7-12fa948fd31c",
+          "resourceType": "Observation",
+          "status": "final",
+          "code": {
+            "text": "ph"
+          },
+          "encounter": {
+            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+            "type": "Encounter",
+            "display": "Encounter intervention"
+          },
+          "effectiveDateTime": "2020-02-04T02:58:50+01:00",
+          "valueQuantity": {
+            "value": 6
+          }
+        },
+        {
+          "id": "5fdf2f64-db5f-435a-a3b3-7748fbbcc3ed",
+          "resourceType": "Observation",
+          "status": "final",
+          "code": {
+            "text": "hb"
+          },
+          "encounter": {
+            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+            "type": "Encounter",
+            "display": "Encounter intervention"
+          },
+          "effectiveDateTime": "2020-02-04T02:58:50+01:00",
+          "valueQuantity": {
+            "value": 96
+          }
+        },
+        {
+          "id": "ad334d45-fb41-40f9-bbd6-983c75670757",
+          "resourceType": "Observation",
+          "status": "final",
+          "code": {
+            "text": "fibtem"
+          },
+          "encounter": {
+            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+            "type": "Encounter",
+            "display": "Encounter intervention"
+          },
+          "effectiveDateTime": "2020-02-04T02:59:01+01:00",
+          "valueString": "A5 = 96"
+        },
+        {
+          "id": "eac27a5b-c030-4c19-bdae-69a7b42641f3",
+          "resourceType": "Observation",
+          "status": "final",
+          "code": {
+            "text": "extem"
+          },
+          "encounter": {
+            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+            "type": "Encounter",
+            "display": "Encounter intervention"
+          },
+          "effectiveDateTime": "2020-02-04T02:59:01+01:00",
+          "valueString": "CT = 25; A10 = 96; alpha = 96"
+        },
+        {
+          "id": "612a7431-05e4-4c59-b31a-04d6774d56be",
+          "resourceType": "Observation",
+          "status": "final",
+          "code": {
+            "text": "hyperfibrinolysis"
+          },
+          "encounter": {
+            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+            "type": "Encounter",
+            "display": "Encounter intervention"
+          },
+          "effectiveDateTime": "2020-02-04T02:59:01+01:00",
+          "valueBoolean": true
+        },
+        {
+          "id": "19",
+          "resourceType": "Procedure",
+          "location": {
+            "display": "Shock-Room"
+          },
+          "status": "completed",
+          "code": {
+            "text": "room-out"
+          },
+          "encounter": {
+            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+            "type": "Encounter",
+            "display": "Encounter intervention"
+          },
+          "performedDateTime": "2020-02-04T02:59:13+01:00"
+        },
+        {
+          "id": "20",
+          "resourceType": "Procedure",
+          "location": {
+            "display": "TAC PS"
+          },
+          "status": "completed",
+          "code": {
+            "text": "room-in"
+          },
+          "encounter": {
+            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+            "type": "Encounter",
+            "display": "Encounter intervention"
+          },
+          "performedDateTime": "2020-02-04T02:59:13+01:00"
+        },
+        {
+          "id": "21",
+          "resourceType": "Procedure",
+          "location": {
+            "display": "TAC PS"
+          },
+          "status": "completed",
+          "code": {
+            "text": "room-out"
+          },
+          "encounter": {
+            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+            "type": "Encounter",
+            "display": "Encounter intervention"
+          },
+          "performedDateTime": "2020-02-04T02:59:24+01:00"
+        },
+        {
+          "id": "24",
+          "resourceType": "Procedure",
+          "location": {
+            "display": "Shock-Room"
+          },
+          "status": "completed",
+          "code": {
+            "text": "room-in"
+          },
+          "encounter": {
+            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+            "type": "Encounter",
+            "display": "Encounter intervention"
+          },
+          "performedDateTime": "2020-02-04T02:59:35+01:00"
+        },
+        {
+          "id": "25",
+          "resourceType": "Procedure",
+          "location": {
+            "display": "Shock-Room"
+          },
+          "status": "completed",
+          "code": {
+            "text": "room-out"
+          },
+          "encounter": {
+            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+            "type": "Encounter",
+            "display": "Encounter intervention"
+          },
+          "performedDateTime": "2020-02-04T02:59:48+01:00"
+        },
+        {
+          "id": "f48ef5e9-4179-41d5-b819-ea2ef5590a79",
           "resourceType": "Practitioner",
           "identifier": [
             {
@@ -190,7 +533,7 @@
           "active": true
         },
         {
-          "id": "65624cb8-33d8-4ffb-851c-3af0dd015055",
+          "id": "44acf11f-7b56-452a-b65b-8c609f9d53d9",
           "resourceType": "Patient",
           "name": [
             {
@@ -201,6 +544,81 @@
             }
           ],
           "gender": "M"
+        },
+        {
+          "id": "0",
+          "resourceType": "Procedure",
+          "location": {
+            "display": "PRE-H"
+          },
+          "status": "completed",
+          "code": {
+            "text": "room-in"
+          },
+          "encounter": {
+            "reference": "#a92375f9-d7f3-4530-960a-792188b09d60",
+            "type": "Encounter",
+            "display": "Encounter pre ospedalizzazione"
+          },
+          "performedDateTime": "2020-02-04T02:56:25+01:00"
+        },
+        {
+          "id": "1",
+          "resourceType": "Procedure",
+          "location": {
+            "display": "PRE-H"
+          },
+          "status": "completed",
+          "code": {
+            "coding": [
+              {
+                "system": "http://www.snomed.org/",
+                "code": "32485007",
+                "display": "Hospital admission (procedure)"
+              }
+            ],
+            "text": "patient-accepted"
+          },
+          "encounter": {
+            "reference": "#a92375f9-d7f3-4530-960a-792188b09d60",
+            "type": "Encounter",
+            "display": "Encounter pre ospedalizzazione"
+          },
+          "performedDateTime": "2020-02-04T02:57:59+01:00"
+        },
+        {
+          "id": "22",
+          "resourceType": "Procedure",
+          "location": {
+            "display": "Trasporto"
+          },
+          "status": "completed",
+          "code": {
+            "text": "room-in"
+          },
+          "encounter": {
+            "reference": "#a92375f9-d7f3-4530-960a-792188b09d60",
+            "type": "Encounter",
+            "display": "Encounter pre ospedalizzazione"
+          },
+          "performedDateTime": "2020-02-04T02:59:24+01:00"
+        },
+        {
+          "id": "23",
+          "resourceType": "Procedure",
+          "location": {
+            "display": "Trasporto"
+          },
+          "status": "completed",
+          "code": {
+            "text": "room-out"
+          },
+          "encounter": {
+            "reference": "#a92375f9-d7f3-4530-960a-792188b09d60",
+            "type": "Encounter",
+            "display": "Encounter pre ospedalizzazione"
+          },
+          "performedDateTime": "2020-02-04T02:59:35+01:00"
         }
       ],
       "resourceType": "Encounter",
@@ -223,7 +641,7 @@
         "text": "Emergency intervention"
       },
       "subject": {
-        "reference": "#65624cb8-33d8-4ffb-851c-3af0dd015055",
+        "reference": "#44acf11f-7b56-452a-b65b-8c609f9d53d9",
         "type": "Patient",
         "display": "Mario Rossi età 40"
       },
@@ -242,7 +660,7 @@
             }
           ],
           "individual": {
-            "reference": "#55b3dc34-40b0-467e-8e97-552bc963c776",
+            "reference": "#f29a1dbb-44cc-491c-bbd4-f1be1b33583c",
             "type": "Practitioner",
             "display": "Vanni Agnoletti"
           }
@@ -393,8 +811,8 @@
         }
       ],
       "period": {
-        "start": "2020-02-04T02:56:25Z",
-        "end": "2020-02-04T02:59:48Z"
+        "start": "2020-02-04T02:56:25+01:00",
+        "end": "2020-02-04T02:59:48+01:00"
       },
       "reasonCode": [
         {
@@ -416,7 +834,7 @@
       "diagnosis": [
         {
           "condition": {
-            "reference": "/Condition/a73fb37e-646b-4dd0-9d8e-8643129c5b7c",
+            "reference": "/Condition/b712b1f0-77e0-4594-81a5-c627909b37c0",
             "type": "Condition",
             "display": "Trauma Condition"
           },
@@ -433,7 +851,7 @@
         },
         {
           "condition": {
-            "reference": "/Condition/af211552-a044-4f02-b087-c3bf25e1deaf",
+            "reference": "/Condition/86170311-044a-4cc7-b027-f060bed5c9f4",
             "type": "Condition",
             "display": "Patient Initial Condition"
           },
@@ -449,7 +867,7 @@
         },
         {
           "condition": {
-            "reference": "/fhirAPI/Condition/de78f791-9258-44f0-9c17-53e849aee6cf",
+            "reference": "/fhirAPI/Condition/242e23fc-40fa-44d8-9365-09fda1d4d2f6",
             "type": "Condition",
             "display": "Injury Severity Score"
           },
@@ -505,7 +923,7 @@
             "display": "PRE-H"
           },
           "period": {
-            "start": "2020-02-04T02:56:25Z"
+            "start": "2020-02-04T02:56:25+01:00"
           }
         },
         {
@@ -513,7 +931,7 @@
             "display": "PRE-H"
           },
           "period": {
-            "start": "2020-02-04T02:57:59Z"
+            "start": "2020-02-04T02:57:59+01:00"
           }
         },
         {
@@ -521,7 +939,7 @@
             "display": "Trasporto"
           },
           "period": {
-            "start": "2020-02-04T02:59:24Z"
+            "start": "2020-02-04T02:59:24+01:00"
           }
         },
         {
@@ -529,7 +947,7 @@
             "display": "Trasporto"
           },
           "period": {
-            "start": "2020-02-04T02:59:35Z"
+            "start": "2020-02-04T02:59:35+01:00"
           }
         },
         {
@@ -537,7 +955,7 @@
             "display": "Shock-Room"
           },
           "period": {
-            "start": "2020-02-04T02:57:59Z"
+            "start": "2020-02-04T02:57:59+01:00"
           }
         },
         {
@@ -545,7 +963,7 @@
             "display": "Shock-Room"
           },
           "period": {
-            "start": "2020-02-04T02:58:16Z"
+            "start": "2020-02-04T02:58:16+01:00"
           }
         },
         {
@@ -553,7 +971,7 @@
             "display": "Shock-Room"
           },
           "period": {
-            "start": "2020-02-04T02:58:17Z"
+            "start": "2020-02-04T02:58:17+01:00"
           }
         },
         {
@@ -561,7 +979,7 @@
             "display": "Shock-Room"
           },
           "period": {
-            "start": "2020-02-04T02:58:19Z"
+            "start": "2020-02-04T02:58:19+01:00"
           }
         },
         {
@@ -569,7 +987,7 @@
             "display": "Shock-Room"
           },
           "period": {
-            "start": "2020-02-04T02:58:20Z"
+            "start": "2020-02-04T02:58:20+01:00"
           }
         },
         {
@@ -577,7 +995,7 @@
             "display": "Shock-Room"
           },
           "period": {
-            "start": "2020-02-04T02:58:22Z"
+            "start": "2020-02-04T02:58:22+01:00"
           }
         },
         {
@@ -585,7 +1003,7 @@
             "display": "Shock-Room"
           },
           "period": {
-            "start": "2020-02-04T02:58:23Z"
+            "start": "2020-02-04T02:58:23+01:00"
           }
         },
         {
@@ -593,7 +1011,7 @@
             "display": "Shock-Room"
           },
           "period": {
-            "start": "2020-02-04T02:58:27Z"
+            "start": "2020-02-04T02:58:27+01:00"
           }
         },
         {
@@ -601,7 +1019,7 @@
             "display": "Shock-Room"
           },
           "period": {
-            "start": "2020-02-04T02:58:28Z"
+            "start": "2020-02-04T02:58:28+01:00"
           }
         },
         {
@@ -609,7 +1027,7 @@
             "display": "Shock-Room"
           },
           "period": {
-            "start": "2020-02-04T02:58:29Z"
+            "start": "2020-02-04T02:58:29+01:00"
           }
         },
         {
@@ -617,7 +1035,7 @@
             "display": "Shock-Room"
           },
           "period": {
-            "start": "2020-02-04T02:58:34Z"
+            "start": "2020-02-04T02:58:34+01:00"
           }
         },
         {
@@ -625,7 +1043,7 @@
             "display": "Shock-Room"
           },
           "period": {
-            "start": "2020-02-04T02:58:36Z"
+            "start": "2020-02-04T02:58:36+01:00"
           }
         },
         {
@@ -633,7 +1051,7 @@
             "display": "Shock-Room"
           },
           "period": {
-            "start": "2020-02-04T02:58:37Z"
+            "start": "2020-02-04T02:58:37+01:00"
           }
         },
         {
@@ -641,7 +1059,7 @@
             "display": "Shock-Room"
           },
           "period": {
-            "start": "2020-02-04T02:58:39Z"
+            "start": "2020-02-04T02:58:39+01:00"
           }
         },
         {
@@ -649,7 +1067,7 @@
             "display": "Shock-Room"
           },
           "period": {
-            "start": "2020-02-04T02:58:41Z"
+            "start": "2020-02-04T02:58:41+01:00"
           }
         },
         {
@@ -657,7 +1075,7 @@
             "display": "Shock-Room"
           },
           "period": {
-            "start": "2020-02-04T02:58:50Z"
+            "start": "2020-02-04T02:58:50+01:00"
           }
         },
         {
@@ -665,7 +1083,7 @@
             "display": "Shock-Room"
           },
           "period": {
-            "start": "2020-02-04T02:59:01Z"
+            "start": "2020-02-04T02:59:01+01:00"
           }
         },
         {
@@ -673,7 +1091,7 @@
             "display": "Shock-Room"
           },
           "period": {
-            "start": "2020-02-04T02:59:13Z"
+            "start": "2020-02-04T02:59:13+01:00"
           }
         },
         {
@@ -681,7 +1099,7 @@
             "display": "TAC PS"
           },
           "period": {
-            "start": "2020-02-04T02:59:13Z"
+            "start": "2020-02-04T02:59:13+01:00"
           }
         },
         {
@@ -689,7 +1107,7 @@
             "display": "TAC PS"
           },
           "period": {
-            "start": "2020-02-04T02:59:24Z"
+            "start": "2020-02-04T02:59:24+01:00"
           }
         },
         {
@@ -697,7 +1115,7 @@
             "display": "Shock-Room"
           },
           "period": {
-            "start": "2020-02-04T02:59:35Z"
+            "start": "2020-02-04T02:59:35+01:00"
           }
         },
         {
@@ -705,7 +1123,7 @@
             "display": "Shock-Room"
           },
           "period": {
-            "start": "2020-02-04T02:59:48Z"
+            "start": "2020-02-04T02:59:48+01:00"
           }
         }
       ],
@@ -719,14 +1137,14 @@
     },
     "subEncounters": [
       {
-        "id": "49b6fbd0-b995-4988-8677-434d6db5d0f2",
+        "id": "04810b11-382b-47ec-a1b1-df9be9af572c",
         "meta": {
-          "versionId": "73653674-2164-4a83-81f9-1111f59cd4cf",
-          "lastUpdated": "2020-02-11T18:06:55.007Z"
+          "versionId": "b19734ea-2cff-4dd3-b7eb-a5071ad9ba8a",
+          "lastUpdated": "2020-02-11T19:15:30.160390Z"
         },
         "contained": [
           {
-            "id": "c839cb9a-530a-47ca-b7bf-9139b8a075ac",
+            "id": "88f28f97-248a-46cd-b8c9-dd4a11b052f1",
             "resourceType": "Practitioner",
             "identifier": [
               {
@@ -739,12 +1157,82 @@
             "active": true
           },
           {
+            "id": "2",
+            "resourceType": "Procedure",
+            "location": {
+              "display": "Shock-Room"
+            },
+            "status": "completed",
+            "code": {
+              "text": "room-in"
+            },
+            "encounter": {
+              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+              "type": "Encounter",
+              "display": "Encounter intervention"
+            },
+            "performedDateTime": "2020-02-04T02:57:59+01:00"
+          },
+          {
+            "id": "3",
+            "resourceType": "MedicationAdministration",
+            "medicationCodeableConcept": {
+              "text": "crystalloid"
+            },
+            "context": {
+              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+              "type": "Encounter",
+              "display": "Encounter intervention"
+            },
+            "note": [
+              {
+                "text": "Cristalloidi"
+              }
+            ],
+            "dosage": {
+              "method": {
+                "text": "one-shot"
+              },
+              "dose": {
+                "value": 500,
+                "unit": "ml"
+              }
+            }
+          },
+          {
+            "id": "4",
+            "resourceType": "MedicationAdministration",
+            "medicationCodeableConcept": {
+              "text": "hypertonic"
+            },
+            "context": {
+              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+              "type": "Encounter",
+              "display": "Encounter intervention"
+            },
+            "note": [
+              {
+                "text": "Soluzione Ipertonica"
+              }
+            ],
+            "dosage": {
+              "method": {
+                "text": "one-shot"
+              },
+              "dose": {
+                "value": 250,
+                "unit": "ml"
+              }
+            }
+          },
+          {
+            "id": "5",
             "resourceType": "MedicationAdministration",
             "medicationCodeableConcept": {
               "text": "mtp"
             },
             "context": {
-              "reference": "/Encounter598eaa40-b93a-407a-973b-d18d1ee47c60",
+              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
               "type": "Encounter",
               "display": "Encounter intervention"
             },
@@ -760,12 +1248,13 @@
             }
           },
           {
+            "id": "6",
             "resourceType": "MedicationAdministration",
             "medicationCodeableConcept": {
               "text": "fresh-frozen-plasma"
             },
             "context": {
-              "reference": "/Encounter598eaa40-b93a-407a-973b-d18d1ee47c60",
+              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
               "type": "Encounter",
               "display": "Encounter intervention"
             },
@@ -786,6 +1275,80 @@
             }
           },
           {
+            "id": "9",
+            "resourceType": "MedicationAdministration",
+            "medicationCodeableConcept": {
+              "text": "ketamine"
+            },
+            "context": {
+              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+              "type": "Encounter",
+              "display": "Encounter intervention"
+            },
+            "note": [
+              {
+                "text": "Ketamina"
+              }
+            ],
+            "dosage": {
+              "method": {
+                "text": "one-shot"
+              },
+              "dose": {
+                "value": 25,
+                "unit": "mg"
+              }
+            }
+          },
+          {
+            "id": "10",
+            "resourceType": "MedicationAdministration",
+            "medicationCodeableConcept": {
+              "text": "tranex"
+            },
+            "context": {
+              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+              "type": "Encounter",
+              "display": "Encounter intervention"
+            },
+            "note": [
+              {
+                "text": "Acido Tranexamico"
+              }
+            ],
+            "dosage": {
+              "method": {
+                "text": "one-shot"
+              },
+              "dose": {
+                "value": 1,
+                "unit": "g"
+              }
+            }
+          },
+          {
+            "id": "11",
+            "resourceType": "MedicationAdministration",
+            "medicationCodeableConcept": {
+              "text": "antibiotic-prophylaxis"
+            },
+            "context": {
+              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+              "type": "Encounter",
+              "display": "Encounter intervention"
+            },
+            "note": [
+              {
+                "text": "Profilassi ABT"
+              }
+            ],
+            "dosage": {
+              "method": {
+                "text": "drug-protocol"
+              }
+            }
+          },
+          {
             "id": "12",
             "resourceType": "Procedure",
             "location": {
@@ -801,11 +1364,11 @@
               "text": "supraglottic-presidium"
             },
             "encounter": {
-              "reference": "#com.oracolo.fhir.model.domain.Encounter@14e8aa2",
+              "reference": "#com.oracolo.fhir.model.domain.Encounter@192bb98a",
               "type": "Encounter",
               "display": "Encounter intervention"
             },
-            "performedDateTime": "2020-02-04T02:58:34Z"
+            "performedDateTime": "2020-02-04T02:58:34+01:00"
           },
           {
             "id": "13",
@@ -823,11 +1386,11 @@
               "text": "intubation"
             },
             "encounter": {
-              "reference": "#com.oracolo.fhir.model.domain.Encounter@14e8aa2",
+              "reference": "#com.oracolo.fhir.model.domain.Encounter@192bb98a",
               "type": "Encounter",
               "display": "Encounter intervention"
             },
-            "performedDateTime": "2020-02-04T02:58:36Z"
+            "performedDateTime": "2020-02-04T02:58:36+01:00"
           },
           {
             "id": "14",
@@ -845,11 +1408,11 @@
               "text": "infuser"
             },
             "encounter": {
-              "reference": "#com.oracolo.fhir.model.domain.Encounter@14e8aa2",
+              "reference": "#com.oracolo.fhir.model.domain.Encounter@192bb98a",
               "type": "Encounter",
               "display": "Encounter intervention"
             },
-            "performedDateTime": "2020-02-04T02:58:37Z"
+            "performedDateTime": "2020-02-04T02:58:37+01:00"
           },
           {
             "id": "15",
@@ -867,11 +1430,209 @@
               "text": "pelvic-packing"
             },
             "encounter": {
-              "reference": "#com.oracolo.fhir.model.domain.Encounter@14e8aa2",
+              "reference": "#com.oracolo.fhir.model.domain.Encounter@192bb98a",
               "type": "Encounter",
               "display": "Encounter intervention"
             },
-            "performedDateTime": "2020-02-04T02:58:39Z"
+            "performedDateTime": "2020-02-04T02:58:39+01:00"
+          },
+          {
+            "id": "a302ea96-9da2-4f53-9fe7-8afc1b01807f",
+            "resourceType": "Observation",
+            "status": "final",
+            "code": {
+              "text": "lactates"
+            },
+            "encounter": {
+              "reference": "#com.oracolo.fhir.model.domain.Encounter@192bb98a",
+              "type": "Encounter",
+              "display": "Encounter intervention"
+            },
+            "effectiveDateTime": "2020-02-04T02:58:50+01:00",
+            "valueQuantity": {
+              "value": 25
+            }
+          },
+          {
+            "id": "e2a2a736-4be1-49e5-b641-a1d30b0c78ed",
+            "resourceType": "Observation",
+            "status": "final",
+            "code": {
+              "text": "be"
+            },
+            "encounter": {
+              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+              "type": "Encounter",
+              "display": "Encounter intervention"
+            },
+            "effectiveDateTime": "2020-02-04T02:58:50+01:00",
+            "valueQuantity": {
+              "value": 3
+            }
+          },
+          {
+            "id": "14d35425-bfc2-4bbd-82a7-12fa948fd31c",
+            "resourceType": "Observation",
+            "status": "final",
+            "code": {
+              "text": "ph"
+            },
+            "encounter": {
+              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+              "type": "Encounter",
+              "display": "Encounter intervention"
+            },
+            "effectiveDateTime": "2020-02-04T02:58:50+01:00",
+            "valueQuantity": {
+              "value": 6
+            }
+          },
+          {
+            "id": "5fdf2f64-db5f-435a-a3b3-7748fbbcc3ed",
+            "resourceType": "Observation",
+            "status": "final",
+            "code": {
+              "text": "hb"
+            },
+            "encounter": {
+              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+              "type": "Encounter",
+              "display": "Encounter intervention"
+            },
+            "effectiveDateTime": "2020-02-04T02:58:50+01:00",
+            "valueQuantity": {
+              "value": 96
+            }
+          },
+          {
+            "id": "ad334d45-fb41-40f9-bbd6-983c75670757",
+            "resourceType": "Observation",
+            "status": "final",
+            "code": {
+              "text": "fibtem"
+            },
+            "encounter": {
+              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+              "type": "Encounter",
+              "display": "Encounter intervention"
+            },
+            "effectiveDateTime": "2020-02-04T02:59:01+01:00",
+            "valueString": "A5 = 96"
+          },
+          {
+            "id": "eac27a5b-c030-4c19-bdae-69a7b42641f3",
+            "resourceType": "Observation",
+            "status": "final",
+            "code": {
+              "text": "extem"
+            },
+            "encounter": {
+              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+              "type": "Encounter",
+              "display": "Encounter intervention"
+            },
+            "effectiveDateTime": "2020-02-04T02:59:01+01:00",
+            "valueString": "CT = 25; A10 = 96; alpha = 96"
+          },
+          {
+            "id": "612a7431-05e4-4c59-b31a-04d6774d56be",
+            "resourceType": "Observation",
+            "status": "final",
+            "code": {
+              "text": "hyperfibrinolysis"
+            },
+            "encounter": {
+              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+              "type": "Encounter",
+              "display": "Encounter intervention"
+            },
+            "effectiveDateTime": "2020-02-04T02:59:01+01:00",
+            "valueBoolean": true
+          },
+          {
+            "id": "19",
+            "resourceType": "Procedure",
+            "location": {
+              "display": "Shock-Room"
+            },
+            "status": "completed",
+            "code": {
+              "text": "room-out"
+            },
+            "encounter": {
+              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+              "type": "Encounter",
+              "display": "Encounter intervention"
+            },
+            "performedDateTime": "2020-02-04T02:59:13+01:00"
+          },
+          {
+            "id": "20",
+            "resourceType": "Procedure",
+            "location": {
+              "display": "TAC PS"
+            },
+            "status": "completed",
+            "code": {
+              "text": "room-in"
+            },
+            "encounter": {
+              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+              "type": "Encounter",
+              "display": "Encounter intervention"
+            },
+            "performedDateTime": "2020-02-04T02:59:13+01:00"
+          },
+          {
+            "id": "21",
+            "resourceType": "Procedure",
+            "location": {
+              "display": "TAC PS"
+            },
+            "status": "completed",
+            "code": {
+              "text": "room-out"
+            },
+            "encounter": {
+              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+              "type": "Encounter",
+              "display": "Encounter intervention"
+            },
+            "performedDateTime": "2020-02-04T02:59:24+01:00"
+          },
+          {
+            "id": "24",
+            "resourceType": "Procedure",
+            "location": {
+              "display": "Shock-Room"
+            },
+            "status": "completed",
+            "code": {
+              "text": "room-in"
+            },
+            "encounter": {
+              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+              "type": "Encounter",
+              "display": "Encounter intervention"
+            },
+            "performedDateTime": "2020-02-04T02:59:35+01:00"
+          },
+          {
+            "id": "25",
+            "resourceType": "Procedure",
+            "location": {
+              "display": "Shock-Room"
+            },
+            "status": "completed",
+            "code": {
+              "text": "room-out"
+            },
+            "encounter": {
+              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
+              "type": "Encounter",
+              "display": "Encounter intervention"
+            },
+            "performedDateTime": "2020-02-04T02:59:48+01:00"
           }
         ],
         "resourceType": "Encounter",
@@ -886,7 +1647,7 @@
           "text": "Emergency intervention"
         },
         "subject": {
-          "reference": "#65624cb8-33d8-4ffb-851c-3af0dd015055",
+          "reference": "#44acf11f-7b56-452a-b65b-8c609f9d53d9",
           "type": "Patient",
           "display": "Mario Rossi età 40"
         },
@@ -905,7 +1666,7 @@
               }
             ],
             "individual": {
-              "reference": "#c839cb9a-530a-47ca-b7bf-9139b8a075ac",
+              "reference": "#88f28f97-248a-46cd-b8c9-dd4a11b052f1",
               "type": "Practitioner",
               "display": "Vanni Agnoletti"
             }
@@ -1058,7 +1819,7 @@
         "diagnosis": [
           {
             "condition": {
-              "reference": "/Condition/af211552-a044-4f02-b087-c3bf25e1deaf",
+              "reference": "/Condition/86170311-044a-4cc7-b027-f060bed5c9f4",
               "type": "Condition",
               "display": "Patient Initial Condition"
             },
@@ -1074,7 +1835,7 @@
           },
           {
             "condition": {
-              "reference": "/fhirAPI/Condition/de78f791-9258-44f0-9c17-53e849aee6cf",
+              "reference": "/fhirAPI/Condition/242e23fc-40fa-44d8-9365-09fda1d4d2f6",
               "type": "Condition",
               "display": "Injury Severity Score"
             },
@@ -1094,7 +1855,7 @@
               "display": "Shock-Room"
             },
             "period": {
-              "start": "2020-02-04T02:57:59Z"
+              "start": "2020-02-04T02:57:59+01:00"
             }
           },
           {
@@ -1102,7 +1863,7 @@
               "display": "Shock-Room"
             },
             "period": {
-              "start": "2020-02-04T02:58:16Z"
+              "start": "2020-02-04T02:58:16+01:00"
             }
           },
           {
@@ -1110,7 +1871,7 @@
               "display": "Shock-Room"
             },
             "period": {
-              "start": "2020-02-04T02:58:17Z"
+              "start": "2020-02-04T02:58:17+01:00"
             }
           },
           {
@@ -1118,7 +1879,7 @@
               "display": "Shock-Room"
             },
             "period": {
-              "start": "2020-02-04T02:58:19Z"
+              "start": "2020-02-04T02:58:19+01:00"
             }
           },
           {
@@ -1126,7 +1887,7 @@
               "display": "Shock-Room"
             },
             "period": {
-              "start": "2020-02-04T02:58:20Z"
+              "start": "2020-02-04T02:58:20+01:00"
             }
           },
           {
@@ -1134,7 +1895,7 @@
               "display": "Shock-Room"
             },
             "period": {
-              "start": "2020-02-04T02:58:22Z"
+              "start": "2020-02-04T02:58:22+01:00"
             }
           },
           {
@@ -1142,7 +1903,7 @@
               "display": "Shock-Room"
             },
             "period": {
-              "start": "2020-02-04T02:58:23Z"
+              "start": "2020-02-04T02:58:23+01:00"
             }
           },
           {
@@ -1150,7 +1911,7 @@
               "display": "Shock-Room"
             },
             "period": {
-              "start": "2020-02-04T02:58:27Z"
+              "start": "2020-02-04T02:58:27+01:00"
             }
           },
           {
@@ -1158,7 +1919,7 @@
               "display": "Shock-Room"
             },
             "period": {
-              "start": "2020-02-04T02:58:28Z"
+              "start": "2020-02-04T02:58:28+01:00"
             }
           },
           {
@@ -1166,7 +1927,7 @@
               "display": "Shock-Room"
             },
             "period": {
-              "start": "2020-02-04T02:58:29Z"
+              "start": "2020-02-04T02:58:29+01:00"
             }
           },
           {
@@ -1174,7 +1935,7 @@
               "display": "Shock-Room"
             },
             "period": {
-              "start": "2020-02-04T02:58:34Z"
+              "start": "2020-02-04T02:58:34+01:00"
             }
           },
           {
@@ -1182,7 +1943,7 @@
               "display": "Shock-Room"
             },
             "period": {
-              "start": "2020-02-04T02:58:36Z"
+              "start": "2020-02-04T02:58:36+01:00"
             }
           },
           {
@@ -1190,7 +1951,7 @@
               "display": "Shock-Room"
             },
             "period": {
-              "start": "2020-02-04T02:58:37Z"
+              "start": "2020-02-04T02:58:37+01:00"
             }
           },
           {
@@ -1198,7 +1959,7 @@
               "display": "Shock-Room"
             },
             "period": {
-              "start": "2020-02-04T02:58:39Z"
+              "start": "2020-02-04T02:58:39+01:00"
             }
           },
           {
@@ -1206,7 +1967,7 @@
               "display": "Shock-Room"
             },
             "period": {
-              "start": "2020-02-04T02:58:41Z"
+              "start": "2020-02-04T02:58:41+01:00"
             }
           },
           {
@@ -1214,7 +1975,7 @@
               "display": "Shock-Room"
             },
             "period": {
-              "start": "2020-02-04T02:58:50Z"
+              "start": "2020-02-04T02:58:50+01:00"
             }
           },
           {
@@ -1222,7 +1983,7 @@
               "display": "Shock-Room"
             },
             "period": {
-              "start": "2020-02-04T02:59:01Z"
+              "start": "2020-02-04T02:59:01+01:00"
             }
           },
           {
@@ -1230,7 +1991,7 @@
               "display": "Shock-Room"
             },
             "period": {
-              "start": "2020-02-04T02:59:13Z"
+              "start": "2020-02-04T02:59:13+01:00"
             }
           },
           {
@@ -1238,7 +1999,7 @@
               "display": "TAC PS"
             },
             "period": {
-              "start": "2020-02-04T02:59:13Z"
+              "start": "2020-02-04T02:59:13+01:00"
             }
           },
           {
@@ -1246,7 +2007,7 @@
               "display": "TAC PS"
             },
             "period": {
-              "start": "2020-02-04T02:59:24Z"
+              "start": "2020-02-04T02:59:24+01:00"
             }
           },
           {
@@ -1254,7 +2015,7 @@
               "display": "Shock-Room"
             },
             "period": {
-              "start": "2020-02-04T02:59:35Z"
+              "start": "2020-02-04T02:59:35+01:00"
             }
           },
           {
@@ -1262,7 +2023,7 @@
               "display": "Shock-Room"
             },
             "period": {
-              "start": "2020-02-04T02:59:48Z"
+              "start": "2020-02-04T02:59:48+01:00"
             }
           }
         ],
@@ -1270,7 +2031,7 @@
           "display": "Ospedale Bufalini"
         },
         "partOf": {
-          "reference": "/Encounter/afa13934-8386-4f18-9595-06024d6bb55f"
+          "reference": "/Encounter/d8eecb1d-c254-409e-b67a-9b205a6d033a"
         },
         "class": {
           "code": "EMER",
@@ -1278,14 +2039,14 @@
         }
       },
       {
-        "id": "598eaa40-b93a-407a-973b-d18d1ee47c60",
+        "id": "a92375f9-d7f3-4530-960a-792188b09d60",
         "meta": {
-          "versionId": "d5af36d4-4318-44ea-95a9-32eef23360da",
-          "lastUpdated": "2020-02-11T18:06:55.010Z"
+          "versionId": "1869ea75-e645-42d0-b912-eb1fe7dee842",
+          "lastUpdated": "2020-02-11T19:15:30.166932Z"
         },
         "contained": [
           {
-            "id": "b3f33670-0e90-4610-859e-a333c66a1bbe",
+            "id": "f48ef5e9-4179-41d5-b819-ea2ef5590a79",
             "resourceType": "Practitioner",
             "identifier": [
               {
@@ -1298,7 +2059,7 @@
             "active": true
           },
           {
-            "id": "65624cb8-33d8-4ffb-851c-3af0dd015055",
+            "id": "44acf11f-7b56-452a-b65b-8c609f9d53d9",
             "resourceType": "Patient",
             "name": [
               {
@@ -1309,6 +2070,81 @@
               }
             ],
             "gender": "M"
+          },
+          {
+            "id": "0",
+            "resourceType": "Procedure",
+            "location": {
+              "display": "PRE-H"
+            },
+            "status": "completed",
+            "code": {
+              "text": "room-in"
+            },
+            "encounter": {
+              "reference": "#a92375f9-d7f3-4530-960a-792188b09d60",
+              "type": "Encounter",
+              "display": "Encounter pre ospedalizzazione"
+            },
+            "performedDateTime": "2020-02-04T02:56:25+01:00"
+          },
+          {
+            "id": "1",
+            "resourceType": "Procedure",
+            "location": {
+              "display": "PRE-H"
+            },
+            "status": "completed",
+            "code": {
+              "coding": [
+                {
+                  "system": "http://www.snomed.org/",
+                  "code": "32485007",
+                  "display": "Hospital admission (procedure)"
+                }
+              ],
+              "text": "patient-accepted"
+            },
+            "encounter": {
+              "reference": "#a92375f9-d7f3-4530-960a-792188b09d60",
+              "type": "Encounter",
+              "display": "Encounter pre ospedalizzazione"
+            },
+            "performedDateTime": "2020-02-04T02:57:59+01:00"
+          },
+          {
+            "id": "22",
+            "resourceType": "Procedure",
+            "location": {
+              "display": "Trasporto"
+            },
+            "status": "completed",
+            "code": {
+              "text": "room-in"
+            },
+            "encounter": {
+              "reference": "#a92375f9-d7f3-4530-960a-792188b09d60",
+              "type": "Encounter",
+              "display": "Encounter pre ospedalizzazione"
+            },
+            "performedDateTime": "2020-02-04T02:59:24+01:00"
+          },
+          {
+            "id": "23",
+            "resourceType": "Procedure",
+            "location": {
+              "display": "Trasporto"
+            },
+            "status": "completed",
+            "code": {
+              "text": "room-out"
+            },
+            "encounter": {
+              "reference": "#a92375f9-d7f3-4530-960a-792188b09d60",
+              "type": "Encounter",
+              "display": "Encounter pre ospedalizzazione"
+            },
+            "performedDateTime": "2020-02-04T02:59:35+01:00"
           }
         ],
         "resourceType": "Encounter",
@@ -1332,7 +2168,7 @@
           ]
         },
         "subject": {
-          "reference": "#65624cb8-33d8-4ffb-851c-3af0dd015055",
+          "reference": "#44acf11f-7b56-452a-b65b-8c609f9d53d9",
           "type": "Patient",
           "display": "Mario Rossi età 40"
         },
@@ -1351,7 +2187,7 @@
               }
             ],
             "individual": {
-              "reference": "#b3f33670-0e90-4610-859e-a333c66a1bbe",
+              "reference": "#f48ef5e9-4179-41d5-b819-ea2ef5590a79",
               "type": "Practitioner",
               "display": "Vanni Agnoletti"
             }
@@ -1504,7 +2340,7 @@
         "diagnosis": [
           {
             "condition": {
-              "reference": "/Condition/a73fb37e-646b-4dd0-9d8e-8643129c5b7c",
+              "reference": "/Condition/b712b1f0-77e0-4594-81a5-c627909b37c0",
               "type": "Condition",
               "display": "Trauma Condition"
             },
@@ -1565,7 +2401,7 @@
               "display": "PRE-H"
             },
             "period": {
-              "start": "2020-02-04T02:56:25Z"
+              "start": "2020-02-04T02:56:25+01:00"
             }
           },
           {
@@ -1573,7 +2409,7 @@
               "display": "PRE-H"
             },
             "period": {
-              "start": "2020-02-04T02:57:59Z"
+              "start": "2020-02-04T02:57:59+01:00"
             }
           },
           {
@@ -1581,7 +2417,7 @@
               "display": "Trasporto"
             },
             "period": {
-              "start": "2020-02-04T02:59:24Z"
+              "start": "2020-02-04T02:59:24+01:00"
             }
           },
           {
@@ -1589,7 +2425,7 @@
               "display": "Trasporto"
             },
             "period": {
-              "start": "2020-02-04T02:59:35Z"
+              "start": "2020-02-04T02:59:35+01:00"
             }
           }
         ],
@@ -1597,7 +2433,7 @@
           "display": "Ospedale Bufalini"
         },
         "partOf": {
-          "reference": "/Encounter/afa13934-8386-4f18-9595-06024d6bb55f"
+          "reference": "/Encounter/d8eecb1d-c254-409e-b67a-9b205a6d033a"
         },
         "class": {
           "code": "EMER",
@@ -1607,10 +2443,10 @@
     ],
     "conditions": [
       {
-        "id": "a73fb37e-646b-4dd0-9d8e-8643129c5b7c",
+        "id": "b712b1f0-77e0-4594-81a5-c627909b37c0",
         "meta": {
-          "versionId": "e2c26f61-39c9-489b-9e85-44e801ded70f",
-          "lastUpdated": "2020-02-11T18:06:54.862Z"
+          "versionId": "dcbdcfe5-38d5-48f0-bd4a-4b25e8c35165",
+          "lastUpdated": "2020-02-11T19:15:30.112727Z"
         },
         "resourceType": "Condition",
         "code": {
@@ -1629,11 +2465,11 @@
           "text": "Trauma Condition gestione pre ospedaliera"
         },
         "encounter": {
-          "reference": "/Encounter/598eaa40-b93a-407a-973b-d18d1ee47c60",
+          "reference": "/Encounter/a92375f9-d7f3-4530-960a-792188b09d60",
           "type": "Encounter",
           "display": "Encounter pre ospedalizzazione"
         },
-        "onsetDateTime": "2020-02-04T09:57:45Z",
+        "onsetDateTime": "2020-02-04T09:57:45+01:00",
         "evidence": [
           {
             "code": [
@@ -1650,7 +2486,7 @@
             ],
             "detail": [
               {
-                "reference": "/Observation/ec1a5235-92a8-485c-904b-e8f49f9c84ef",
+                "reference": "/Observation/c50d64c6-3505-4d43-a217-7e99903ad643",
                 "type": "Observation",
                 "display": "Type of accident chiuso"
               }
@@ -1713,7 +2549,7 @@
             ],
             "detail": [
               {
-                "reference": "/Procedure/bcdb02a5-2e7a-400d-9d9f-745fe1ac107f",
+                "reference": "/Procedure/e352adfa-16bf-4ab2-947d-d7f39732406d",
                 "type": "Procedure",
                 "display": "Anamnesi procedure"
               }
@@ -1722,21 +2558,21 @@
           {
             "detail": [
               {
-                "reference": "/Procedure/d329ee34-4432-4391-a532-30dc3338fc31"
+                "reference": "/Procedure/157f342d-b952-4046-9724-547e6b9e6c79"
               }
             ]
           },
           {
             "detail": [
               {
-                "reference": "/Procedure/248532ec-8289-4a75-8433-938d4d1b6b3b"
+                "reference": "/Procedure/3997b8b4-867e-4ebf-85e0-d99d89dfe4f3"
               }
             ]
           },
           {
             "detail": [
               {
-                "reference": "/Procedure/0a05523b-2ae8-40da-bf31-d8b66fef7ff6"
+                "reference": "/Procedure/1b9bf9d7-d15f-4ab0-a050-717ab895fe7c"
               }
             ]
           },
@@ -1748,7 +2584,7 @@
             ],
             "detail": [
               {
-                "reference": "/Observation/699e3ffc-baea-4284-9cf5-beb595a7c8ee"
+                "reference": "/Observation/80849be7-4743-443f-bc07-e331add085a4"
               }
             ]
           },
@@ -1760,7 +2596,7 @@
             ],
             "detail": [
               {
-                "reference": "/Observation/f4cec475-3d52-4ef6-936a-e01ca3f42a75"
+                "reference": "/Observation/b86e6ed0-4ab2-4acd-a6b9-3ca4dbd3dc8c"
               }
             ]
           },
@@ -1772,7 +2608,7 @@
             ],
             "detail": [
               {
-                "reference": "/Observation/81050476-66f4-4c09-9e5b-6fe147c85b51"
+                "reference": "/Observation/1dd8be95-f74c-4c04-a1de-ba7f2e6fb1fd"
               }
             ]
           },
@@ -1784,7 +2620,7 @@
             ],
             "detail": [
               {
-                "reference": "/Observation/375f0668-e431-469a-b476-7d1bb970539e"
+                "reference": "/Observation/08dd4e25-f57d-4d02-99c9-f34327315ae5"
               }
             ]
           },
@@ -1796,7 +2632,7 @@
             ],
             "detail": [
               {
-                "reference": "/Observation/874ec297-af43-4bc8-8d83-ffc13dcfe4c9"
+                "reference": "/Observation/751a689e-e5a9-4a92-93f3-1fdddbfb84f6"
               }
             ]
           },
@@ -1808,17 +2644,17 @@
             ],
             "detail": [
               {
-                "reference": "/Observation/72782439-d89c-430c-a898-bec48da667f1"
+                "reference": "/Observation/ab6b5ba9-9392-4ff3-b78e-355e84c07532"
               }
             ]
           }
         ]
       },
       {
-        "id": "af211552-a044-4f02-b087-c3bf25e1deaf",
+        "id": "86170311-044a-4cc7-b027-f060bed5c9f4",
         "meta": {
-          "versionId": "98c262fc-fd30-4fd4-a6e5-b605c7dfff63",
-          "lastUpdated": "2020-02-11T18:06:54.869Z"
+          "versionId": "b1839c07-3633-4256-bfc4-d4027d9051e1",
+          "lastUpdated": "2020-02-11T19:15:30.115889Z"
         },
         "resourceType": "Condition",
         "code": {
@@ -1832,7 +2668,7 @@
           "text": "Patient Initial Condition"
         },
         "encounter": {
-          "reference": "/Encounter/49b6fbd0-b995-4988-8677-434d6db5d0f2",
+          "reference": "/Encounter/04810b11-382b-47ec-a1b1-df9be9af572c",
           "type": "Encounter",
           "display": "Encounter intervention"
         },
@@ -1852,7 +2688,7 @@
             ],
             "detail": [
               {
-                "reference": "/Observation/b932e7b2-8233-4d86-b9c5-6211dd4ef042",
+                "reference": "/Observation/7c5405fb-1fcd-4fcf-92ea-7b9359da3059",
                 "type": "Observation",
                 "display": "Initial Vital Signs"
               }
@@ -1866,7 +2702,7 @@
             ],
             "detail": [
               {
-                "reference": "/Observation/0b72b012-6b69-432a-aaeb-681e1ab67fd4",
+                "reference": "/Observation/4cb38799-3faa-426d-92b4-06b0924ebf67",
                 "type": "Observation"
               }
             ]
@@ -1879,7 +2715,7 @@
             ],
             "detail": [
               {
-                "reference": "/Observation/69887319-a512-4246-83b9-caab51eca929",
+                "reference": "/Observation/c9388fc1-02d5-48e9-94cb-2d8f173258e4",
                 "type": "Observation"
               }
             ]
@@ -1892,7 +2728,7 @@
             ],
             "detail": [
               {
-                "reference": "/Observation/95fcfef4-fb0f-4cc3-9ad3-9bdaa719caf8",
+                "reference": "/Observation/a64a6124-e94b-44eb-bc90-9c1536aa0e54",
                 "type": "Observation"
               }
             ]
@@ -1905,7 +2741,7 @@
             ],
             "detail": [
               {
-                "reference": "/Observation/9be642ca-12d6-4f7c-8958-a6d30059ed84",
+                "reference": "/Observation/57ed814b-bc78-415f-96b4-702ec1453dc6",
                 "type": "Observation"
               }
             ]
@@ -1918,7 +2754,7 @@
             ],
             "detail": [
               {
-                "reference": "/Observation/23764fac-33f6-4b73-8cf2-18ccb31e3e15",
+                "reference": "/Observation/c2e727b8-d9be-4957-b315-b5036cb964c0",
                 "type": "Observation"
               }
             ]
@@ -1931,7 +2767,7 @@
             ],
             "detail": [
               {
-                "reference": "/Procedure/bc19f1db-8bb8-47f4-9a17-09ac3df741e1",
+                "reference": "/Procedure/90fda598-a8ab-41e9-a635-4a9c3c848dfc",
                 "type": "Procedure"
               }
             ]
@@ -1944,7 +2780,7 @@
             ],
             "detail": [
               {
-                "reference": "/Observation/bb16451b-4c9b-4dbc-a4fb-5198b7f574e9",
+                "reference": "/Observation/ea2f891e-af06-49c8-b4d2-8d5044ead2b4",
                 "type": "Observation"
               }
             ]
@@ -1957,7 +2793,7 @@
             ],
             "detail": [
               {
-                "reference": "/Observation/dc53057b-90ae-4c0b-a3b3-9789259862c7",
+                "reference": "/Observation/48e0679c-af3f-402a-bd62-e1bac3ac284e",
                 "type": "Observation"
               }
             ]
@@ -1970,7 +2806,7 @@
             ],
             "detail": [
               {
-                "reference": "/Observation/0374b219-b3b2-497f-a388-01db566531ca",
+                "reference": "/Observation/adbff705-187e-430f-b5ae-096573c997cb",
                 "type": "Observation"
               }
             ]
@@ -1983,7 +2819,7 @@
             ],
             "detail": [
               {
-                "reference": "/Observation/0fec5d7a-6df6-4295-8c8d-385383b7543d",
+                "reference": "/Observation/22024429-c4d9-49e3-bf06-211e4cd7ecec",
                 "type": "Observation"
               }
             ]
@@ -1996,7 +2832,7 @@
             ],
             "detail": [
               {
-                "reference": "/Observation/10409042-869b-44c2-8bc4-b98e723bb8f4",
+                "reference": "/Observation/d8f2cfea-1a3a-4b6b-8490-bd599d7b30df",
                 "type": "Observation"
               }
             ]
@@ -2004,10 +2840,10 @@
         ]
       },
       {
-        "id": "de78f791-9258-44f0-9c17-53e849aee6cf",
+        "id": "242e23fc-40fa-44d8-9365-09fda1d4d2f6",
         "meta": {
-          "versionId": "947ad63a-09f2-4176-8103-d4989aa71a95",
-          "lastUpdated": "2020-02-11T18:06:54.897Z"
+          "versionId": "681f04e9-1485-4184-9577-01ec4f2274ef",
+          "lastUpdated": "2020-02-11T19:15:30.128406Z"
         },
         "resourceType": "Condition",
         "clinicalStatus": {
@@ -2041,7 +2877,7 @@
           "text": "Physical Condition after intervention"
         },
         "encounter": {
-          "reference": "/Encounter/49b6fbd0-b995-4988-8677-434d6db5d0f2",
+          "reference": "/Encounter/04810b11-382b-47ec-a1b1-df9be9af572c",
           "type": "Encounter",
           "display": "Encounter intervention"
         },
@@ -2049,7 +2885,7 @@
           {
             "assessment": [
               {
-                "reference": "/Observation/6a18892a-547a-4793-9985-8a8f981b4c68",
+                "reference": "/Observation/024ab61d-8c8f-4d7b-b935-8eb7b5b2d187",
                 "type": "Observation",
                 "display": "Total Iss Score: 17"
               }
@@ -2070,10 +2906,10 @@
     "practitioners": [],
     "observations": [
       {
-        "id": "6a18892a-547a-4793-9985-8a8f981b4c68",
+        "id": "024ab61d-8c8f-4d7b-b935-8eb7b5b2d187",
         "meta": {
-          "versionId": "00ebf594-0d6b-4d83-a3c1-40e6cbd81143",
-          "lastUpdated": "2020-02-11T18:06:54.894Z"
+          "versionId": "9e897a87-f144-4cc1-91e9-3e37ff83bcef",
+          "lastUpdated": "2020-02-11T19:15:30.127346Z"
         },
         "resourceType": "Observation",
         "component": [
@@ -2324,17 +3160,17 @@
           "text": "Total Iss"
         },
         "encounter": {
-          "reference": "/Encounter/49b6fbd0-b995-4988-8677-434d6db5d0f2",
+          "reference": "/Encounter/04810b11-382b-47ec-a1b1-df9be9af572c",
           "type": "Encounter",
           "display": "Encounter intervention"
         },
         "valueInteger": 17
       },
       {
-        "id": "ec1a5235-92a8-485c-904b-e8f49f9c84ef",
+        "id": "c50d64c6-3505-4d43-a217-7e99903ad643",
         "meta": {
-          "versionId": "3296967a-8eb5-4c72-b7c6-f749794a4846",
-          "lastUpdated": "2020-02-11T18:06:54.897Z"
+          "versionId": "cc4733e2-a433-4b25-95b5-ed8e7bbf55ea",
+          "lastUpdated": "2020-02-11T19:15:30.128539Z"
         },
         "resourceType": "Observation",
         "status": "final",
@@ -2349,21 +3185,21 @@
           "text": "Accident Type Observation"
         },
         "encounter": {
-          "reference": "/Encounter/598eaa40-b93a-407a-973b-d18d1ee47c60",
+          "reference": "/Encounter/a92375f9-d7f3-4530-960a-792188b09d60",
           "display": "Encounter pre ospedalizzazione"
         },
         "valueString": "chiuso"
       },
       {
-        "id": "ee58f358-c18c-4378-ab71-274f688c55b5",
+        "id": "eb2c4aa6-924e-4f1f-851e-fea15673ae43",
         "meta": {
-          "versionId": "90ebff96-144c-4843-bb00-8e4eba3eb0aa",
-          "lastUpdated": "2020-02-11T18:06:54.917Z"
+          "versionId": "55f73a6d-e85e-4d85-a5ca-7bef24e95d5d",
+          "lastUpdated": "2020-02-11T19:15:30.135984Z"
         },
         "resourceType": "Observation",
         "partOf": [
           {
-            "reference": "/Procedure/bcdb02a5-2e7a-400d-9d9f-745fe1ac107f",
+            "reference": "/Procedure/e352adfa-16bf-4ab2-947d-d7f39732406d",
             "type": "Procedure"
           }
         ],
@@ -2379,22 +3215,22 @@
           "text": "Use of anti-platelets"
         },
         "encounter": {
-          "reference": "/Encounter/598eaa40-b93a-407a-973b-d18d1ee47c60",
+          "reference": "/Encounter/a92375f9-d7f3-4530-960a-792188b09d60",
           "type": "Encounter",
           "display": "Encounter pre ospedalizzazione"
         },
         "valueBoolean": true
       },
       {
-        "id": "f652e2c6-695b-45be-b7b4-aa652716c658",
+        "id": "4cd3c408-7056-44e3-b978-145dd1384a33",
         "meta": {
-          "versionId": "648c00ae-198f-42eb-a98f-9d510a755002",
-          "lastUpdated": "2020-02-11T18:06:54.918Z"
+          "versionId": "c673d8c7-0457-45ab-9ee2-b3b259ac2a10",
+          "lastUpdated": "2020-02-11T19:15:30.136097Z"
         },
         "resourceType": "Observation",
         "partOf": [
           {
-            "reference": "/Procedure/bcdb02a5-2e7a-400d-9d9f-745fe1ac107f",
+            "reference": "/Procedure/e352adfa-16bf-4ab2-947d-d7f39732406d",
             "type": "Procedure"
           }
         ],
@@ -2410,22 +3246,22 @@
           "text": "Use of anticoagulants"
         },
         "encounter": {
-          "reference": "/Encounter/598eaa40-b93a-407a-973b-d18d1ee47c60",
+          "reference": "/Encounter/a92375f9-d7f3-4530-960a-792188b09d60",
           "type": "Encounter",
           "display": "Encounter pre ospedalizzazione"
         },
         "valueBoolean": true
       },
       {
-        "id": "65e72194-6b0d-4a03-b528-c1c9c9782372",
+        "id": "47dcb409-5c4b-40f3-a8e9-274e2a0e53cc",
         "meta": {
-          "versionId": "e640512b-e947-497f-8657-3f3f310cac32",
-          "lastUpdated": "2020-02-11T18:06:54.918Z"
+          "versionId": "079de76c-585e-4c0b-aa57-bcc5412d486c",
+          "lastUpdated": "2020-02-11T19:15:30.136188Z"
         },
         "resourceType": "Observation",
         "partOf": [
           {
-            "reference": "/Procedure/bcdb02a5-2e7a-400d-9d9f-745fe1ac107f",
+            "reference": "/Procedure/e352adfa-16bf-4ab2-947d-d7f39732406d",
             "type": "Procedure"
           }
         ],
@@ -2441,17 +3277,17 @@
           "text": "Use of new oral anti-coagulants"
         },
         "encounter": {
-          "reference": "/Encounter/598eaa40-b93a-407a-973b-d18d1ee47c60",
+          "reference": "/Encounter/a92375f9-d7f3-4530-960a-792188b09d60",
           "type": "Encounter",
           "display": "Encounter pre ospedalizzazione"
         },
         "valueBoolean": true
       },
       {
-        "id": "699e3ffc-baea-4284-9cf5-beb595a7c8ee",
+        "id": "80849be7-4743-443f-bc07-e331add085a4",
         "meta": {
-          "versionId": "866e76b0-ef72-4736-8374-8db50aaf4dac",
-          "lastUpdated": "2020-02-11T18:06:54.919Z"
+          "versionId": "c7064dbf-ca1a-4f9d-8d19-9e49cff2f083",
+          "lastUpdated": "2020-02-11T19:15:30.136654Z"
         },
         "resourceType": "Observation",
         "status": "final",
@@ -2466,22 +3302,22 @@
           "text": "Anisocoria"
         },
         "subject": {
-          "reference": "#65624cb8-33d8-4ffb-851c-3af0dd015055",
+          "reference": "#44acf11f-7b56-452a-b65b-8c609f9d53d9",
           "type": "Patient",
           "display": "Mario Rossi età 40"
         },
         "encounter": {
-          "reference": "/Encounter/598eaa40-b93a-407a-973b-d18d1ee47c60",
+          "reference": "/Encounter/a92375f9-d7f3-4530-960a-792188b09d60",
           "type": "Encounter",
           "display": "Encounter pre ospedalizzazione"
         },
         "valueBoolean": true
       },
       {
-        "id": "f4cec475-3d52-4ef6-936a-e01ca3f42a75",
+        "id": "b86e6ed0-4ab2-4acd-a6b9-3ca4dbd3dc8c",
         "meta": {
-          "versionId": "5f591e7c-5f4f-490b-88ae-3210c8e86e40",
-          "lastUpdated": "2020-02-11T18:06:54.925Z"
+          "versionId": "5271e6ea-d32d-427a-bf4d-5f8f1062739e",
+          "lastUpdated": "2020-02-11T19:15:30.137836Z"
         },
         "resourceType": "Observation",
         "status": "final",
@@ -2496,22 +3332,22 @@
           "text": "Mydriasis"
         },
         "subject": {
-          "reference": "#65624cb8-33d8-4ffb-851c-3af0dd015055",
+          "reference": "#44acf11f-7b56-452a-b65b-8c609f9d53d9",
           "type": "Patient",
           "display": "Mario Rossi età 40"
         },
         "encounter": {
-          "reference": "/Encounter/598eaa40-b93a-407a-973b-d18d1ee47c60",
+          "reference": "/Encounter/a92375f9-d7f3-4530-960a-792188b09d60",
           "type": "Encounter",
           "display": "Encounter pre ospedalizzazione"
         },
         "valueBoolean": true
       },
       {
-        "id": "81050476-66f4-4c09-9e5b-6fe147c85b51",
+        "id": "1dd8be95-f74c-4c04-a1de-ba7f2e6fb1fd",
         "meta": {
-          "versionId": "2dcf75c6-1d96-45f8-80d1-27464cc32869",
-          "lastUpdated": "2020-02-11T18:06:54.926Z"
+          "versionId": "2c94c9c0-a5e1-4ead-8f0d-f6cdee8323c7",
+          "lastUpdated": "2020-02-11T19:15:30.137966Z"
         },
         "resourceType": "Observation",
         "status": "final",
@@ -2526,20 +3362,20 @@
           "text": "Motility"
         },
         "subject": {
-          "reference": "#65624cb8-33d8-4ffb-851c-3af0dd015055",
+          "reference": "#44acf11f-7b56-452a-b65b-8c609f9d53d9",
           "type": "Patient",
           "display": "Mario Rossi età 40"
         },
         "encounter": {
-          "reference": "/Encounter/598eaa40-b93a-407a-973b-d18d1ee47c60"
+          "reference": "/Encounter/a92375f9-d7f3-4530-960a-792188b09d60"
         },
         "valueBoolean": true
       },
       {
-        "id": "375f0668-e431-469a-b476-7d1bb970539e",
+        "id": "08dd4e25-f57d-4d02-99c9-f34327315ae5",
         "meta": {
-          "versionId": "7fd830b2-3edc-497d-a813-ef67c6db11f0",
-          "lastUpdated": "2020-02-11T18:06:54.927Z"
+          "versionId": "8858c00c-59b3-492a-9b64-96a6bd8e8e61",
+          "lastUpdated": "2020-02-11T19:15:30.138717Z"
         },
         "resourceType": "Observation",
         "status": "final",
@@ -2554,22 +3390,22 @@
           "text": "Glasgow Coma Scale Total"
         },
         "subject": {
-          "reference": "#65624cb8-33d8-4ffb-851c-3af0dd015055",
+          "reference": "#44acf11f-7b56-452a-b65b-8c609f9d53d9",
           "type": "Patient",
           "display": "Mario Rossi età 40"
         },
         "encounter": {
-          "reference": "/Encounter/598eaa40-b93a-407a-973b-d18d1ee47c60",
+          "reference": "/Encounter/a92375f9-d7f3-4530-960a-792188b09d60",
           "type": "Encounter",
           "display": "Encounter pre ospedalizzazione"
         },
         "valueInteger": 8
       },
       {
-        "id": "874ec297-af43-4bc8-8d83-ffc13dcfe4c9",
+        "id": "751a689e-e5a9-4a92-93f3-1fdddbfb84f6",
         "meta": {
-          "versionId": "dcf6e357-b7c2-4a8b-8302-d364f60b9a66",
-          "lastUpdated": "2020-02-11T18:06:54.928Z"
+          "versionId": "19b1a24f-051f-4795-a807-7358e902479d",
+          "lastUpdated": "2020-02-11T19:15:30.139469Z"
         },
         "resourceType": "Observation",
         "status": "final",
@@ -2584,12 +3420,12 @@
           "text": "Worst Blood Pressure Observation"
         },
         "subject": {
-          "reference": "#65624cb8-33d8-4ffb-851c-3af0dd015055",
+          "reference": "#44acf11f-7b56-452a-b65b-8c609f9d53d9",
           "type": "Patient",
           "display": "Mario Rossi età 40"
         },
         "encounter": {
-          "reference": "/Encounter/598eaa40-b93a-407a-973b-d18d1ee47c60",
+          "reference": "/Encounter/a92375f9-d7f3-4530-960a-792188b09d60",
           "type": "Encounter",
           "display": "Encounter pre ospedalizzazione"
         },
@@ -2601,10 +3437,10 @@
         }
       },
       {
-        "id": "72782439-d89c-430c-a898-bec48da667f1",
+        "id": "ab6b5ba9-9392-4ff3-b78e-355e84c07532",
         "meta": {
-          "versionId": "21ce74fc-7aae-4c4e-a08b-03cb80047d87",
-          "lastUpdated": "2020-02-11T18:06:54.929Z"
+          "versionId": "5b7a4f51-67d3-4223-bfc6-50a001e1ddc3",
+          "lastUpdated": "2020-02-11T19:15:30.139611Z"
         },
         "resourceType": "Observation",
         "status": "final",
@@ -2619,12 +3455,12 @@
           "text": "Worst Respiratory Rate Observation"
         },
         "subject": {
-          "reference": "#65624cb8-33d8-4ffb-851c-3af0dd015055",
+          "reference": "#44acf11f-7b56-452a-b65b-8c609f9d53d9",
           "type": "Patient",
           "display": "Mario Rossi età 40"
         },
         "encounter": {
-          "reference": "/Encounter/598eaa40-b93a-407a-973b-d18d1ee47c60",
+          "reference": "/Encounter/a92375f9-d7f3-4530-960a-792188b09d60",
           "type": "Encounter",
           "display": "Encounter pre ospedalizzazione"
         },
@@ -2634,10 +3470,10 @@
         }
       },
       {
-        "id": "b932e7b2-8233-4d86-b9c5-6211dd4ef042",
+        "id": "7c5405fb-1fcd-4fcf-92ea-7b9359da3059",
         "meta": {
-          "versionId": "8b97ae29-0cb6-4e84-8305-518cb1604e0a",
-          "lastUpdated": "2020-02-11T18:06:54.929Z"
+          "versionId": "6b1db921-5fa6-4d65-8542-1576627348b2",
+          "lastUpdated": "2020-02-11T19:15:30.139818Z"
         },
         "resourceType": "Observation",
         "component": [
@@ -2719,16 +3555,16 @@
           "text": "Vital Signs"
         },
         "encounter": {
-          "reference": "/Encounter/49b6fbd0-b995-4988-8677-434d6db5d0f2",
+          "reference": "/Encounter/04810b11-382b-47ec-a1b1-df9be9af572c",
           "type": "Encounter",
           "display": "Encounter intervention"
         }
       },
       {
-        "id": "0b72b012-6b69-432a-aaeb-681e1ab67fd4",
+        "id": "4cb38799-3faa-426d-92b4-06b0924ebf67",
         "meta": {
-          "versionId": "7a51bd00-9757-427d-b75a-01371640bbaf",
-          "lastUpdated": "2020-02-11T18:06:54.930Z"
+          "versionId": "7c6a4cb8-96ef-4ae1-b9a4-61b8e9a6920e",
+          "lastUpdated": "2020-02-11T19:15:30.139962Z"
         },
         "resourceType": "Observation",
         "component": [
@@ -2784,17 +3620,17 @@
           "text": "Glasgow Coma Scale Totale"
         },
         "encounter": {
-          "reference": "/Encounter/49b6fbd0-b995-4988-8677-434d6db5d0f2",
+          "reference": "/Encounter/04810b11-382b-47ec-a1b1-df9be9af572c",
           "type": "Encounter",
           "display": "Encounter intervention"
         },
         "valueInteger": 12
       },
       {
-        "id": "69887319-a512-4246-83b9-caab51eca929",
+        "id": "c9388fc1-02d5-48e9-94cb-2d8f173258e4",
         "meta": {
-          "versionId": "c623af86-ab96-4137-8132-45d93a4ca59a",
-          "lastUpdated": "2020-02-11T18:06:54.930Z"
+          "versionId": "a44b757c-3a8b-4d03-b5e9-b67607f9d6c4",
+          "lastUpdated": "2020-02-11T19:15:30.140064Z"
         },
         "resourceType": "Observation",
         "status": "final",
@@ -2809,17 +3645,17 @@
           "text": "Sedated Patient"
         },
         "encounter": {
-          "reference": "/Encounter/49b6fbd0-b995-4988-8677-434d6db5d0f2",
+          "reference": "/Encounter/04810b11-382b-47ec-a1b1-df9be9af572c",
           "type": "Encounter",
           "display": "Encounter intervention"
         },
         "valueBoolean": false
       },
       {
-        "id": "95fcfef4-fb0f-4cc3-9ad3-9bdaa719caf8",
+        "id": "a64a6124-e94b-44eb-bc90-9c1536aa0e54",
         "meta": {
-          "versionId": "5f36f7a7-758c-4565-a5fe-b7e73925b761",
-          "lastUpdated": "2020-02-11T18:06:54.930Z"
+          "versionId": "4f6af8cd-b999-40f3-a79b-c283705258d1",
+          "lastUpdated": "2020-02-11T19:15:30.140166Z"
         },
         "resourceType": "Observation",
         "status": "final",
@@ -2834,17 +3670,17 @@
           "text": "Pupils"
         },
         "encounter": {
-          "reference": "/Encounter/49b6fbd0-b995-4988-8677-434d6db5d0f2",
+          "reference": "/Encounter/04810b11-382b-47ec-a1b1-df9be9af572c",
           "type": "Encounter",
           "display": "Encounter intevention"
         },
         "valueString": "Aniso"
       },
       {
-        "id": "9be642ca-12d6-4f7c-8958-a6d30059ed84",
+        "id": "57ed814b-bc78-415f-96b4-702ec1453dc6",
         "meta": {
-          "versionId": "73a27702-9635-4563-b600-4672692c2460",
-          "lastUpdated": "2020-02-11T18:06:54.942Z"
+          "versionId": "61e24a01-6138-4b88-bd84-66c4195741cd",
+          "lastUpdated": "2020-02-11T19:15:30.145563Z"
         },
         "resourceType": "Observation",
         "status": "final",
@@ -2859,17 +3695,17 @@
           "text": "Airways"
         },
         "encounter": {
-          "reference": "/Encounter/49b6fbd0-b995-4988-8677-434d6db5d0f2",
+          "reference": "/Encounter/04810b11-382b-47ec-a1b1-df9be9af572c",
           "type": "Encounter",
           "display": "Encounter intervention"
         },
         "valueString": "Respiro Spontaneo"
       },
       {
-        "id": "23764fac-33f6-4b73-8cf2-18ccb31e3e15",
+        "id": "c2e727b8-d9be-4957-b315-b5036cb964c0",
         "meta": {
-          "versionId": "0258acbf-bc5f-42c5-aea2-a9ce327ca0cd",
-          "lastUpdated": "2020-02-11T18:06:54.942Z"
+          "versionId": "ae6af3c5-6747-4671-9fe4-88ea20ac707a",
+          "lastUpdated": "2020-02-11T19:15:30.145827Z"
         },
         "resourceType": "Observation",
         "status": "final",
@@ -2877,17 +3713,17 @@
           "text": "Positive Inhalation"
         },
         "encounter": {
-          "reference": "/Encounter/49b6fbd0-b995-4988-8677-434d6db5d0f2",
+          "reference": "/Encounter/04810b11-382b-47ec-a1b1-df9be9af572c",
           "type": "Encounter",
           "display": "Encounter intervention"
         },
         "valueBoolean": false
       },
       {
-        "id": "bb16451b-4c9b-4dbc-a4fb-5198b7f574e9",
+        "id": "ea2f891e-af06-49c8-b4d2-8d5044ead2b4",
         "meta": {
-          "versionId": "7780c4fb-0a9e-41fe-bb05-f87d3dc10ca8",
-          "lastUpdated": "2020-02-11T18:06:54.943Z"
+          "versionId": "639d3907-dfad-4720-86bc-a40672dbc391",
+          "lastUpdated": "2020-02-11T19:15:30.146151Z"
         },
         "resourceType": "Observation",
         "status": "final",
@@ -2902,17 +3738,17 @@
           "text": "Chest Tube"
         },
         "encounter": {
-          "reference": "/Encounter/49b6fbd0-b995-4988-8677-434d6db5d0f2",
+          "reference": "/Encounter/04810b11-382b-47ec-a1b1-df9be9af572c",
           "type": "Encounter",
           "display": "Encounter intervention"
         },
         "valueString": "Non Presente"
       },
       {
-        "id": "dc53057b-90ae-4c0b-a3b3-9789259862c7",
+        "id": "48e0679c-af3f-402a-bd62-e1bac3ac284e",
         "meta": {
-          "versionId": "021a5184-650d-491f-94c3-ebd00cda85ce",
-          "lastUpdated": "2020-02-11T18:06:54.943Z"
+          "versionId": "1433d881-251b-4084-b943-e62d7ad0e11d",
+          "lastUpdated": "2020-02-11T19:15:30.146265Z"
         },
         "resourceType": "Observation",
         "status": "final",
@@ -2927,17 +3763,17 @@
           "text": "External Hemorrhage"
         },
         "encounter": {
-          "reference": "/Encounter/49b6fbd0-b995-4988-8677-434d6db5d0f2",
+          "reference": "/Encounter/04810b11-382b-47ec-a1b1-df9be9af572c",
           "type": "Encounter",
           "display": "Encounter intervention"
         },
         "valueBoolean": false
       },
       {
-        "id": "0374b219-b3b2-497f-a388-01db566531ca",
+        "id": "adbff705-187e-430f-b5ae-096573c997cb",
         "meta": {
-          "versionId": "ea252b25-afa8-4f41-8c20-037e608a60ce",
-          "lastUpdated": "2020-02-11T18:06:54.943Z"
+          "versionId": "fe3ce331-8df7-4e74-a853-81be099026b1",
+          "lastUpdated": "2020-02-11T19:15:30.146392Z"
         },
         "resourceType": "Observation",
         "status": "final",
@@ -2952,17 +3788,17 @@
           "text": "Limbs Fracture"
         },
         "encounter": {
-          "reference": "/Encounter/49b6fbd0-b995-4988-8677-434d6db5d0f2",
+          "reference": "/Encounter/04810b11-382b-47ec-a1b1-df9be9af572c",
           "type": "Encounter",
           "display": "Encounter intervention"
         },
         "valueBoolean": false
       },
       {
-        "id": "0fec5d7a-6df6-4295-8c8d-385383b7543d",
+        "id": "22024429-c4d9-49e3-bf06-211e4cd7ecec",
         "meta": {
-          "versionId": "86739b65-f073-4841-aa21-7ce4559af1ef",
-          "lastUpdated": "2020-02-11T18:06:54.944Z"
+          "versionId": "c61fa999-a3ad-4e67-b5ab-391935c37dd8",
+          "lastUpdated": "2020-02-11T19:15:30.146478Z"
         },
         "resourceType": "Observation",
         "status": "final",
@@ -2977,17 +3813,17 @@
           "text": "Fracture Exposition"
         },
         "encounter": {
-          "reference": "/Encounter/49b6fbd0-b995-4988-8677-434d6db5d0f2",
+          "reference": "/Encounter/04810b11-382b-47ec-a1b1-df9be9af572c",
           "type": "Encounter",
           "display": "Encounter intervention"
         },
         "valueBoolean": false
       },
       {
-        "id": "10409042-869b-44c2-8bc4-b98e723bb8f4",
+        "id": "d8f2cfea-1a3a-4b6b-8490-bd599d7b30df",
         "meta": {
-          "versionId": "dbb45d58-964d-433c-9532-cea9a6a15a1b",
-          "lastUpdated": "2020-02-11T18:06:54.944Z"
+          "versionId": "46fdde05-083f-4303-9a50-8e6c9ee640ef",
+          "lastUpdated": "2020-02-11T19:15:30.146569Z"
         },
         "resourceType": "Observation",
         "status": "final",
@@ -3001,7 +3837,7 @@
           "text": "Burn"
         },
         "encounter": {
-          "reference": "/Encounter/49b6fbd0-b995-4988-8677-434d6db5d0f2",
+          "reference": "/Encounter/04810b11-382b-47ec-a1b1-df9be9af572c",
           "type": "Encounter",
           "display": "Encounter intervention"
         },
@@ -3010,10 +3846,10 @@
     ],
     "procedures": [
       {
-        "id": "bcdb02a5-2e7a-400d-9d9f-745fe1ac107f",
+        "id": "e352adfa-16bf-4ab2-947d-d7f39732406d",
         "meta": {
-          "versionId": "40299c58-2420-4c1c-8569-25b393c76619",
-          "lastUpdated": "2020-02-11T18:06:54.917Z"
+          "versionId": "2d2d2cad-d6d0-4916-bf11-039e6d331865",
+          "lastUpdated": "2020-02-11T19:15:30.135793Z"
         },
         "resourceType": "Procedure",
         "status": "completed",
@@ -3028,21 +3864,21 @@
           "text": "Anamnesis"
         },
         "subject": {
-          "reference": "#65624cb8-33d8-4ffb-851c-3af0dd015055",
+          "reference": "#44acf11f-7b56-452a-b65b-8c609f9d53d9",
           "type": "Patient",
           "display": "Mario Rossi età 40"
         },
         "encounter": {
-          "reference": "/Encounter/598eaa40-b93a-407a-973b-d18d1ee47c60",
+          "reference": "/Encounter/a92375f9-d7f3-4530-960a-792188b09d60",
           "type": "Encounter",
           "display": "Encounter pre ospedalizzazione"
         }
       },
       {
-        "id": "d329ee34-4432-4391-a532-30dc3338fc31",
+        "id": "157f342d-b952-4046-9724-547e6b9e6c79",
         "meta": {
-          "versionId": "38609bec-4b87-4cb7-97cd-48835e75772c",
-          "lastUpdated": "2020-02-11T18:06:54.918Z"
+          "versionId": "9f7dd79c-d3c4-4bba-a4a7-3839d0bc5062",
+          "lastUpdated": "2020-02-11T19:15:30.136292Z"
         },
         "resourceType": "Procedure",
         "status": "completed",
@@ -3057,19 +3893,19 @@
           "text": "Pleural Decompression"
         },
         "subject": {
-          "reference": "#65624cb8-33d8-4ffb-851c-3af0dd015055"
+          "reference": "#44acf11f-7b56-452a-b65b-8c609f9d53d9"
         },
         "encounter": {
-          "reference": "/Encounter/598eaa40-b93a-407a-973b-d18d1ee47c60",
+          "reference": "/Encounter/a92375f9-d7f3-4530-960a-792188b09d60",
           "type": "Encounter",
           "display": "Encounter pre ospedalizzazione"
         }
       },
       {
-        "id": "248532ec-8289-4a75-8433-938d4d1b6b3b",
+        "id": "3997b8b4-867e-4ebf-85e0-d99d89dfe4f3",
         "meta": {
-          "versionId": "aacf5b02-e38c-4b1f-bc95-73e7b273069b",
-          "lastUpdated": "2020-02-11T18:06:54.918Z"
+          "versionId": "8eb5b2e7-25f0-4d1c-ad36-9d9f3ac03cf0",
+          "lastUpdated": "2020-02-11T19:15:30.136394Z"
         },
         "resourceType": "Procedure",
         "status": "completed",
@@ -3084,21 +3920,21 @@
           "text": "Blood Protocol"
         },
         "subject": {
-          "reference": "#65624cb8-33d8-4ffb-851c-3af0dd015055",
+          "reference": "#44acf11f-7b56-452a-b65b-8c609f9d53d9",
           "type": "Patient",
           "display": "Mario Rossi età 40"
         },
         "encounter": {
-          "reference": "/Encounter/598eaa40-b93a-407a-973b-d18d1ee47c60",
+          "reference": "/Encounter/a92375f9-d7f3-4530-960a-792188b09d60",
           "type": "Encounter",
           "display": "Encounter pre ospedalizzazione"
         }
       },
       {
-        "id": "0a05523b-2ae8-40da-bf31-d8b66fef7ff6",
+        "id": "1b9bf9d7-d15f-4ab0-a050-717ab895fe7c",
         "meta": {
-          "versionId": "0e95bb52-7098-4234-be45-a177143f797f",
-          "lastUpdated": "2020-02-11T18:06:54.919Z"
+          "versionId": "0338dbbb-145d-47a7-b7a5-571d091d8626",
+          "lastUpdated": "2020-02-11T19:15:30.136532Z"
         },
         "resourceType": "Procedure",
         "usedCode": [
@@ -3118,21 +3954,21 @@
           "text": "Tpod Responder"
         },
         "subject": {
-          "reference": "#65624cb8-33d8-4ffb-851c-3af0dd015055",
+          "reference": "#44acf11f-7b56-452a-b65b-8c609f9d53d9",
           "type": "Patient",
           "display": "Mario Rossi età 40"
         },
         "encounter": {
-          "reference": "/Encounter/598eaa40-b93a-407a-973b-d18d1ee47c60",
+          "reference": "/Encounter/a92375f9-d7f3-4530-960a-792188b09d60",
           "type": "Encounter",
           "display": "Encounter pre ospedalizzazione"
         }
       },
       {
-        "id": "bc19f1db-8bb8-47f4-9a17-09ac3df741e1",
+        "id": "90fda598-a8ab-41e9-a635-4a9c3c848dfc",
         "meta": {
-          "versionId": "ac82e2bc-0609-4d87-86a6-ceb3d1337d62",
-          "lastUpdated": "2020-02-11T18:06:54.943Z"
+          "versionId": "09068710-5418-49ad-b36a-b90f629d20fa",
+          "lastUpdated": "2020-02-11T19:15:30.146031Z"
         },
         "resourceType": "Procedure",
         "status": "completed",
@@ -3147,7 +3983,7 @@
           "text": "Intubation"
         },
         "encounter": {
-          "reference": "/Encounter/49b6fbd0-b995-4988-8677-434d6db5d0f2",
+          "reference": "/Encounter/04810b11-382b-47ec-a1b1-df9be9af572c",
           "type": "Encounter",
           "display": "Encounter intervention"
         },
@@ -3161,6 +3997,6 @@
         }
       }
     ],
-    "_id": "5e42ed3fb91ee344e3e056e1"
+    "_id": "5e42fd52c890f15fd51b0877"
   }
 }
