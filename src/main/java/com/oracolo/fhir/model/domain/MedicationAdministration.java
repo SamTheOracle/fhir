@@ -32,7 +32,7 @@ public class MedicationAdministration extends DomainResource {
   private Period effectivePeriod;
   private List<MedicationAdministrationPerformer> performer;
   private List<CodeableConcept> reasonCode;
-  private Reference reasonReference;
+  private List<Reference> reasonReference;
   private Reference request;
   private List<Reference> device;
   private List<Annotation> note;
@@ -176,11 +176,11 @@ public class MedicationAdministration extends DomainResource {
     this.reasonCode = reasonCode;
   }
 
-  public Reference getReasonReference() {
+  public List<Reference> getReasonReference() {
     return reasonReference;
   }
 
-  public void setReasonReference(Reference reasonReference) {
+  public void setReasonReference(List<Reference> reasonReference) {
     this.reasonReference = reasonReference;
   }
 
