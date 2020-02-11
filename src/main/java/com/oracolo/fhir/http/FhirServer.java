@@ -57,52 +57,55 @@ public class FhirServer extends BaseRestInterface {
         .putHeader(HttpHeaderNames.CONTENT_TYPE, FhirHttpHeader.APPLICATION_JSON.value())
         .setStatusCode(routingContext.statusCode())
         .end(JsonObject.mapFrom(operationOutcome).encodePrettily());
-    }).errorHandler(HttpResponseStatus.METHOD_NOT_ALLOWED.code(), routingContext -> {
-      HttpServerResponse response = routingContext.response();
-      OperationOutcome operationOutcome = new OperationOutcome()
-        .addNewIssue(new OperationOutcomeIssue()
-          .setSeverity("error")
-          .setCode(String.valueOf(HttpResponseStatus.METHOD_NOT_ALLOWED.code()))
-          .setDiagnostics(HttpResponseStatus.METHOD_NOT_ALLOWED.reasonPhrase()));
+    })
+      .errorHandler(HttpResponseStatus.METHOD_NOT_ALLOWED.code(), routingContext -> {
+        HttpServerResponse response = routingContext.response();
+        OperationOutcome operationOutcome = new OperationOutcome()
+          .addNewIssue(new OperationOutcomeIssue()
+            .setSeverity("error")
+            .setCode(String.valueOf(HttpResponseStatus.METHOD_NOT_ALLOWED.code()))
+            .setDiagnostics(HttpResponseStatus.METHOD_NOT_ALLOWED.reasonPhrase()));
 
-      response
-        .putHeader(HttpHeaderNames.CONTENT_TYPE, FhirHttpHeader.APPLICATION_JSON.value())
-        .setStatusCode(routingContext.statusCode())
-        .end(JsonObject.mapFrom(operationOutcome).encodePrettily());
-    }).errorHandler(HttpResponseStatus.NOT_ACCEPTABLE.code(), routingContext -> {
-      HttpServerResponse response = routingContext.response();
-      OperationOutcome operationOutcome = new OperationOutcome()
-        .addNewIssue(new OperationOutcomeIssue()
-          .setSeverity("error")
-          .setCode(String.valueOf(HttpResponseStatus.NOT_ACCEPTABLE.code()))
-          .setDiagnostics(HttpResponseStatus.NOT_ACCEPTABLE.reasonPhrase()));
+        response
+          .putHeader(HttpHeaderNames.CONTENT_TYPE, FhirHttpHeader.APPLICATION_JSON.value())
+          .setStatusCode(routingContext.statusCode())
+          .end(JsonObject.mapFrom(operationOutcome).encodePrettily());
+      })
+      .errorHandler(HttpResponseStatus.NOT_ACCEPTABLE.code(), routingContext -> {
+        HttpServerResponse response = routingContext.response();
+        OperationOutcome operationOutcome = new OperationOutcome()
+          .addNewIssue(new OperationOutcomeIssue()
+            .setSeverity("error")
+            .setCode(String.valueOf(HttpResponseStatus.NOT_ACCEPTABLE.code()))
+            .setDiagnostics(HttpResponseStatus.NOT_ACCEPTABLE.reasonPhrase()));
+        response
+          .putHeader(HttpHeaderNames.CONTENT_TYPE, FhirHttpHeader.APPLICATION_JSON.value())
+          .setStatusCode(routingContext.statusCode())
+          .end(JsonObject.mapFrom(operationOutcome).encodePrettily());
+      })
+      .errorHandler(HttpResponseStatus.UNSUPPORTED_MEDIA_TYPE.code(), routingContext -> {
+        HttpServerResponse response = routingContext.response();
+        OperationOutcome operationOutcome = new OperationOutcome()
+          .addNewIssue(new OperationOutcomeIssue()
+            .setSeverity("error")
+            .setCode(String.valueOf(HttpResponseStatus.UNSUPPORTED_MEDIA_TYPE.code()))
+            .setDiagnostics(HttpResponseStatus.UNSUPPORTED_MEDIA_TYPE.reasonPhrase()));
+        response
+          .putHeader(HttpHeaderNames.CONTENT_TYPE, FhirHttpHeader.APPLICATION_JSON.value())
+          .setStatusCode(routingContext.statusCode())
+          .end(JsonObject.mapFrom(operationOutcome).encodePrettily());
+      })
+      .errorHandler(HttpResponseStatus.BAD_REQUEST.code(), routingContext -> {
+        HttpServerResponse response = routingContext.response();
+        String diagnostics = routingContext.get("error") == null ? HttpResponseStatus.BAD_REQUEST.reasonPhrase() : routingContext.get("error");
+        OperationOutcome operationOutcome = new OperationOutcome()
+          .addNewIssue(new OperationOutcomeIssue()
+            .setSeverity("error")
+            .setCode(String.valueOf(HttpResponseStatus.BAD_REQUEST.code()))
+            .setDiagnostics(diagnostics));
 
-      response
-        .putHeader(HttpHeaderNames.CONTENT_TYPE, FhirHttpHeader.APPLICATION_JSON.value())
-        .setStatusCode(routingContext.statusCode())
-        .end(JsonObject.mapFrom(operationOutcome).encodePrettily());
-    }).errorHandler(HttpResponseStatus.UNSUPPORTED_MEDIA_TYPE.code(), routingContext -> {
-      HttpServerResponse response = routingContext.response();
-      OperationOutcome operationOutcome = new OperationOutcome()
-        .addNewIssue(new OperationOutcomeIssue()
-          .setSeverity("error")
-          .setCode(String.valueOf(HttpResponseStatus.UNSUPPORTED_MEDIA_TYPE.code()))
-          .setDiagnostics(HttpResponseStatus.UNSUPPORTED_MEDIA_TYPE.reasonPhrase()));
-      response
-        .putHeader(HttpHeaderNames.CONTENT_TYPE, FhirHttpHeader.APPLICATION_JSON.value())
-        .setStatusCode(routingContext.statusCode())
-        .end(JsonObject.mapFrom(operationOutcome).encodePrettily());
-    }).errorHandler(HttpResponseStatus.BAD_REQUEST.code(), routingContext -> {
-      HttpServerResponse response = routingContext.response();
-      String diagnostics = routingContext.get("error") == null ? HttpResponseStatus.BAD_REQUEST.reasonPhrase() : routingContext.get("error");
-      OperationOutcome operationOutcome = new OperationOutcome()
-        .addNewIssue(new OperationOutcomeIssue()
-          .setSeverity("error")
-          .setCode(String.valueOf(HttpResponseStatus.BAD_REQUEST.code()))
-          .setDiagnostics(diagnostics));
-
-      response
-        .putHeader(HttpHeaderNames.CONTENT_TYPE, FhirHttpHeader.APPLICATION_JSON.value())
+        response
+          .putHeader(HttpHeaderNames.CONTENT_TYPE, FhirHttpHeader.APPLICATION_JSON.value())
         .setStatusCode(routingContext.statusCode())
         .end(JsonObject.mapFrom(operationOutcome).encodePrettily());
     });

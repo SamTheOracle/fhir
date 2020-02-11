@@ -3,7 +3,6 @@ package com.oracolo.fhir.handlers.response;
 import com.oracolo.fhir.database.DatabaseService;
 import com.oracolo.fhir.handlers.response.format.Format;
 import com.oracolo.fhir.model.elements.Metadata;
-import com.oracolo.fhir.utils.FhirUtils;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.Promise;
@@ -39,7 +38,7 @@ public class ReadResponseHandler extends BaseResponseHandler implements Response
         String contentType = format.getContentType();
         String length = String.valueOf(response.getBytes(Charset.defaultCharset()).length);
         serverResponse
-          .putHeader(HttpHeaderNames.LOCATION, FhirUtils.BASE + "/" + resourceType + "/" + id + "/_history/" + versionId)
+          .putHeader(HttpHeaderNames.LOCATION, "/" + resourceType + "/" + id + "/_history/" + versionId)
           .putHeader(HttpHeaderNames.ETAG, versionId)
           .putHeader(HttpHeaderNames.LAST_MODIFIED, lastModified)
           .setStatusCode(HttpResponseStatus.OK.code())

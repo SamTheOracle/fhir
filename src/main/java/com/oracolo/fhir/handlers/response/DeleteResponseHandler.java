@@ -2,7 +2,6 @@ package com.oracolo.fhir.handlers.response;
 
 import com.oracolo.fhir.database.DatabaseService;
 import com.oracolo.fhir.model.elements.Metadata;
-import com.oracolo.fhir.utils.FhirUtils;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -40,7 +39,7 @@ public class DeleteResponseHandler extends BaseResponseHandler implements Respon
 
         serverResponse
           .putHeader(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.TEXT_PLAIN)
-          .putHeader(HttpHeaderNames.LOCATION, FhirUtils.BASE + "/" + resourceType + "/" + id + "/_history/" + versionId)
+          .putHeader(HttpHeaderNames.LOCATION, "/" + resourceType + "/" + id + "/_history/" + versionId)
           .putHeader(HttpHeaderNames.ETAG, versionId)
           .putHeader(HttpHeaderNames.LAST_MODIFIED, lastModified)
           .setStatusCode(HttpResponseStatus.NO_CONTENT.code())
