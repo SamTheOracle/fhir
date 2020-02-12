@@ -130,6 +130,7 @@ public class FhirServer extends BaseRestInterface {
       .produces("*/xml")
       .handler(this::handleEncounterEverything)
       .failureHandler(this::errorHandler);
+
     createAPIServer(0, restApi)
       .compose(httpServer -> {
         int port = httpServer.actualPort();

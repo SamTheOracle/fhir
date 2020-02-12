@@ -15,7 +15,6 @@ public class EncounterQueryHandler extends BaseQueryHandler implements QueryHand
   public JsonObject createMongoDbQuery() {
     JsonObject baseQuery = super.createMongoDbQuery();
     JsonArray baseQueryOperations = baseQuery.getJsonArray("$and");
-    String patientReference = params.get(subject);
 
     String subject = params.get(this.subject);
     if (subject != null) {
