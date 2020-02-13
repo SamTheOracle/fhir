@@ -11,8 +11,8 @@ public enum ResourceType {
   OBSERVATION("Observation", "observations", Observation.class),
   CONDITION("Condition", "conditions", Condition.class),
   PROCEDURE("Procedure", "procedures", Procedure.class),
-  DIAGNOSTIC_REPORT("DiagnosticReport", "diagnosticreports", DiagnosticReport.class),
-  MEDICATION_ADMINISTRATION("MedicationAdministration", "medicationadministrations", MedicationAdministration.class),//TO-DO
+  DIAGNOSTICREPORT("DiagnosticReport", "diagnosticreports", DiagnosticReport.class),
+  MEDICATIONADMINISTRATION("MedicationAdministration", "medicationadministrations", MedicationAdministration.class),//TO-DO
   PRACTITIONER("Practitioner", "practitioners", Practitioner.class);
 
 

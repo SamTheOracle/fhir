@@ -130,6 +130,16 @@ public class FhirServer extends BaseRestInterface {
       .produces("*/xml")
       .handler(this::handleEncounterEverything)
       .failureHandler(this::errorHandler);
+    restApi.post("/" + FhirUtils.BASE + "/Resource/$validate")
+      .consumes(FhirHttpHeader.APPLICATION_JSON.value())
+      .consumes(FhirHttpHeader.APPLICATION_JSON_VERSION.value())
+      .produces(HttpHeaderValues.APPLICATION_JSON.toString())
+      .produces(FhirHttpHeader.APPLICATION_JSON.value())
+      .produces(FhirHttpHeader.APPLICATION_JSON.value())
+      .produces("*/json")
+      .produces("*/xml")
+      .handler(this::handleResourceValidation)
+      .failureHandler(this::errorHandler);
 
     createAPIServer(0, restApi)
       .compose(httpServer -> {
@@ -617,6 +627,46 @@ public class FhirServer extends BaseRestInterface {
   }
 
   private void handleBatchOperations(RoutingContext routingContext) {
+  }
+
+  private void handleResourceValidation(RoutingContext routingContext) {
+    JsonObject resourceToValidate = null;
+    ResourceType type;
+    try {
+      resourceToValidate = routingContext.getBodyAsJson() == null ? new JsonObject() : routingContext.getBodyAsJson();
+      type = ResourceType.valueOf(resourceToValidate.getString("resourceType").toUpperCase());
+    } catch (IllegalArgumentException e) {
+      routingContext
+        .put("code", "exception")
+        .put("error", "Resource not supported")
+        .fail(HttpResponseStatus.BAD_REQUEST.code());
+    } catch (Exception e) {
+      routingContext.put("code", "exception");
+      routingContext.put("error", "Malformed body");
+      routingContext.fail(HttpResponseStatus.BAD_REQUEST.code());
+    }
+    boolean validFhir = ValidationHandler
+      .createValidator()
+      .validateAgainstJsonSchema(resourceToValidate);
+
+    if (validFhir) {
+      OperationOutcome operationOutcome = new OperationOutcome();
+      operationOutcome
+        .addNewIssue(new OperationOutcomeIssue()
+          .setCode("invariant")
+          .setSeverity("information")
+          .setDiagnostics("The offered resource is a valid Fhir Resource"));
+      routingContext
+        .response()
+        .setStatusCode(HttpResponseStatus.OK.code())
+        .putHeader(FhirHttpHeader.APPLICATION_JSON.name(), FhirHttpHeader.APPLICATION_JSON.value())
+        .end(JsonObject.mapFrom(operationOutcome).encodePrettily());
+    } else {
+      routingContext
+        .put("code", "invariant")
+        .put("error", "The offered resource is NOT a valid FHIR Resource")
+        .fail(HttpResponseStatus.BAD_REQUEST.code());
+    }
 
   }
 }
