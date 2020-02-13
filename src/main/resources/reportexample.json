@@ -1,66 +1,213 @@
 {
-  "resourceType": "DiagnosticReport",
-  "id": "ghp",
-  "meta": {
-    "lastUpdated": "2015-08-16T10:35:23Z"
-  },
-  "text": {
-    "status": "generated",
-    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>Generated Narrative with Details</b></p><p><b>id</b>: ghp</p><p><b>meta</b>: </p><p><b>identifier</b>: ghp-example</p><p><b>status</b>: final</p><p><b>code</b>: General Health Profile <span>(Details : {http://acme.com/labs/reports code 'GHP' = 'GHP', given as 'General Health Profile'})</span></p><p><b>subject</b>: <a>Patient/pat2</a></p><p><b>effective</b>: 16/08/2015 6:40:17 AM</p><p><b>issued</b>: 17/08/2015 6:40:17 AM</p><p><b>performer</b>: <a>Acme Laboratory, Inc</a></p><p><b>specimen</b>: </p><ul><li><a>Red Top Tube</a></li><li><a>Lavender Top Tube</a></li><li><a>Urine Sample</a></li></ul><p><b>result</b>: </p><ul><li><a>Chemistry Panel</a></li><li><a>CBC</a></li><li><a>Urinalysis</a></li></ul></div>"
-  },
-  "identifier": [
-    {
-      "system": "http://acme.com/lab/reports",
-      "value": "ghp-example"
-    }
-  ],
-  "status": "final",
+  "id": "0368dfc5-8465-4f7b-a7cd-baa923310a80",
+  "resourceType": "Condition",
   "code": {
     "coding": [
       {
-        "system": "http://acme.com/labs/reports",
-        "code": "GHP",
-        "display": "General Health Profile"
+        "system": "http://www.snomed.org/",
+        "code": "417163006",
+        "display": "Traumatic AND/OR non-traumatic injury (disorder)"
+      },
+      {
+        "system": "http://www.snomed.org/",
+        "code": "418399005",
+        "display": "Motor vehicle accident"
       }
-    ]
+    ],
+    "text": "Trauma Condition gestione pre ospedaliera"
+  },
+  "encounter": {
+    "reference": "/Encounter/b9d30708-c3e7-41de-836a-65c335201f59",
+    "type": "Encounter",
+    "display": "Encounter pre ospedalizzazione"
+  },
+  "onsetDateTime": "2020-02-04T09:57:45Z",
+  "evidence": [
+    {
+      "code": [
+        {
+          "coding": [
+            {
+              "system": "http://www.snomed.org/",
+              "code": "416886008",
+              "display": "Closed wound"
+            }
+          ],
+          "text": "Type of accident chiuso"
+        }
+      ],
+      "detail": [
+        {
+          "reference": "/Observation/5557ac85-e628-412d-89c0-db5f2e488dce",
+          "type": "Observation",
+          "display": "Type of accident chiuso"
+        }
+      ]
+    },
+    {
+      "code": [
+        {
+          "coding": [
+            {
+              "system": "http://www.snomed.org/",
+              "code": "229027002",
+              "display": "Dynamic"
+            }
+          ],
+          "text": "Major Trauma Criteria - Dynamic"
+        }
+      ]
+    },
+    {
+      "code": [
+        {
+          "coding": [
+            {
+              "system": "http://www.snomed.org/",
+              "code": "36298004",
+              "display": "Anatomical "
+            }
+          ],
+          "text": "Major Trauma Criteria - Anatomical"
+        }
+      ]
+    },
+    {
+      "code": [
+        {
+          "coding": [
+            {
+              "system": "http://www.snomed.org/",
+              "code": "1360005",
+              "display": "Physiological"
+            }
+          ],
+          "text": "Major Trauma Criteria - Physiological"
+        }
+      ]
+    },
+    {
+      "code": [
+        {
+          "coding": [
+            {
+              "system": "http://www.snomed.org/",
+              "code": "311791003",
+              "display": "Information gathering (procedure)"
+            }
+          ],
+          "text": "Anamnesis evidence"
+        }
+      ],
+      "detail": [
+        {
+          "reference": "/Procedure/5e6e590e-3bdf-402f-bf07-380ed87aa25f",
+          "type": "Procedure",
+          "display": "Anamnesi procedure"
+        }
+      ]
+    },
+    {
+      "detail": [
+        {
+          "reference": "/Procedure/835898a7-1c3d-4675-b4d8-06d411a44178"
+        }
+      ]
+    },
+    {
+      "detail": [
+        {
+          "reference": "/Procedure/39e1017a-e8c3-4947-a04b-1dee13c1218b"
+        }
+      ]
+    },
+    {
+      "detail": [
+        {
+          "reference": "/Procedure/44ed10c0-a99d-4a82-a2c2-c6af0b0de48e"
+        }
+      ]
+    },
+    {
+      "code": [
+        {
+          "text": "Anisocoria Observation"
+        }
+      ],
+      "detail": [
+        {
+          "reference": "/Observation/5ab9297d-2d80-47cf-9e7b-da202475b5ed"
+        }
+      ]
+    },
+    {
+      "code": [
+        {
+          "text": "Midriasi Observation"
+        }
+      ],
+      "detail": [
+        {
+          "reference": "/Observation/98e8b460-52e4-4364-8854-78f4d958c7c5"
+        }
+      ]
+    },
+    {
+      "code": [
+        {
+          "text": "Motility Observation"
+        }
+      ],
+      "detail": [
+        {
+          "reference": "/Observation/5fda6dee-c239-4e82-99e7-7ef3363614c2"
+        }
+      ]
+    },
+    {
+      "code": [
+        {
+          "text": "Glasgow Coma Scale Total"
+        }
+      ],
+      "detail": [
+        {
+          "reference": "/Observation/4b41eb55-b027-4546-999f-4515c865d6e9"
+        }
+      ]
+    },
+    {
+      "code": [
+        {
+          "text": "Worst Blood Pressure Observation"
+        }
+      ],
+      "detail": [
+        {
+          "reference": "/Observation/02c24e3c-cf68-4b75-b773-dfaee02f1baa"
+        }
+      ]
+    },
+    {
+      "code": [
+        {
+          "text": "Worst Respiratory Rate Observation"
+        }
+      ],
+      "detail": [
+        {
+          "reference": "/Observation/11d9d543-c9de-4859-bc3c-4bf2449fce93"
+        }
+      ]
+    }
+  ],
+  "meta": {
+    "versionId": "65d3226f-1a7a-4972-909b-68d9fdaa220b",
+    "lastUpdated": "2020-02-13T10:04:39.071Z"
   },
   "subject": {
-    "reference": "Patient/pat2"
-  },
-  "effectiveDateTime": "2015-08-16T06:40:17Z",
-  "issued": "2015-08-17T06:40:17Z",
-  "performer": [
-    {
-      "reference": "Organization/1832473e-2fe0-452d-abe9-3cdb9879522f",
-      "display": "Acme Laboratory, Inc"
-    }
-  ],
-  "specimen": [
-    {
-      "reference": "Specimen/rtt",
-      "display": "Red Top Tube"
-    },
-    {
-      "reference": "Specimen/ltt",
-      "display": "Lavender Top Tube"
-    },
-    {
-      "reference": "Specimen/urine",
-      "display": "Urine Sample"
-    }
-  ],
-  "result": [
-    {
-      "reference": "Observation/p1",
-      "display": "Chemistry Panel"
-    },
-    {
-      "reference": "Observation/p2",
-      "display": "CBC"
-    },
-    {
-      "reference": "Observation/p3",
-      "display": "Urinalysis"
-    }
-  ]
+    "reference": "#741c9fc9-b2ba-4e4c-8461-0b9a773b9538",
+    "type": "Patient",
+    "display": "Mario Rossi età 40"
+  }
 }

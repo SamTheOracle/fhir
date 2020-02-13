@@ -1,4002 +1,1241 @@
 {
-  "encounterAllId": "d8eecb1d-c254-409e-b67a-9b205a6d033a",
-  "encounterShockId": "04810b11-382b-47ec-a1b1-df9be9af572c",
-  "encounterPrehId": "a92375f9-d7f3-4530-960a-792188b09d60",
-  "aggregatedEncounter": {
-    "ids": [
-      "04810b11-382b-47ec-a1b1-df9be9af572c",
-      "a92375f9-d7f3-4530-960a-792188b09d60"
-    ],
-    "resourceType": "AggregationEncounter",
-    "mainEncounter": {
-      "id": "d8eecb1d-c254-409e-b67a-9b205a6d033a",
-      "meta": {
-        "versionId": "08d8aa60-5301-42dd-9c3e-36bc19da5685",
-        "lastUpdated": "2020-02-11T19:15:30.104574Z"
-      },
-      "contained": [
-        {
-          "id": "f29a1dbb-44cc-491c-bbd4-f1be1b33583c",
-          "resourceType": "Practitioner",
-          "identifier": [
-            {
-              "value": "vanni.agnoletti"
-            },
-            {
-              "value": "Vanni Agnoletti"
-            }
-          ],
-          "active": true
-        },
-        {
-          "id": "88f28f97-248a-46cd-b8c9-dd4a11b052f1",
-          "resourceType": "Practitioner",
-          "identifier": [
-            {
-              "value": "vanni.agnoletti"
-            },
-            {
-              "value": "Vanni Agnoletti"
-            }
-          ],
-          "active": true
-        },
-        {
-          "id": "2",
-          "resourceType": "Procedure",
-          "location": {
-            "display": "Shock-Room"
-          },
-          "status": "completed",
-          "code": {
-            "text": "room-in"
-          },
-          "encounter": {
-            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-            "type": "Encounter",
-            "display": "Encounter intervention"
-          },
-          "performedDateTime": "2020-02-04T02:57:59+01:00"
-        },
-        {
-          "id": "3",
-          "resourceType": "MedicationAdministration",
-          "medicationCodeableConcept": {
-            "text": "crystalloid"
-          },
-          "context": {
-            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-            "type": "Encounter",
-            "display": "Encounter intervention"
-          },
-          "note": [
-            {
-              "text": "Cristalloidi"
-            }
-          ],
-          "dosage": {
-            "method": {
-              "text": "one-shot"
-            },
-            "dose": {
-              "value": 500,
-              "unit": "ml"
-            }
-          }
-        },
-        {
-          "id": "4",
-          "resourceType": "MedicationAdministration",
-          "medicationCodeableConcept": {
-            "text": "hypertonic"
-          },
-          "context": {
-            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-            "type": "Encounter",
-            "display": "Encounter intervention"
-          },
-          "note": [
-            {
-              "text": "Soluzione Ipertonica"
-            }
-          ],
-          "dosage": {
-            "method": {
-              "text": "one-shot"
-            },
-            "dose": {
-              "value": 250,
-              "unit": "ml"
-            }
-          }
-        },
-        {
-          "id": "5",
-          "resourceType": "MedicationAdministration",
-          "medicationCodeableConcept": {
-            "text": "mtp"
-          },
-          "context": {
-            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-            "type": "Encounter",
-            "display": "Encounter intervention"
-          },
-          "note": [
-            {
-              "text": "Protocollo Trasfusione Massiva (P.T.M.)"
-            }
-          ],
-          "dosage": {
-            "method": {
-              "text": "blood-protocol"
-            }
-          }
-        },
-        {
-          "id": "6",
-          "resourceType": "MedicationAdministration",
-          "medicationCodeableConcept": {
-            "text": "fresh-frozen-plasma"
-          },
-          "context": {
-            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-            "type": "Encounter",
-            "display": "Encounter intervention"
-          },
-          "note": [
-            {
-              "text": "Plasma Fresco Congelato"
-            }
-          ],
-          "dosage": {
-            "text": "",
-            "method": {
-              "text": "one-shot"
-            },
-            "dose": {
-              "value": 1,
-              "unit": "UI"
-            }
-          }
-        },
-        {
-          "id": "9",
-          "resourceType": "MedicationAdministration",
-          "medicationCodeableConcept": {
-            "text": "ketamine"
-          },
-          "context": {
-            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-            "type": "Encounter",
-            "display": "Encounter intervention"
-          },
-          "note": [
-            {
-              "text": "Ketamina"
-            }
-          ],
-          "dosage": {
-            "method": {
-              "text": "one-shot"
-            },
-            "dose": {
-              "value": 25,
-              "unit": "mg"
-            }
-          }
-        },
-        {
-          "id": "10",
-          "resourceType": "MedicationAdministration",
-          "medicationCodeableConcept": {
-            "text": "tranex"
-          },
-          "context": {
-            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-            "type": "Encounter",
-            "display": "Encounter intervention"
-          },
-          "note": [
-            {
-              "text": "Acido Tranexamico"
-            }
-          ],
-          "dosage": {
-            "method": {
-              "text": "one-shot"
-            },
-            "dose": {
-              "value": 1,
-              "unit": "g"
-            }
-          }
-        },
-        {
-          "id": "11",
-          "resourceType": "MedicationAdministration",
-          "medicationCodeableConcept": {
-            "text": "antibiotic-prophylaxis"
-          },
-          "context": {
-            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-            "type": "Encounter",
-            "display": "Encounter intervention"
-          },
-          "note": [
-            {
-              "text": "Profilassi ABT"
-            }
-          ],
-          "dosage": {
-            "method": {
-              "text": "drug-protocol"
-            }
-          }
-        },
-        {
-          "id": "12",
-          "resourceType": "Procedure",
-          "location": {
-            "display": "Shock-Room"
-          },
-          "note": [
-            {}
-          ],
-          "category": {
-            "text": "one-shot"
-          },
-          "code": {
-            "text": "supraglottic-presidium"
-          },
-          "encounter": {
-            "reference": "#com.oracolo.fhir.model.domain.Encounter@192bb98a",
-            "type": "Encounter",
-            "display": "Encounter intervention"
-          },
-          "performedDateTime": "2020-02-04T02:58:34+01:00"
-        },
-        {
-          "id": "13",
-          "resourceType": "Procedure",
-          "location": {
-            "display": "Shock-Room"
-          },
-          "note": [
-            {}
-          ],
-          "category": {
-            "text": "one-shot"
-          },
-          "code": {
-            "text": "intubation"
-          },
-          "encounter": {
-            "reference": "#com.oracolo.fhir.model.domain.Encounter@192bb98a",
-            "type": "Encounter",
-            "display": "Encounter intervention"
-          },
-          "performedDateTime": "2020-02-04T02:58:36+01:00"
-        },
-        {
-          "id": "14",
-          "resourceType": "Procedure",
-          "location": {
-            "display": "Shock-Room"
-          },
-          "note": [
-            {}
-          ],
-          "category": {
-            "text": "one-shot"
-          },
-          "code": {
-            "text": "infuser"
-          },
-          "encounter": {
-            "reference": "#com.oracolo.fhir.model.domain.Encounter@192bb98a",
-            "type": "Encounter",
-            "display": "Encounter intervention"
-          },
-          "performedDateTime": "2020-02-04T02:58:37+01:00"
-        },
-        {
-          "id": "15",
-          "resourceType": "Procedure",
-          "location": {
-            "display": "Shock-Room"
-          },
-          "note": [
-            {}
-          ],
-          "category": {
-            "text": "one-shot"
-          },
-          "code": {
-            "text": "pelvic-packing"
-          },
-          "encounter": {
-            "reference": "#com.oracolo.fhir.model.domain.Encounter@192bb98a",
-            "type": "Encounter",
-            "display": "Encounter intervention"
-          },
-          "performedDateTime": "2020-02-04T02:58:39+01:00"
-        },
-        {
-          "id": "a302ea96-9da2-4f53-9fe7-8afc1b01807f",
-          "resourceType": "Observation",
-          "status": "final",
-          "code": {
-            "text": "lactates"
-          },
-          "encounter": {
-            "reference": "#com.oracolo.fhir.model.domain.Encounter@192bb98a",
-            "type": "Encounter",
-            "display": "Encounter intervention"
-          },
-          "effectiveDateTime": "2020-02-04T02:58:50+01:00",
-          "valueQuantity": {
-            "value": 25
-          }
-        },
-        {
-          "id": "e2a2a736-4be1-49e5-b641-a1d30b0c78ed",
-          "resourceType": "Observation",
-          "status": "final",
-          "code": {
-            "text": "be"
-          },
-          "encounter": {
-            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-            "type": "Encounter",
-            "display": "Encounter intervention"
-          },
-          "effectiveDateTime": "2020-02-04T02:58:50+01:00",
-          "valueQuantity": {
-            "value": 3
-          }
-        },
-        {
-          "id": "14d35425-bfc2-4bbd-82a7-12fa948fd31c",
-          "resourceType": "Observation",
-          "status": "final",
-          "code": {
-            "text": "ph"
-          },
-          "encounter": {
-            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-            "type": "Encounter",
-            "display": "Encounter intervention"
-          },
-          "effectiveDateTime": "2020-02-04T02:58:50+01:00",
-          "valueQuantity": {
-            "value": 6
-          }
-        },
-        {
-          "id": "5fdf2f64-db5f-435a-a3b3-7748fbbcc3ed",
-          "resourceType": "Observation",
-          "status": "final",
-          "code": {
-            "text": "hb"
-          },
-          "encounter": {
-            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-            "type": "Encounter",
-            "display": "Encounter intervention"
-          },
-          "effectiveDateTime": "2020-02-04T02:58:50+01:00",
-          "valueQuantity": {
-            "value": 96
-          }
-        },
-        {
-          "id": "ad334d45-fb41-40f9-bbd6-983c75670757",
-          "resourceType": "Observation",
-          "status": "final",
-          "code": {
-            "text": "fibtem"
-          },
-          "encounter": {
-            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-            "type": "Encounter",
-            "display": "Encounter intervention"
-          },
-          "effectiveDateTime": "2020-02-04T02:59:01+01:00",
-          "valueString": "A5 = 96"
-        },
-        {
-          "id": "eac27a5b-c030-4c19-bdae-69a7b42641f3",
-          "resourceType": "Observation",
-          "status": "final",
-          "code": {
-            "text": "extem"
-          },
-          "encounter": {
-            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-            "type": "Encounter",
-            "display": "Encounter intervention"
-          },
-          "effectiveDateTime": "2020-02-04T02:59:01+01:00",
-          "valueString": "CT = 25; A10 = 96; alpha = 96"
-        },
-        {
-          "id": "612a7431-05e4-4c59-b31a-04d6774d56be",
-          "resourceType": "Observation",
-          "status": "final",
-          "code": {
-            "text": "hyperfibrinolysis"
-          },
-          "encounter": {
-            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-            "type": "Encounter",
-            "display": "Encounter intervention"
-          },
-          "effectiveDateTime": "2020-02-04T02:59:01+01:00",
-          "valueBoolean": true
-        },
-        {
-          "id": "19",
-          "resourceType": "Procedure",
-          "location": {
-            "display": "Shock-Room"
-          },
-          "status": "completed",
-          "code": {
-            "text": "room-out"
-          },
-          "encounter": {
-            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-            "type": "Encounter",
-            "display": "Encounter intervention"
-          },
-          "performedDateTime": "2020-02-04T02:59:13+01:00"
-        },
-        {
-          "id": "20",
-          "resourceType": "Procedure",
-          "location": {
-            "display": "TAC PS"
-          },
-          "status": "completed",
-          "code": {
-            "text": "room-in"
-          },
-          "encounter": {
-            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-            "type": "Encounter",
-            "display": "Encounter intervention"
-          },
-          "performedDateTime": "2020-02-04T02:59:13+01:00"
-        },
-        {
-          "id": "21",
-          "resourceType": "Procedure",
-          "location": {
-            "display": "TAC PS"
-          },
-          "status": "completed",
-          "code": {
-            "text": "room-out"
-          },
-          "encounter": {
-            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-            "type": "Encounter",
-            "display": "Encounter intervention"
-          },
-          "performedDateTime": "2020-02-04T02:59:24+01:00"
-        },
-        {
-          "id": "24",
-          "resourceType": "Procedure",
-          "location": {
-            "display": "Shock-Room"
-          },
-          "status": "completed",
-          "code": {
-            "text": "room-in"
-          },
-          "encounter": {
-            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-            "type": "Encounter",
-            "display": "Encounter intervention"
-          },
-          "performedDateTime": "2020-02-04T02:59:35+01:00"
-        },
-        {
-          "id": "25",
-          "resourceType": "Procedure",
-          "location": {
-            "display": "Shock-Room"
-          },
-          "status": "completed",
-          "code": {
-            "text": "room-out"
-          },
-          "encounter": {
-            "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-            "type": "Encounter",
-            "display": "Encounter intervention"
-          },
-          "performedDateTime": "2020-02-04T02:59:48+01:00"
-        },
-        {
-          "id": "f48ef5e9-4179-41d5-b819-ea2ef5590a79",
-          "resourceType": "Practitioner",
-          "identifier": [
-            {
-              "value": "vanni.agnoletti"
-            },
-            {
-              "value": "Vanni Agnoletti"
-            }
-          ],
-          "active": true
-        },
-        {
-          "id": "44acf11f-7b56-452a-b65b-8c609f9d53d9",
-          "resourceType": "Patient",
-          "name": [
-            {
-              "family": "Rossi",
-              "given": [
-                "Mario"
-              ]
-            }
-          ],
-          "gender": "M"
-        },
-        {
-          "id": "0",
-          "resourceType": "Procedure",
-          "location": {
-            "display": "PRE-H"
-          },
-          "status": "completed",
-          "code": {
-            "text": "room-in"
-          },
-          "encounter": {
-            "reference": "#a92375f9-d7f3-4530-960a-792188b09d60",
-            "type": "Encounter",
-            "display": "Encounter pre ospedalizzazione"
-          },
-          "performedDateTime": "2020-02-04T02:56:25+01:00"
-        },
-        {
-          "id": "1",
-          "resourceType": "Procedure",
-          "location": {
-            "display": "PRE-H"
-          },
-          "status": "completed",
-          "code": {
-            "coding": [
-              {
-                "system": "http://www.snomed.org/",
-                "code": "32485007",
-                "display": "Hospital admission (procedure)"
-              }
-            ],
-            "text": "patient-accepted"
-          },
-          "encounter": {
-            "reference": "#a92375f9-d7f3-4530-960a-792188b09d60",
-            "type": "Encounter",
-            "display": "Encounter pre ospedalizzazione"
-          },
-          "performedDateTime": "2020-02-04T02:57:59+01:00"
-        },
-        {
-          "id": "22",
-          "resourceType": "Procedure",
-          "location": {
-            "display": "Trasporto"
-          },
-          "status": "completed",
-          "code": {
-            "text": "room-in"
-          },
-          "encounter": {
-            "reference": "#a92375f9-d7f3-4530-960a-792188b09d60",
-            "type": "Encounter",
-            "display": "Encounter pre ospedalizzazione"
-          },
-          "performedDateTime": "2020-02-04T02:59:24+01:00"
-        },
-        {
-          "id": "23",
-          "resourceType": "Procedure",
-          "location": {
-            "display": "Trasporto"
-          },
-          "status": "completed",
-          "code": {
-            "text": "room-out"
-          },
-          "encounter": {
-            "reference": "#a92375f9-d7f3-4530-960a-792188b09d60",
-            "type": "Encounter",
-            "display": "Encounter pre ospedalizzazione"
-          },
-          "performedDateTime": "2020-02-04T02:59:35+01:00"
-        }
-      ],
-      "resourceType": "Encounter",
+  "id": "7fb91915-e122-4903-a72f-cb8fa6665d2c",
+  "meta": {
+    "versionId": "b83e2d40-8831-4f14-8cd4-e69b455fac5f",
+    "lastUpdated": "2020-02-13T10:04:39.036Z"
+  },
+  "contained": [
+    {
+      "id": "39ad729e-95ec-4027-a197-6a36f0ce50d2",
+      "resourceType": "Practitioner",
       "identifier": [
         {
-          "value": "rep-20200204-145625"
+          "value": "vanni.agnoletti"
         },
         {
-          "value": "1.2"
+          "value": "Vanni Agnoletti"
         }
       ],
-      "status": "finished",
-      "serviceType": {
-        "coding": [
-          {
-            "code": "117",
-            "display": "Emergency Medical"
-          }
-        ],
-        "text": "Emergency intervention"
-      },
-      "subject": {
-        "reference": "#44acf11f-7b56-452a-b65b-8c609f9d53d9",
-        "type": "Patient",
-        "display": "Mario Rossi età 40"
-      },
-      "participant": [
+      "active": true
+    },
+    {
+      "id": "db33d317-2907-4a4b-a741-f6dd6c218a8c",
+      "resourceType": "Practitioner",
+      "identifier": [
         {
-          "type": [
-            {
-              "coding": [
-                {
-                  "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-                  "code": "PPRF",
-                  "display": "primary performer"
-                }
-              ],
-              "text": "Trauma Leader"
-            }
-          ],
-          "individual": {
-            "reference": "#f29a1dbb-44cc-491c-bbd4-f1be1b33583c",
-            "type": "Practitioner",
-            "display": "Vanni Agnoletti"
-          }
+          "value": "vanni.agnoletti"
         },
         {
-          "type": [
-            {
-              "coding": [
-                {
-                  "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-                  "code": "SPRF",
-                  "display": "secondary performer"
-                }
-              ],
-              "text": "Trauma team members"
-            }
-          ],
-          "individual": {
-            "type": "Practitioner",
-            "display": "Medico PS"
-          }
-        },
-        {
-          "type": [
-            {
-              "coding": [
-                {
-                  "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-                  "code": "SPRF",
-                  "display": "secondary performer"
-                }
-              ],
-              "text": "Trauma team members"
-            }
-          ],
-          "individual": {
-            "type": "Practitioner",
-            "display": "Anestesista"
-          }
-        },
-        {
-          "type": [
-            {
-              "coding": [
-                {
-                  "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-                  "code": "SPRF",
-                  "display": "secondary performer"
-                }
-              ],
-              "text": "Trauma team members"
-            }
-          ],
-          "individual": {
-            "type": "Practitioner",
-            "display": "Radiologo"
-          }
-        },
-        {
-          "type": [
-            {
-              "coding": [
-                {
-                  "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-                  "code": "SPRF",
-                  "display": "secondary performer"
-                }
-              ],
-              "text": "Trauma team members"
-            }
-          ],
-          "individual": {
-            "type": "Practitioner",
-            "display": "Chirurgo Urgenze"
-          }
-        },
-        {
-          "type": [
-            {
-              "coding": [
-                {
-                  "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-                  "code": "SPRF",
-                  "display": "secondary performer"
-                }
-              ],
-              "text": "Trauma team members"
-            }
-          ],
-          "individual": {
-            "type": "Practitioner",
-            "display": "Neurochirurgo"
-          }
-        },
-        {
-          "type": [
-            {
-              "coding": [
-                {
-                  "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-                  "code": "SPRF",
-                  "display": "secondary performer"
-                }
-              ],
-              "text": "Trauma team members"
-            }
-          ],
-          "individual": {
-            "type": "Practitioner",
-            "display": "Chirurgo Ortopedico"
-          }
-        },
-        {
-          "type": [
-            {
-              "coding": [
-                {
-                  "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-                  "code": "SPRF",
-                  "display": "secondary performer"
-                }
-              ],
-              "text": "Trauma team members"
-            }
-          ],
-          "individual": {
-            "type": "Practitioner",
-            "display": "Maxillo-Facciale"
-          }
-        },
-        {
-          "type": [
-            {
-              "coding": [
-                {
-                  "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-                  "code": "SPRF",
-                  "display": "secondary performer"
-                }
-              ],
-              "text": "Trauma team members"
-            }
-          ],
-          "individual": {
-            "type": "Practitioner",
-            "display": "Urologo"
-          }
+          "value": "Vanni Agnoletti"
         }
       ],
-      "period": {
-        "start": "2020-02-04T02:56:25+01:00",
-        "end": "2020-02-04T02:59:48+01:00"
+      "active": true
+    },
+    {
+      "id": "2",
+      "resourceType": "Procedure",
+      "location": {
+        "display": "Shock-Room"
       },
-      "reasonCode": [
+      "status": "completed",
+      "code": {
+        "text": "room-in"
+      },
+      "encounter": {
+        "reference": "#130f1db9-abd6-497c-b8e1-3a5cd8702c37",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "performedDateTime": "2020-02-04T02:57:59Z"
+    },
+    {
+      "id": "3",
+      "resourceType": "MedicationAdministration",
+      "medicationCodeableConcept": {
+        "text": "crystalloid"
+      },
+      "context": {
+        "reference": "#130f1db9-abd6-497c-b8e1-3a5cd8702c37",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "note": [
         {
-          "coding": [
-            {
-              "system": "http://www.snomed.org/",
-              "code": "417163006",
-              "display": "Traumatic AND/OR non-traumatic injury (disorder)"
-            },
-            {
-              "system": "http://www.snomed.org/",
-              "code": "418399005",
-              "display": "Motor vehicle accident"
-            }
-          ],
-          "text": "Trauma Condition gestione pre ospedaliera"
+          "text": "Cristalloidi"
         }
       ],
-      "diagnosis": [
-        {
-          "condition": {
-            "reference": "/Condition/b712b1f0-77e0-4594-81a5-c627909b37c0",
-            "type": "Condition",
-            "display": "Trauma Condition"
-          },
-          "use": {
-            "coding": [
-              {
-                "system": "https://www.hl7.org/fhir/codesystem-diagnosis-role.html",
-                "code": "AD",
-                "display": "Admission diagnosis"
-              }
-            ],
-            "text": "Trauma Condition"
-          }
+      "dosage": {
+        "method": {
+          "text": "one-shot"
         },
-        {
-          "condition": {
-            "reference": "/Condition/86170311-044a-4cc7-b027-f060bed5c9f4",
-            "type": "Condition",
-            "display": "Patient Initial Condition"
-          },
-          "use": {
-            "coding": [
-              {
-                "system": "http://terminology.hl7.org/CodeSystem/diagnosis-role",
-                "code": "pre-op",
-                "display": "pre-op diagnosis"
-              }
-            ]
-          }
-        },
-        {
-          "condition": {
-            "reference": "/fhirAPI/Condition/242e23fc-40fa-44d8-9365-09fda1d4d2f6",
-            "type": "Condition",
-            "display": "Injury Severity Score"
-          },
-          "use": {
-            "coding": [
-              {
-                "code": "post-op",
-                "display": "post-op diagnosis"
-              }
-            ]
-          }
+        "dose": {
+          "value": 500,
+          "unit": "ml"
         }
-      ],
-      "hospitalization": {
-        "destination": {
-          "display": "Pronto Soccorso"
-        }
-      },
-      "location": [
-        {
-          "location": {
-            "display": "Elicottero"
-          },
-          "status": "completed",
-          "physicalType": {
-            "coding": [
-              {
-                "system": "https://www.hl7.org/fhir/valueset-location-physical-type.html",
-                "code": "ve",
-                "display": "Vehicle"
-              }
-            ],
-            "text": "Trasporto con Elicottero"
-          }
-        },
-        {
-          "location": {
-            "display": "Territorial Area: Cesena"
-          },
-          "physicalType": {
-            "coding": [
-              {
-                "system": "https://www.hl7.org/fhir/codesystem-location-physical-type.html",
-                "code": "si",
-                "display": "Site"
-              }
-            ],
-            "text": "Territorial Area"
-          }
-        },
-        {
-          "location": {
-            "display": "PRE-H"
-          },
-          "period": {
-            "start": "2020-02-04T02:56:25+01:00"
-          }
-        },
-        {
-          "location": {
-            "display": "PRE-H"
-          },
-          "period": {
-            "start": "2020-02-04T02:57:59+01:00"
-          }
-        },
-        {
-          "location": {
-            "display": "Trasporto"
-          },
-          "period": {
-            "start": "2020-02-04T02:59:24+01:00"
-          }
-        },
-        {
-          "location": {
-            "display": "Trasporto"
-          },
-          "period": {
-            "start": "2020-02-04T02:59:35+01:00"
-          }
-        },
-        {
-          "location": {
-            "display": "Shock-Room"
-          },
-          "period": {
-            "start": "2020-02-04T02:57:59+01:00"
-          }
-        },
-        {
-          "location": {
-            "display": "Shock-Room"
-          },
-          "period": {
-            "start": "2020-02-04T02:58:16+01:00"
-          }
-        },
-        {
-          "location": {
-            "display": "Shock-Room"
-          },
-          "period": {
-            "start": "2020-02-04T02:58:17+01:00"
-          }
-        },
-        {
-          "location": {
-            "display": "Shock-Room"
-          },
-          "period": {
-            "start": "2020-02-04T02:58:19+01:00"
-          }
-        },
-        {
-          "location": {
-            "display": "Shock-Room"
-          },
-          "period": {
-            "start": "2020-02-04T02:58:20+01:00"
-          }
-        },
-        {
-          "location": {
-            "display": "Shock-Room"
-          },
-          "period": {
-            "start": "2020-02-04T02:58:22+01:00"
-          }
-        },
-        {
-          "location": {
-            "display": "Shock-Room"
-          },
-          "period": {
-            "start": "2020-02-04T02:58:23+01:00"
-          }
-        },
-        {
-          "location": {
-            "display": "Shock-Room"
-          },
-          "period": {
-            "start": "2020-02-04T02:58:27+01:00"
-          }
-        },
-        {
-          "location": {
-            "display": "Shock-Room"
-          },
-          "period": {
-            "start": "2020-02-04T02:58:28+01:00"
-          }
-        },
-        {
-          "location": {
-            "display": "Shock-Room"
-          },
-          "period": {
-            "start": "2020-02-04T02:58:29+01:00"
-          }
-        },
-        {
-          "location": {
-            "display": "Shock-Room"
-          },
-          "period": {
-            "start": "2020-02-04T02:58:34+01:00"
-          }
-        },
-        {
-          "location": {
-            "display": "Shock-Room"
-          },
-          "period": {
-            "start": "2020-02-04T02:58:36+01:00"
-          }
-        },
-        {
-          "location": {
-            "display": "Shock-Room"
-          },
-          "period": {
-            "start": "2020-02-04T02:58:37+01:00"
-          }
-        },
-        {
-          "location": {
-            "display": "Shock-Room"
-          },
-          "period": {
-            "start": "2020-02-04T02:58:39+01:00"
-          }
-        },
-        {
-          "location": {
-            "display": "Shock-Room"
-          },
-          "period": {
-            "start": "2020-02-04T02:58:41+01:00"
-          }
-        },
-        {
-          "location": {
-            "display": "Shock-Room"
-          },
-          "period": {
-            "start": "2020-02-04T02:58:50+01:00"
-          }
-        },
-        {
-          "location": {
-            "display": "Shock-Room"
-          },
-          "period": {
-            "start": "2020-02-04T02:59:01+01:00"
-          }
-        },
-        {
-          "location": {
-            "display": "Shock-Room"
-          },
-          "period": {
-            "start": "2020-02-04T02:59:13+01:00"
-          }
-        },
-        {
-          "location": {
-            "display": "TAC PS"
-          },
-          "period": {
-            "start": "2020-02-04T02:59:13+01:00"
-          }
-        },
-        {
-          "location": {
-            "display": "TAC PS"
-          },
-          "period": {
-            "start": "2020-02-04T02:59:24+01:00"
-          }
-        },
-        {
-          "location": {
-            "display": "Shock-Room"
-          },
-          "period": {
-            "start": "2020-02-04T02:59:35+01:00"
-          }
-        },
-        {
-          "location": {
-            "display": "Shock-Room"
-          },
-          "period": {
-            "start": "2020-02-04T02:59:48+01:00"
-          }
-        }
-      ],
-      "serviceProvider": {
-        "display": "Ospedale Bufalini"
-      },
-      "class": {
-        "code": "EMER",
-        "display": "Emergency"
       }
     },
-    "subEncounters": [
-      {
-        "id": "04810b11-382b-47ec-a1b1-df9be9af572c",
-        "meta": {
-          "versionId": "b19734ea-2cff-4dd3-b7eb-a5071ad9ba8a",
-          "lastUpdated": "2020-02-11T19:15:30.160390Z"
-        },
-        "contained": [
-          {
-            "id": "88f28f97-248a-46cd-b8c9-dd4a11b052f1",
-            "resourceType": "Practitioner",
-            "identifier": [
-              {
-                "value": "vanni.agnoletti"
-              },
-              {
-                "value": "Vanni Agnoletti"
-              }
-            ],
-            "active": true
-          },
-          {
-            "id": "2",
-            "resourceType": "Procedure",
-            "location": {
-              "display": "Shock-Room"
-            },
-            "status": "completed",
-            "code": {
-              "text": "room-in"
-            },
-            "encounter": {
-              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-              "type": "Encounter",
-              "display": "Encounter intervention"
-            },
-            "performedDateTime": "2020-02-04T02:57:59+01:00"
-          },
-          {
-            "id": "3",
-            "resourceType": "MedicationAdministration",
-            "medicationCodeableConcept": {
-              "text": "crystalloid"
-            },
-            "context": {
-              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-              "type": "Encounter",
-              "display": "Encounter intervention"
-            },
-            "note": [
-              {
-                "text": "Cristalloidi"
-              }
-            ],
-            "dosage": {
-              "method": {
-                "text": "one-shot"
-              },
-              "dose": {
-                "value": 500,
-                "unit": "ml"
-              }
-            }
-          },
-          {
-            "id": "4",
-            "resourceType": "MedicationAdministration",
-            "medicationCodeableConcept": {
-              "text": "hypertonic"
-            },
-            "context": {
-              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-              "type": "Encounter",
-              "display": "Encounter intervention"
-            },
-            "note": [
-              {
-                "text": "Soluzione Ipertonica"
-              }
-            ],
-            "dosage": {
-              "method": {
-                "text": "one-shot"
-              },
-              "dose": {
-                "value": 250,
-                "unit": "ml"
-              }
-            }
-          },
-          {
-            "id": "5",
-            "resourceType": "MedicationAdministration",
-            "medicationCodeableConcept": {
-              "text": "mtp"
-            },
-            "context": {
-              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-              "type": "Encounter",
-              "display": "Encounter intervention"
-            },
-            "note": [
-              {
-                "text": "Protocollo Trasfusione Massiva (P.T.M.)"
-              }
-            ],
-            "dosage": {
-              "method": {
-                "text": "blood-protocol"
-              }
-            }
-          },
-          {
-            "id": "6",
-            "resourceType": "MedicationAdministration",
-            "medicationCodeableConcept": {
-              "text": "fresh-frozen-plasma"
-            },
-            "context": {
-              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-              "type": "Encounter",
-              "display": "Encounter intervention"
-            },
-            "note": [
-              {
-                "text": "Plasma Fresco Congelato"
-              }
-            ],
-            "dosage": {
-              "text": "",
-              "method": {
-                "text": "one-shot"
-              },
-              "dose": {
-                "value": 1,
-                "unit": "UI"
-              }
-            }
-          },
-          {
-            "id": "9",
-            "resourceType": "MedicationAdministration",
-            "medicationCodeableConcept": {
-              "text": "ketamine"
-            },
-            "context": {
-              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-              "type": "Encounter",
-              "display": "Encounter intervention"
-            },
-            "note": [
-              {
-                "text": "Ketamina"
-              }
-            ],
-            "dosage": {
-              "method": {
-                "text": "one-shot"
-              },
-              "dose": {
-                "value": 25,
-                "unit": "mg"
-              }
-            }
-          },
-          {
-            "id": "10",
-            "resourceType": "MedicationAdministration",
-            "medicationCodeableConcept": {
-              "text": "tranex"
-            },
-            "context": {
-              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-              "type": "Encounter",
-              "display": "Encounter intervention"
-            },
-            "note": [
-              {
-                "text": "Acido Tranexamico"
-              }
-            ],
-            "dosage": {
-              "method": {
-                "text": "one-shot"
-              },
-              "dose": {
-                "value": 1,
-                "unit": "g"
-              }
-            }
-          },
-          {
-            "id": "11",
-            "resourceType": "MedicationAdministration",
-            "medicationCodeableConcept": {
-              "text": "antibiotic-prophylaxis"
-            },
-            "context": {
-              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-              "type": "Encounter",
-              "display": "Encounter intervention"
-            },
-            "note": [
-              {
-                "text": "Profilassi ABT"
-              }
-            ],
-            "dosage": {
-              "method": {
-                "text": "drug-protocol"
-              }
-            }
-          },
-          {
-            "id": "12",
-            "resourceType": "Procedure",
-            "location": {
-              "display": "Shock-Room"
-            },
-            "note": [
-              {}
-            ],
-            "category": {
-              "text": "one-shot"
-            },
-            "code": {
-              "text": "supraglottic-presidium"
-            },
-            "encounter": {
-              "reference": "#com.oracolo.fhir.model.domain.Encounter@192bb98a",
-              "type": "Encounter",
-              "display": "Encounter intervention"
-            },
-            "performedDateTime": "2020-02-04T02:58:34+01:00"
-          },
-          {
-            "id": "13",
-            "resourceType": "Procedure",
-            "location": {
-              "display": "Shock-Room"
-            },
-            "note": [
-              {}
-            ],
-            "category": {
-              "text": "one-shot"
-            },
-            "code": {
-              "text": "intubation"
-            },
-            "encounter": {
-              "reference": "#com.oracolo.fhir.model.domain.Encounter@192bb98a",
-              "type": "Encounter",
-              "display": "Encounter intervention"
-            },
-            "performedDateTime": "2020-02-04T02:58:36+01:00"
-          },
-          {
-            "id": "14",
-            "resourceType": "Procedure",
-            "location": {
-              "display": "Shock-Room"
-            },
-            "note": [
-              {}
-            ],
-            "category": {
-              "text": "one-shot"
-            },
-            "code": {
-              "text": "infuser"
-            },
-            "encounter": {
-              "reference": "#com.oracolo.fhir.model.domain.Encounter@192bb98a",
-              "type": "Encounter",
-              "display": "Encounter intervention"
-            },
-            "performedDateTime": "2020-02-04T02:58:37+01:00"
-          },
-          {
-            "id": "15",
-            "resourceType": "Procedure",
-            "location": {
-              "display": "Shock-Room"
-            },
-            "note": [
-              {}
-            ],
-            "category": {
-              "text": "one-shot"
-            },
-            "code": {
-              "text": "pelvic-packing"
-            },
-            "encounter": {
-              "reference": "#com.oracolo.fhir.model.domain.Encounter@192bb98a",
-              "type": "Encounter",
-              "display": "Encounter intervention"
-            },
-            "performedDateTime": "2020-02-04T02:58:39+01:00"
-          },
-          {
-            "id": "a302ea96-9da2-4f53-9fe7-8afc1b01807f",
-            "resourceType": "Observation",
-            "status": "final",
-            "code": {
-              "text": "lactates"
-            },
-            "encounter": {
-              "reference": "#com.oracolo.fhir.model.domain.Encounter@192bb98a",
-              "type": "Encounter",
-              "display": "Encounter intervention"
-            },
-            "effectiveDateTime": "2020-02-04T02:58:50+01:00",
-            "valueQuantity": {
-              "value": 25
-            }
-          },
-          {
-            "id": "e2a2a736-4be1-49e5-b641-a1d30b0c78ed",
-            "resourceType": "Observation",
-            "status": "final",
-            "code": {
-              "text": "be"
-            },
-            "encounter": {
-              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-              "type": "Encounter",
-              "display": "Encounter intervention"
-            },
-            "effectiveDateTime": "2020-02-04T02:58:50+01:00",
-            "valueQuantity": {
-              "value": 3
-            }
-          },
-          {
-            "id": "14d35425-bfc2-4bbd-82a7-12fa948fd31c",
-            "resourceType": "Observation",
-            "status": "final",
-            "code": {
-              "text": "ph"
-            },
-            "encounter": {
-              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-              "type": "Encounter",
-              "display": "Encounter intervention"
-            },
-            "effectiveDateTime": "2020-02-04T02:58:50+01:00",
-            "valueQuantity": {
-              "value": 6
-            }
-          },
-          {
-            "id": "5fdf2f64-db5f-435a-a3b3-7748fbbcc3ed",
-            "resourceType": "Observation",
-            "status": "final",
-            "code": {
-              "text": "hb"
-            },
-            "encounter": {
-              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-              "type": "Encounter",
-              "display": "Encounter intervention"
-            },
-            "effectiveDateTime": "2020-02-04T02:58:50+01:00",
-            "valueQuantity": {
-              "value": 96
-            }
-          },
-          {
-            "id": "ad334d45-fb41-40f9-bbd6-983c75670757",
-            "resourceType": "Observation",
-            "status": "final",
-            "code": {
-              "text": "fibtem"
-            },
-            "encounter": {
-              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-              "type": "Encounter",
-              "display": "Encounter intervention"
-            },
-            "effectiveDateTime": "2020-02-04T02:59:01+01:00",
-            "valueString": "A5 = 96"
-          },
-          {
-            "id": "eac27a5b-c030-4c19-bdae-69a7b42641f3",
-            "resourceType": "Observation",
-            "status": "final",
-            "code": {
-              "text": "extem"
-            },
-            "encounter": {
-              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-              "type": "Encounter",
-              "display": "Encounter intervention"
-            },
-            "effectiveDateTime": "2020-02-04T02:59:01+01:00",
-            "valueString": "CT = 25; A10 = 96; alpha = 96"
-          },
-          {
-            "id": "612a7431-05e4-4c59-b31a-04d6774d56be",
-            "resourceType": "Observation",
-            "status": "final",
-            "code": {
-              "text": "hyperfibrinolysis"
-            },
-            "encounter": {
-              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-              "type": "Encounter",
-              "display": "Encounter intervention"
-            },
-            "effectiveDateTime": "2020-02-04T02:59:01+01:00",
-            "valueBoolean": true
-          },
-          {
-            "id": "19",
-            "resourceType": "Procedure",
-            "location": {
-              "display": "Shock-Room"
-            },
-            "status": "completed",
-            "code": {
-              "text": "room-out"
-            },
-            "encounter": {
-              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-              "type": "Encounter",
-              "display": "Encounter intervention"
-            },
-            "performedDateTime": "2020-02-04T02:59:13+01:00"
-          },
-          {
-            "id": "20",
-            "resourceType": "Procedure",
-            "location": {
-              "display": "TAC PS"
-            },
-            "status": "completed",
-            "code": {
-              "text": "room-in"
-            },
-            "encounter": {
-              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-              "type": "Encounter",
-              "display": "Encounter intervention"
-            },
-            "performedDateTime": "2020-02-04T02:59:13+01:00"
-          },
-          {
-            "id": "21",
-            "resourceType": "Procedure",
-            "location": {
-              "display": "TAC PS"
-            },
-            "status": "completed",
-            "code": {
-              "text": "room-out"
-            },
-            "encounter": {
-              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-              "type": "Encounter",
-              "display": "Encounter intervention"
-            },
-            "performedDateTime": "2020-02-04T02:59:24+01:00"
-          },
-          {
-            "id": "24",
-            "resourceType": "Procedure",
-            "location": {
-              "display": "Shock-Room"
-            },
-            "status": "completed",
-            "code": {
-              "text": "room-in"
-            },
-            "encounter": {
-              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-              "type": "Encounter",
-              "display": "Encounter intervention"
-            },
-            "performedDateTime": "2020-02-04T02:59:35+01:00"
-          },
-          {
-            "id": "25",
-            "resourceType": "Procedure",
-            "location": {
-              "display": "Shock-Room"
-            },
-            "status": "completed",
-            "code": {
-              "text": "room-out"
-            },
-            "encounter": {
-              "reference": "#04810b11-382b-47ec-a1b1-df9be9af572c",
-              "type": "Encounter",
-              "display": "Encounter intervention"
-            },
-            "performedDateTime": "2020-02-04T02:59:48+01:00"
-          }
-        ],
-        "resourceType": "Encounter",
-        "status": "finished",
-        "serviceType": {
-          "coding": [
-            {
-              "code": "117",
-              "display": "Emergency Medical"
-            }
-          ],
-          "text": "Emergency intervention"
-        },
-        "subject": {
-          "reference": "#44acf11f-7b56-452a-b65b-8c609f9d53d9",
-          "type": "Patient",
-          "display": "Mario Rossi età 40"
-        },
-        "participant": [
-          {
-            "type": [
-              {
-                "coding": [
-                  {
-                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-                    "code": "PPRF",
-                    "display": "primary performer"
-                  }
-                ],
-                "text": "Trauma Leader"
-              }
-            ],
-            "individual": {
-              "reference": "#88f28f97-248a-46cd-b8c9-dd4a11b052f1",
-              "type": "Practitioner",
-              "display": "Vanni Agnoletti"
-            }
-          },
-          {
-            "type": [
-              {
-                "coding": [
-                  {
-                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-                    "code": "SPRF",
-                    "display": "secondary performer"
-                  }
-                ],
-                "text": "Trauma team members"
-              }
-            ],
-            "individual": {
-              "type": "Practitioner",
-              "display": "Medico PS"
-            }
-          },
-          {
-            "type": [
-              {
-                "coding": [
-                  {
-                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-                    "code": "SPRF",
-                    "display": "secondary performer"
-                  }
-                ],
-                "text": "Trauma team members"
-              }
-            ],
-            "individual": {
-              "type": "Practitioner",
-              "display": "Anestesista"
-            }
-          },
-          {
-            "type": [
-              {
-                "coding": [
-                  {
-                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-                    "code": "SPRF",
-                    "display": "secondary performer"
-                  }
-                ],
-                "text": "Trauma team members"
-              }
-            ],
-            "individual": {
-              "type": "Practitioner",
-              "display": "Radiologo"
-            }
-          },
-          {
-            "type": [
-              {
-                "coding": [
-                  {
-                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-                    "code": "SPRF",
-                    "display": "secondary performer"
-                  }
-                ],
-                "text": "Trauma team members"
-              }
-            ],
-            "individual": {
-              "type": "Practitioner",
-              "display": "Chirurgo Urgenze"
-            }
-          },
-          {
-            "type": [
-              {
-                "coding": [
-                  {
-                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-                    "code": "SPRF",
-                    "display": "secondary performer"
-                  }
-                ],
-                "text": "Trauma team members"
-              }
-            ],
-            "individual": {
-              "type": "Practitioner",
-              "display": "Neurochirurgo"
-            }
-          },
-          {
-            "type": [
-              {
-                "coding": [
-                  {
-                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-                    "code": "SPRF",
-                    "display": "secondary performer"
-                  }
-                ],
-                "text": "Trauma team members"
-              }
-            ],
-            "individual": {
-              "type": "Practitioner",
-              "display": "Chirurgo Ortopedico"
-            }
-          },
-          {
-            "type": [
-              {
-                "coding": [
-                  {
-                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-                    "code": "SPRF",
-                    "display": "secondary performer"
-                  }
-                ],
-                "text": "Trauma team members"
-              }
-            ],
-            "individual": {
-              "type": "Practitioner",
-              "display": "Maxillo-Facciale"
-            }
-          },
-          {
-            "type": [
-              {
-                "coding": [
-                  {
-                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-                    "code": "SPRF",
-                    "display": "secondary performer"
-                  }
-                ],
-                "text": "Trauma team members"
-              }
-            ],
-            "individual": {
-              "type": "Practitioner",
-              "display": "Urologo"
-            }
-          }
-        ],
-        "diagnosis": [
-          {
-            "condition": {
-              "reference": "/Condition/86170311-044a-4cc7-b027-f060bed5c9f4",
-              "type": "Condition",
-              "display": "Patient Initial Condition"
-            },
-            "use": {
-              "coding": [
-                {
-                  "system": "http://terminology.hl7.org/CodeSystem/diagnosis-role",
-                  "code": "pre-op",
-                  "display": "pre-op diagnosis"
-                }
-              ]
-            }
-          },
-          {
-            "condition": {
-              "reference": "/fhirAPI/Condition/242e23fc-40fa-44d8-9365-09fda1d4d2f6",
-              "type": "Condition",
-              "display": "Injury Severity Score"
-            },
-            "use": {
-              "coding": [
-                {
-                  "code": "post-op",
-                  "display": "post-op diagnosis"
-                }
-              ]
-            }
-          }
-        ],
-        "location": [
-          {
-            "location": {
-              "display": "Shock-Room"
-            },
-            "period": {
-              "start": "2020-02-04T02:57:59+01:00"
-            }
-          },
-          {
-            "location": {
-              "display": "Shock-Room"
-            },
-            "period": {
-              "start": "2020-02-04T02:58:16+01:00"
-            }
-          },
-          {
-            "location": {
-              "display": "Shock-Room"
-            },
-            "period": {
-              "start": "2020-02-04T02:58:17+01:00"
-            }
-          },
-          {
-            "location": {
-              "display": "Shock-Room"
-            },
-            "period": {
-              "start": "2020-02-04T02:58:19+01:00"
-            }
-          },
-          {
-            "location": {
-              "display": "Shock-Room"
-            },
-            "period": {
-              "start": "2020-02-04T02:58:20+01:00"
-            }
-          },
-          {
-            "location": {
-              "display": "Shock-Room"
-            },
-            "period": {
-              "start": "2020-02-04T02:58:22+01:00"
-            }
-          },
-          {
-            "location": {
-              "display": "Shock-Room"
-            },
-            "period": {
-              "start": "2020-02-04T02:58:23+01:00"
-            }
-          },
-          {
-            "location": {
-              "display": "Shock-Room"
-            },
-            "period": {
-              "start": "2020-02-04T02:58:27+01:00"
-            }
-          },
-          {
-            "location": {
-              "display": "Shock-Room"
-            },
-            "period": {
-              "start": "2020-02-04T02:58:28+01:00"
-            }
-          },
-          {
-            "location": {
-              "display": "Shock-Room"
-            },
-            "period": {
-              "start": "2020-02-04T02:58:29+01:00"
-            }
-          },
-          {
-            "location": {
-              "display": "Shock-Room"
-            },
-            "period": {
-              "start": "2020-02-04T02:58:34+01:00"
-            }
-          },
-          {
-            "location": {
-              "display": "Shock-Room"
-            },
-            "period": {
-              "start": "2020-02-04T02:58:36+01:00"
-            }
-          },
-          {
-            "location": {
-              "display": "Shock-Room"
-            },
-            "period": {
-              "start": "2020-02-04T02:58:37+01:00"
-            }
-          },
-          {
-            "location": {
-              "display": "Shock-Room"
-            },
-            "period": {
-              "start": "2020-02-04T02:58:39+01:00"
-            }
-          },
-          {
-            "location": {
-              "display": "Shock-Room"
-            },
-            "period": {
-              "start": "2020-02-04T02:58:41+01:00"
-            }
-          },
-          {
-            "location": {
-              "display": "Shock-Room"
-            },
-            "period": {
-              "start": "2020-02-04T02:58:50+01:00"
-            }
-          },
-          {
-            "location": {
-              "display": "Shock-Room"
-            },
-            "period": {
-              "start": "2020-02-04T02:59:01+01:00"
-            }
-          },
-          {
-            "location": {
-              "display": "Shock-Room"
-            },
-            "period": {
-              "start": "2020-02-04T02:59:13+01:00"
-            }
-          },
-          {
-            "location": {
-              "display": "TAC PS"
-            },
-            "period": {
-              "start": "2020-02-04T02:59:13+01:00"
-            }
-          },
-          {
-            "location": {
-              "display": "TAC PS"
-            },
-            "period": {
-              "start": "2020-02-04T02:59:24+01:00"
-            }
-          },
-          {
-            "location": {
-              "display": "Shock-Room"
-            },
-            "period": {
-              "start": "2020-02-04T02:59:35+01:00"
-            }
-          },
-          {
-            "location": {
-              "display": "Shock-Room"
-            },
-            "period": {
-              "start": "2020-02-04T02:59:48+01:00"
-            }
-          }
-        ],
-        "serviceProvider": {
-          "display": "Ospedale Bufalini"
-        },
-        "partOf": {
-          "reference": "/Encounter/d8eecb1d-c254-409e-b67a-9b205a6d033a"
-        },
-        "class": {
-          "code": "EMER",
-          "display": "Emergency"
-        }
+    {
+      "id": "4",
+      "resourceType": "MedicationAdministration",
+      "medicationCodeableConcept": {
+        "text": "hypertonic"
       },
-      {
-        "id": "a92375f9-d7f3-4530-960a-792188b09d60",
-        "meta": {
-          "versionId": "1869ea75-e645-42d0-b912-eb1fe7dee842",
-          "lastUpdated": "2020-02-11T19:15:30.166932Z"
+      "context": {
+        "reference": "#130f1db9-abd6-497c-b8e1-3a5cd8702c37",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "note": [
+        {
+          "text": "Soluzione Ipertonica"
+        }
+      ],
+      "dosage": {
+        "method": {
+          "text": "one-shot"
         },
-        "contained": [
-          {
-            "id": "f48ef5e9-4179-41d5-b819-ea2ef5590a79",
-            "resourceType": "Practitioner",
-            "identifier": [
-              {
-                "value": "vanni.agnoletti"
-              },
-              {
-                "value": "Vanni Agnoletti"
-              }
-            ],
-            "active": true
-          },
-          {
-            "id": "44acf11f-7b56-452a-b65b-8c609f9d53d9",
-            "resourceType": "Patient",
-            "name": [
-              {
-                "family": "Rossi",
-                "given": [
-                  "Mario"
-                ]
-              }
-            ],
-            "gender": "M"
-          },
-          {
-            "id": "0",
-            "resourceType": "Procedure",
-            "location": {
-              "display": "PRE-H"
-            },
-            "status": "completed",
-            "code": {
-              "text": "room-in"
-            },
-            "encounter": {
-              "reference": "#a92375f9-d7f3-4530-960a-792188b09d60",
-              "type": "Encounter",
-              "display": "Encounter pre ospedalizzazione"
-            },
-            "performedDateTime": "2020-02-04T02:56:25+01:00"
-          },
-          {
-            "id": "1",
-            "resourceType": "Procedure",
-            "location": {
-              "display": "PRE-H"
-            },
-            "status": "completed",
-            "code": {
-              "coding": [
-                {
-                  "system": "http://www.snomed.org/",
-                  "code": "32485007",
-                  "display": "Hospital admission (procedure)"
-                }
-              ],
-              "text": "patient-accepted"
-            },
-            "encounter": {
-              "reference": "#a92375f9-d7f3-4530-960a-792188b09d60",
-              "type": "Encounter",
-              "display": "Encounter pre ospedalizzazione"
-            },
-            "performedDateTime": "2020-02-04T02:57:59+01:00"
-          },
-          {
-            "id": "22",
-            "resourceType": "Procedure",
-            "location": {
-              "display": "Trasporto"
-            },
-            "status": "completed",
-            "code": {
-              "text": "room-in"
-            },
-            "encounter": {
-              "reference": "#a92375f9-d7f3-4530-960a-792188b09d60",
-              "type": "Encounter",
-              "display": "Encounter pre ospedalizzazione"
-            },
-            "performedDateTime": "2020-02-04T02:59:24+01:00"
-          },
-          {
-            "id": "23",
-            "resourceType": "Procedure",
-            "location": {
-              "display": "Trasporto"
-            },
-            "status": "completed",
-            "code": {
-              "text": "room-out"
-            },
-            "encounter": {
-              "reference": "#a92375f9-d7f3-4530-960a-792188b09d60",
-              "type": "Encounter",
-              "display": "Encounter pre ospedalizzazione"
-            },
-            "performedDateTime": "2020-02-04T02:59:35+01:00"
-          }
-        ],
-        "resourceType": "Encounter",
-        "status": "finished",
-        "serviceType": {
-          "coding": [
-            {
-              "code": "117",
-              "display": "Emergency Medical"
-            }
-          ],
-          "text": "Emergency intervention"
-        },
-        "priority": {
-          "coding": [
-            {
-              "system": "http://www.eena.it/",
-              "code": "Codice ROSSO",
-              "display": "Codice ammissione pronto soccorso"
-            }
-          ]
-        },
-        "subject": {
-          "reference": "#44acf11f-7b56-452a-b65b-8c609f9d53d9",
-          "type": "Patient",
-          "display": "Mario Rossi età 40"
-        },
-        "participant": [
-          {
-            "type": [
-              {
-                "coding": [
-                  {
-                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-                    "code": "PPRF",
-                    "display": "primary performer"
-                  }
-                ],
-                "text": "Trauma Leader"
-              }
-            ],
-            "individual": {
-              "reference": "#f48ef5e9-4179-41d5-b819-ea2ef5590a79",
-              "type": "Practitioner",
-              "display": "Vanni Agnoletti"
-            }
-          },
-          {
-            "type": [
-              {
-                "coding": [
-                  {
-                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-                    "code": "SPRF",
-                    "display": "secondary performer"
-                  }
-                ],
-                "text": "Trauma team members"
-              }
-            ],
-            "individual": {
-              "type": "Practitioner",
-              "display": "Medico PS"
-            }
-          },
-          {
-            "type": [
-              {
-                "coding": [
-                  {
-                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-                    "code": "SPRF",
-                    "display": "secondary performer"
-                  }
-                ],
-                "text": "Trauma team members"
-              }
-            ],
-            "individual": {
-              "type": "Practitioner",
-              "display": "Anestesista"
-            }
-          },
-          {
-            "type": [
-              {
-                "coding": [
-                  {
-                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-                    "code": "SPRF",
-                    "display": "secondary performer"
-                  }
-                ],
-                "text": "Trauma team members"
-              }
-            ],
-            "individual": {
-              "type": "Practitioner",
-              "display": "Radiologo"
-            }
-          },
-          {
-            "type": [
-              {
-                "coding": [
-                  {
-                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-                    "code": "SPRF",
-                    "display": "secondary performer"
-                  }
-                ],
-                "text": "Trauma team members"
-              }
-            ],
-            "individual": {
-              "type": "Practitioner",
-              "display": "Chirurgo Urgenze"
-            }
-          },
-          {
-            "type": [
-              {
-                "coding": [
-                  {
-                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-                    "code": "SPRF",
-                    "display": "secondary performer"
-                  }
-                ],
-                "text": "Trauma team members"
-              }
-            ],
-            "individual": {
-              "type": "Practitioner",
-              "display": "Neurochirurgo"
-            }
-          },
-          {
-            "type": [
-              {
-                "coding": [
-                  {
-                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-                    "code": "SPRF",
-                    "display": "secondary performer"
-                  }
-                ],
-                "text": "Trauma team members"
-              }
-            ],
-            "individual": {
-              "type": "Practitioner",
-              "display": "Chirurgo Ortopedico"
-            }
-          },
-          {
-            "type": [
-              {
-                "coding": [
-                  {
-                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-                    "code": "SPRF",
-                    "display": "secondary performer"
-                  }
-                ],
-                "text": "Trauma team members"
-              }
-            ],
-            "individual": {
-              "type": "Practitioner",
-              "display": "Maxillo-Facciale"
-            }
-          },
-          {
-            "type": [
-              {
-                "coding": [
-                  {
-                    "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
-                    "code": "SPRF",
-                    "display": "secondary performer"
-                  }
-                ],
-                "text": "Trauma team members"
-              }
-            ],
-            "individual": {
-              "type": "Practitioner",
-              "display": "Urologo"
-            }
-          }
-        ],
-        "diagnosis": [
-          {
-            "condition": {
-              "reference": "/Condition/b712b1f0-77e0-4594-81a5-c627909b37c0",
-              "type": "Condition",
-              "display": "Trauma Condition"
-            },
-            "use": {
-              "coding": [
-                {
-                  "system": "https://www.hl7.org/fhir/codesystem-diagnosis-role.html",
-                  "code": "AD",
-                  "display": "Admission diagnosis"
-                }
-              ],
-              "text": "Trauma Condition"
-            }
-          }
-        ],
-        "hospitalization": {
-          "preAdmissionIdentifier": {
-            "value": "123456789"
-          },
-          "dischargeDisposition": {
-            "text": "1472583690"
-          }
-        },
-        "location": [
-          {
-            "location": {
-              "display": "Elicottero"
-            },
-            "status": "completed",
-            "physicalType": {
-              "coding": [
-                {
-                  "system": "https://www.hl7.org/fhir/valueset-location-physical-type.html",
-                  "code": "ve",
-                  "display": "Vehicle"
-                }
-              ],
-              "text": "Trasporto con Elicottero"
-            }
-          },
-          {
-            "location": {
-              "display": "Territorial Area: Cesena"
-            },
-            "physicalType": {
-              "coding": [
-                {
-                  "system": "https://www.hl7.org/fhir/codesystem-location-physical-type.html",
-                  "code": "si",
-                  "display": "Site"
-                }
-              ],
-              "text": "Territorial Area"
-            }
-          },
-          {
-            "location": {
-              "display": "PRE-H"
-            },
-            "period": {
-              "start": "2020-02-04T02:56:25+01:00"
-            }
-          },
-          {
-            "location": {
-              "display": "PRE-H"
-            },
-            "period": {
-              "start": "2020-02-04T02:57:59+01:00"
-            }
-          },
-          {
-            "location": {
-              "display": "Trasporto"
-            },
-            "period": {
-              "start": "2020-02-04T02:59:24+01:00"
-            }
-          },
-          {
-            "location": {
-              "display": "Trasporto"
-            },
-            "period": {
-              "start": "2020-02-04T02:59:35+01:00"
-            }
-          }
-        ],
-        "serviceProvider": {
-          "display": "Ospedale Bufalini"
-        },
-        "partOf": {
-          "reference": "/Encounter/d8eecb1d-c254-409e-b67a-9b205a6d033a"
-        },
-        "class": {
-          "code": "EMER",
-          "display": "Emergency"
+        "dose": {
+          "value": 250,
+          "unit": "ml"
         }
       }
-    ],
-    "conditions": [
-      {
-        "id": "b712b1f0-77e0-4594-81a5-c627909b37c0",
-        "meta": {
-          "versionId": "dcbdcfe5-38d5-48f0-bd4a-4b25e8c35165",
-          "lastUpdated": "2020-02-11T19:15:30.112727Z"
-        },
-        "resourceType": "Condition",
-        "code": {
-          "coding": [
-            {
-              "system": "http://www.snomed.org/",
-              "code": "417163006",
-              "display": "Traumatic AND/OR non-traumatic injury (disorder)"
-            },
-            {
-              "system": "http://www.snomed.org/",
-              "code": "418399005",
-              "display": "Motor vehicle accident"
-            }
-          ],
-          "text": "Trauma Condition gestione pre ospedaliera"
-        },
-        "encounter": {
-          "reference": "/Encounter/a92375f9-d7f3-4530-960a-792188b09d60",
-          "type": "Encounter",
-          "display": "Encounter pre ospedalizzazione"
-        },
-        "onsetDateTime": "2020-02-04T09:57:45+01:00",
-        "evidence": [
-          {
-            "code": [
-              {
-                "coding": [
-                  {
-                    "system": "http://www.snomed.org/",
-                    "code": "416886008",
-                    "display": "Closed wound"
-                  }
-                ],
-                "text": "Type of accident chiuso"
-              }
-            ],
-            "detail": [
-              {
-                "reference": "/Observation/c50d64c6-3505-4d43-a217-7e99903ad643",
-                "type": "Observation",
-                "display": "Type of accident chiuso"
-              }
-            ]
-          },
-          {
-            "code": [
-              {
-                "coding": [
-                  {
-                    "system": "http://www.snomed.org/",
-                    "code": "229027002",
-                    "display": "Dynamic"
-                  }
-                ],
-                "text": "Major Trauma Criteria - Dynamic"
-              }
-            ]
-          },
-          {
-            "code": [
-              {
-                "coding": [
-                  {
-                    "system": "http://www.snomed.org/",
-                    "code": "36298004",
-                    "display": "Anatomical "
-                  }
-                ],
-                "text": "Major Trauma Criteria - Anatomical"
-              }
-            ]
-          },
-          {
-            "code": [
-              {
-                "coding": [
-                  {
-                    "system": "http://www.snomed.org/",
-                    "code": "1360005",
-                    "display": "Physiological"
-                  }
-                ],
-                "text": "Major Trauma Criteria - Physiological"
-              }
-            ]
-          },
-          {
-            "code": [
-              {
-                "coding": [
-                  {
-                    "system": "http://www.snomed.org/",
-                    "code": "311791003",
-                    "display": "Information gathering (procedure)"
-                  }
-                ],
-                "text": "Anamnesis evidence"
-              }
-            ],
-            "detail": [
-              {
-                "reference": "/Procedure/e352adfa-16bf-4ab2-947d-d7f39732406d",
-                "type": "Procedure",
-                "display": "Anamnesi procedure"
-              }
-            ]
-          },
-          {
-            "detail": [
-              {
-                "reference": "/Procedure/157f342d-b952-4046-9724-547e6b9e6c79"
-              }
-            ]
-          },
-          {
-            "detail": [
-              {
-                "reference": "/Procedure/3997b8b4-867e-4ebf-85e0-d99d89dfe4f3"
-              }
-            ]
-          },
-          {
-            "detail": [
-              {
-                "reference": "/Procedure/1b9bf9d7-d15f-4ab0-a050-717ab895fe7c"
-              }
-            ]
-          },
-          {
-            "code": [
-              {
-                "text": "Anisocoria Observation"
-              }
-            ],
-            "detail": [
-              {
-                "reference": "/Observation/80849be7-4743-443f-bc07-e331add085a4"
-              }
-            ]
-          },
-          {
-            "code": [
-              {
-                "text": "Midriasi Observation"
-              }
-            ],
-            "detail": [
-              {
-                "reference": "/Observation/b86e6ed0-4ab2-4acd-a6b9-3ca4dbd3dc8c"
-              }
-            ]
-          },
-          {
-            "code": [
-              {
-                "text": "Motility Observation"
-              }
-            ],
-            "detail": [
-              {
-                "reference": "/Observation/1dd8be95-f74c-4c04-a1de-ba7f2e6fb1fd"
-              }
-            ]
-          },
-          {
-            "code": [
-              {
-                "text": "Glasgow Coma Scale Total"
-              }
-            ],
-            "detail": [
-              {
-                "reference": "/Observation/08dd4e25-f57d-4d02-99c9-f34327315ae5"
-              }
-            ]
-          },
-          {
-            "code": [
-              {
-                "text": "Worst Blood Pressure Observation"
-              }
-            ],
-            "detail": [
-              {
-                "reference": "/Observation/751a689e-e5a9-4a92-93f3-1fdddbfb84f6"
-              }
-            ]
-          },
-          {
-            "code": [
-              {
-                "text": "Worst Respiratory Rate Observation"
-              }
-            ],
-            "detail": [
-              {
-                "reference": "/Observation/ab6b5ba9-9392-4ff3-b78e-355e84c07532"
-              }
-            ]
-          }
-        ]
+    },
+    {
+      "id": "5",
+      "resourceType": "MedicationAdministration",
+      "medicationCodeableConcept": {
+        "text": "mtp"
       },
-      {
-        "id": "86170311-044a-4cc7-b027-f060bed5c9f4",
-        "meta": {
-          "versionId": "b1839c07-3633-4256-bfc4-d4027d9051e1",
-          "lastUpdated": "2020-02-11T19:15:30.115889Z"
-        },
-        "resourceType": "Condition",
-        "code": {
-          "coding": [
-            {
-              "system": "http://www.snomed.org/",
-              "code": "417163006",
-              "display": "Traumatic AND/OR non-traumatic injury (disorder)"
-            }
-          ],
-          "text": "Patient Initial Condition"
-        },
-        "encounter": {
-          "reference": "/Encounter/04810b11-382b-47ec-a1b1-df9be9af572c",
-          "type": "Encounter",
-          "display": "Encounter intervention"
-        },
-        "evidence": [
-          {
-            "code": [
-              {
-                "coding": [
-                  {
-                    "system": "http://loinc.org",
-                    "code": "85353-1",
-                    "display": "Vital Signs"
-                  }
-                ],
-                "text": "Patient Initial Condition Vital Sign"
-              }
-            ],
-            "detail": [
-              {
-                "reference": "/Observation/7c5405fb-1fcd-4fcf-92ea-7b9359da3059",
-                "type": "Observation",
-                "display": "Initial Vital Signs"
-              }
-            ]
-          },
-          {
-            "code": [
-              {
-                "text": "Glasgow Coma Scale Total"
-              }
-            ],
-            "detail": [
-              {
-                "reference": "/Observation/4cb38799-3faa-426d-92b4-06b0924ebf67",
-                "type": "Observation"
-              }
-            ]
-          },
-          {
-            "code": [
-              {
-                "text": "Patient Sedated"
-              }
-            ],
-            "detail": [
-              {
-                "reference": "/Observation/c9388fc1-02d5-48e9-94cb-2d8f173258e4",
-                "type": "Observation"
-              }
-            ]
-          },
-          {
-            "code": [
-              {
-                "text": "Pupils"
-              }
-            ],
-            "detail": [
-              {
-                "reference": "/Observation/a64a6124-e94b-44eb-bc90-9c1536aa0e54",
-                "type": "Observation"
-              }
-            ]
-          },
-          {
-            "code": [
-              {
-                "text": "Airways"
-              }
-            ],
-            "detail": [
-              {
-                "reference": "/Observation/57ed814b-bc78-415f-96b4-702ec1453dc6",
-                "type": "Observation"
-              }
-            ]
-          },
-          {
-            "code": [
-              {
-                "text": "positiveInhalation"
-              }
-            ],
-            "detail": [
-              {
-                "reference": "/Observation/c2e727b8-d9be-4957-b315-b5036cb964c0",
-                "type": "Observation"
-              }
-            ]
-          },
-          {
-            "code": [
-              {
-                "text": "Intubation"
-              }
-            ],
-            "detail": [
-              {
-                "reference": "/Procedure/90fda598-a8ab-41e9-a635-4a9c3c848dfc",
-                "type": "Procedure"
-              }
-            ]
-          },
-          {
-            "code": [
-              {
-                "text": "Chest Tube"
-              }
-            ],
-            "detail": [
-              {
-                "reference": "/Observation/ea2f891e-af06-49c8-b4d2-8d5044ead2b4",
-                "type": "Observation"
-              }
-            ]
-          },
-          {
-            "code": [
-              {
-                "text": "Hemorrhage"
-              }
-            ],
-            "detail": [
-              {
-                "reference": "/Observation/48e0679c-af3f-402a-bd62-e1bac3ac284e",
-                "type": "Observation"
-              }
-            ]
-          },
-          {
-            "code": [
-              {
-                "text": "Limbs Fracture"
-              }
-            ],
-            "detail": [
-              {
-                "reference": "/Observation/adbff705-187e-430f-b5ae-096573c997cb",
-                "type": "Observation"
-              }
-            ]
-          },
-          {
-            "code": [
-              {
-                "text": "Fracture Exposition"
-              }
-            ],
-            "detail": [
-              {
-                "reference": "/Observation/22024429-c4d9-49e3-bf06-211e4cd7ecec",
-                "type": "Observation"
-              }
-            ]
-          },
-          {
-            "code": [
-              {
-                "text": "Burn"
-              }
-            ],
-            "detail": [
-              {
-                "reference": "/Observation/d8f2cfea-1a3a-4b6b-8490-bd599d7b30df",
-                "type": "Observation"
-              }
-            ]
-          }
-        ]
+      "context": {
+        "reference": "#130f1db9-abd6-497c-b8e1-3a5cd8702c37",
+        "type": "Encounter",
+        "display": "Encounter intervention"
       },
-      {
-        "id": "242e23fc-40fa-44d8-9365-09fda1d4d2f6",
-        "meta": {
-          "versionId": "681f04e9-1485-4184-9577-01ec4f2274ef",
-          "lastUpdated": "2020-02-11T19:15:30.128406Z"
+      "note": [
+        {
+          "text": "Protocollo Trasfusione Massiva (P.T.M.)"
+        }
+      ],
+      "dosage": {
+        "method": {
+          "text": "blood-protocol"
+        }
+      }
+    },
+    {
+      "id": "6",
+      "resourceType": "MedicationAdministration",
+      "medicationCodeableConcept": {
+        "text": "fresh-frozen-plasma"
+      },
+      "context": {
+        "reference": "#130f1db9-abd6-497c-b8e1-3a5cd8702c37",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "note": [
+        {
+          "text": "Plasma Fresco Congelato"
+        }
+      ],
+      "dosage": {
+        "text": "",
+        "method": {
+          "text": "one-shot"
         },
-        "resourceType": "Condition",
-        "clinicalStatus": {
-          "coding": [
-            {
-              "system": "http://terminology.hl7.org/CodeSystem/condition-clinicalversion4.0.1",
-              "code": "active",
-              "display": "Active"
-            }
+        "dose": {
+          "value": 1,
+          "unit": "UI"
+        }
+      }
+    },
+    {
+      "id": "7",
+      "resourceType": "DiagnosticReport",
+      "status": "final",
+      "code": {
+        "text": "echofast"
+      },
+      "encounter": {
+        "reference": "#com.oracolo.fhir.model.domain.Encounter@4aab5454",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "effectiveDateTime": "2020-02-04 14:58:22",
+      "conclusion": "Ecografia (Echofast)"
+    },
+    {
+      "id": "8",
+      "resourceType": "DiagnosticReport",
+      "status": "final",
+      "code": {
+        "text": "abdomen-rx"
+      },
+      "encounter": {
+        "reference": "#com.oracolo.fhir.model.domain.Encounter@4aab5454",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "effectiveDateTime": "2020-02-04 14:58:23",
+      "conclusion": "RX Bacino"
+    },
+    {
+      "id": "9",
+      "resourceType": "MedicationAdministration",
+      "medicationCodeableConcept": {
+        "text": "ketamine"
+      },
+      "context": {
+        "reference": "#130f1db9-abd6-497c-b8e1-3a5cd8702c37",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "note": [
+        {
+          "text": "Ketamina"
+        }
+      ],
+      "dosage": {
+        "method": {
+          "text": "one-shot"
+        },
+        "dose": {
+          "value": 25,
+          "unit": "mg"
+        }
+      }
+    },
+    {
+      "id": "10",
+      "resourceType": "MedicationAdministration",
+      "medicationCodeableConcept": {
+        "text": "tranex"
+      },
+      "context": {
+        "reference": "#130f1db9-abd6-497c-b8e1-3a5cd8702c37",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "note": [
+        {
+          "text": "Acido Tranexamico"
+        }
+      ],
+      "dosage": {
+        "method": {
+          "text": "one-shot"
+        },
+        "dose": {
+          "value": 1,
+          "unit": "g"
+        }
+      }
+    },
+    {
+      "id": "11",
+      "resourceType": "MedicationAdministration",
+      "medicationCodeableConcept": {
+        "text": "antibiotic-prophylaxis"
+      },
+      "context": {
+        "reference": "#130f1db9-abd6-497c-b8e1-3a5cd8702c37",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "note": [
+        {
+          "text": "Profilassi ABT"
+        }
+      ],
+      "dosage": {
+        "method": {
+          "text": "drug-protocol"
+        }
+      }
+    },
+    {
+      "id": "12",
+      "resourceType": "Procedure",
+      "location": {
+        "display": "Shock-Room"
+      },
+      "note": [
+        {}
+      ],
+      "category": {
+        "text": "one-shot"
+      },
+      "code": {
+        "text": "supraglottic-presidium"
+      },
+      "encounter": {
+        "reference": "#com.oracolo.fhir.model.domain.Encounter@4aab5454",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "performedDateTime": "2020-02-04T02:58:34Z"
+    },
+    {
+      "id": "13",
+      "resourceType": "Procedure",
+      "location": {
+        "display": "Shock-Room"
+      },
+      "note": [
+        {}
+      ],
+      "category": {
+        "text": "one-shot"
+      },
+      "code": {
+        "text": "intubation"
+      },
+      "encounter": {
+        "reference": "#com.oracolo.fhir.model.domain.Encounter@4aab5454",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "performedDateTime": "2020-02-04T02:58:36Z"
+    },
+    {
+      "id": "14",
+      "resourceType": "Procedure",
+      "location": {
+        "display": "Shock-Room"
+      },
+      "note": [
+        {}
+      ],
+      "category": {
+        "text": "one-shot"
+      },
+      "code": {
+        "text": "infuser"
+      },
+      "encounter": {
+        "reference": "#com.oracolo.fhir.model.domain.Encounter@4aab5454",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "performedDateTime": "2020-02-04T02:58:37Z"
+    },
+    {
+      "id": "15",
+      "resourceType": "Procedure",
+      "location": {
+        "display": "Shock-Room"
+      },
+      "note": [
+        {}
+      ],
+      "category": {
+        "text": "one-shot"
+      },
+      "code": {
+        "text": "pelvic-packing"
+      },
+      "encounter": {
+        "reference": "#com.oracolo.fhir.model.domain.Encounter@4aab5454",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "performedDateTime": "2020-02-04T02:58:39Z"
+    },
+    {
+      "id": "16",
+      "resourceType": "DiagnosticReport",
+      "status": "final",
+      "code": {
+        "text": "thoracoabdominal-tc"
+      },
+      "encounter": {
+        "reference": "#com.oracolo.fhir.model.domain.Encounter@4aab5454",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "effectiveDateTime": "2020-02-04 14:58:41",
+      "conclusion": "TC Toraco-Addominale (MdC)"
+    },
+    {
+      "id": "17",
+      "resourceType": "DiagnosticReport",
+      "status": "final",
+      "code": {
+        "text": "abg"
+      },
+      "encounter": {
+        "reference": "#com.oracolo.fhir.model.domain.Encounter@4aab5454",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "effectiveDateTime": "2020-02-04 14:58:50",
+      "result": [
+        {
+          "reference": "#41c7f99d-1f1a-4e2a-b688-616739ba8004",
+          "type": "Observation",
+          "display": "Observation lactates"
+        },
+        {
+          "reference": "#eb13dfcf-d2ec-4607-9843-6b67127df08e",
+          "type": "Observation",
+          "display": "Observation be"
+        },
+        {
+          "reference": "#b17924f6-daf6-4bc3-8282-d726963aa980",
+          "type": "Observation",
+          "display": "Observation be"
+        },
+        {
+          "reference": "/Observation4123743c-9a3b-4980-a7a7-9d27e88c4dca",
+          "type": "Observation",
+          "display": "Observation hb"
+        }
+      ],
+      "conclusion": "EGA"
+    },
+    {
+      "id": "41c7f99d-1f1a-4e2a-b688-616739ba8004",
+      "resourceType": "Observation",
+      "status": "final",
+      "code": {
+        "text": "lactates"
+      },
+      "encounter": {
+        "reference": "#com.oracolo.fhir.model.domain.Encounter@4aab5454",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "effectiveDateTime": "2020-02-04T02:58:50Z",
+      "valueQuantity": {
+        "value": 25
+      }
+    },
+    {
+      "id": "eb13dfcf-d2ec-4607-9843-6b67127df08e",
+      "resourceType": "Observation",
+      "status": "final",
+      "code": {
+        "text": "be"
+      },
+      "encounter": {
+        "reference": "#130f1db9-abd6-497c-b8e1-3a5cd8702c37",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "effectiveDateTime": "2020-02-04T02:58:50Z",
+      "valueQuantity": {
+        "value": 3
+      }
+    },
+    {
+      "id": "b17924f6-daf6-4bc3-8282-d726963aa980",
+      "resourceType": "Observation",
+      "status": "final",
+      "code": {
+        "text": "ph"
+      },
+      "encounter": {
+        "reference": "#130f1db9-abd6-497c-b8e1-3a5cd8702c37",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "effectiveDateTime": "2020-02-04T02:58:50Z",
+      "valueQuantity": {
+        "value": 6
+      }
+    },
+    {
+      "id": "4123743c-9a3b-4980-a7a7-9d27e88c4dca",
+      "resourceType": "Observation",
+      "status": "final",
+      "code": {
+        "text": "hb"
+      },
+      "encounter": {
+        "reference": "#130f1db9-abd6-497c-b8e1-3a5cd8702c37",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "effectiveDateTime": "2020-02-04T02:58:50Z",
+      "valueQuantity": {
+        "value": 96
+      }
+    },
+    {
+      "id": "18",
+      "resourceType": "DiagnosticReport",
+      "status": "final",
+      "code": {
+        "text": "rotem"
+      },
+      "encounter": {
+        "reference": "#com.oracolo.fhir.model.domain.Encounter@4aab5454",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "effectiveDateTime": "2020-02-04 14:59:01",
+      "result": [
+        {
+          "reference": "#ed25c7b2-fd46-4da8-ad75-3ec4de92d57c",
+          "type": "Observation",
+          "display": "Observation fibtem"
+        },
+        {
+          "reference": "#54f791dc-8caf-4479-9704-6e18259fbd6f",
+          "type": "Observation",
+          "display": "Observation extem"
+        },
+        {
+          "reference": "#7ad4943c-bbef-4617-8e21-1af88212381e",
+          "type": "Observation",
+          "display": "Observation hyperfibrinolysis"
+        }
+      ],
+      "conclusion": "ROTEM"
+    },
+    {
+      "id": "ed25c7b2-fd46-4da8-ad75-3ec4de92d57c",
+      "resourceType": "Observation",
+      "status": "final",
+      "code": {
+        "text": "fibtem"
+      },
+      "encounter": {
+        "reference": "#130f1db9-abd6-497c-b8e1-3a5cd8702c37",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "effectiveDateTime": "2020-02-04T02:59:01Z",
+      "valueString": "A5 = 96"
+    },
+    {
+      "id": "54f791dc-8caf-4479-9704-6e18259fbd6f",
+      "resourceType": "Observation",
+      "status": "final",
+      "code": {
+        "text": "extem"
+      },
+      "encounter": {
+        "reference": "#130f1db9-abd6-497c-b8e1-3a5cd8702c37",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "effectiveDateTime": "2020-02-04T02:59:01Z",
+      "valueString": "CT = 25; A10 = 96; alpha = 96"
+    },
+    {
+      "id": "7ad4943c-bbef-4617-8e21-1af88212381e",
+      "resourceType": "Observation",
+      "status": "final",
+      "code": {
+        "text": "hyperfibrinolysis"
+      },
+      "encounter": {
+        "reference": "#130f1db9-abd6-497c-b8e1-3a5cd8702c37",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "effectiveDateTime": "2020-02-04T02:59:01Z",
+      "valueBoolean": true
+    },
+    {
+      "id": "19",
+      "resourceType": "Procedure",
+      "location": {
+        "display": "Shock-Room"
+      },
+      "status": "completed",
+      "code": {
+        "text": "room-out"
+      },
+      "encounter": {
+        "reference": "#130f1db9-abd6-497c-b8e1-3a5cd8702c37",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "performedDateTime": "2020-02-04T02:59:13Z"
+    },
+    {
+      "id": "20",
+      "resourceType": "Procedure",
+      "location": {
+        "display": "TAC PS"
+      },
+      "status": "completed",
+      "code": {
+        "text": "room-in"
+      },
+      "encounter": {
+        "reference": "#130f1db9-abd6-497c-b8e1-3a5cd8702c37",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "performedDateTime": "2020-02-04T02:59:13Z"
+    },
+    {
+      "id": "21",
+      "resourceType": "Procedure",
+      "location": {
+        "display": "TAC PS"
+      },
+      "status": "completed",
+      "code": {
+        "text": "room-out"
+      },
+      "encounter": {
+        "reference": "#130f1db9-abd6-497c-b8e1-3a5cd8702c37",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "performedDateTime": "2020-02-04T02:59:24Z"
+    },
+    {
+      "id": "24",
+      "resourceType": "Procedure",
+      "location": {
+        "display": "Shock-Room"
+      },
+      "status": "completed",
+      "code": {
+        "text": "room-in"
+      },
+      "encounter": {
+        "reference": "#130f1db9-abd6-497c-b8e1-3a5cd8702c37",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "performedDateTime": "2020-02-04T02:59:35Z"
+    },
+    {
+      "id": "25",
+      "resourceType": "Procedure",
+      "location": {
+        "display": "Shock-Room"
+      },
+      "status": "completed",
+      "code": {
+        "text": "room-out"
+      },
+      "encounter": {
+        "reference": "#130f1db9-abd6-497c-b8e1-3a5cd8702c37",
+        "type": "Encounter",
+        "display": "Encounter intervention"
+      },
+      "performedDateTime": "2020-02-04T02:59:48Z"
+    },
+    {
+      "id": "56a99f4e-11ed-41c0-9ea2-4c4d8ea65db9",
+      "resourceType": "Practitioner",
+      "identifier": [
+        {
+          "value": "vanni.agnoletti"
+        },
+        {
+          "value": "Vanni Agnoletti"
+        }
+      ],
+      "active": true
+    },
+    {
+      "id": "741c9fc9-b2ba-4e4c-8461-0b9a773b9538",
+      "resourceType": "Patient",
+      "name": [
+        {
+          "family": "Rossi",
+          "given": [
+            "Mario"
           ]
-        },
-        "category": [
+        }
+      ],
+      "gender": "M"
+    },
+    {
+      "id": "0",
+      "resourceType": "Procedure",
+      "location": {
+        "display": "PRE-H"
+      },
+      "status": "completed",
+      "code": {
+        "text": "room-in"
+      },
+      "encounter": {
+        "reference": "#b9d30708-c3e7-41de-836a-65c335201f59",
+        "type": "Encounter",
+        "display": "Encounter pre ospedalizzazione"
+      },
+      "performedDateTime": "2020-02-04T02:56:25Z"
+    },
+    {
+      "id": "1",
+      "resourceType": "Procedure",
+      "location": {
+        "display": "PRE-H"
+      },
+      "status": "completed",
+      "code": {
+        "coding": [
           {
-            "coding": [
-              {
-                "system": "https://www.hl7.org/fhir/codesystem-condition-category.html",
-                "code": "encounter-diagnosis",
-                "display": "Encounter Diagnosis"
-              }
-            ]
+            "system": "http://www.snomed.org/",
+            "code": "32485007",
+            "display": "Hospital admission (procedure)"
           }
         ],
-        "code": {
+        "text": "patient-accepted"
+      },
+      "encounter": {
+        "reference": "#b9d30708-c3e7-41de-836a-65c335201f59",
+        "type": "Encounter",
+        "display": "Encounter pre ospedalizzazione"
+      },
+      "performedDateTime": "2020-02-04T02:57:59Z"
+    },
+    {
+      "id": "22",
+      "resourceType": "Procedure",
+      "location": {
+        "display": "Trasporto"
+      },
+      "status": "completed",
+      "code": {
+        "text": "room-in"
+      },
+      "encounter": {
+        "reference": "#b9d30708-c3e7-41de-836a-65c335201f59",
+        "type": "Encounter",
+        "display": "Encounter pre ospedalizzazione"
+      },
+      "performedDateTime": "2020-02-04T02:59:24Z"
+    },
+    {
+      "id": "23",
+      "resourceType": "Procedure",
+      "location": {
+        "display": "Trasporto"
+      },
+      "status": "completed",
+      "code": {
+        "text": "room-out"
+      },
+      "encounter": {
+        "reference": "#b9d30708-c3e7-41de-836a-65c335201f59",
+        "type": "Encounter",
+        "display": "Encounter pre ospedalizzazione"
+      },
+      "performedDateTime": "2020-02-04T02:59:35Z"
+    }
+  ],
+  "resourceType": "Encounter",
+  "identifier": [
+    {
+      "value": "rep-20200204-145625"
+    },
+    {
+      "value": "1.2"
+    }
+  ],
+  "status": "finished",
+  "serviceType": {
+    "coding": [
+      {
+        "code": "117",
+        "display": "Emergency Medical"
+      }
+    ],
+    "text": "Emergency intervention"
+  },
+  "subject": {
+    "reference": "#741c9fc9-b2ba-4e4c-8461-0b9a773b9538",
+    "type": "Patient",
+    "display": "Mario Rossi età 40"
+  },
+  "participant": [
+    {
+      "type": [
+        {
           "coding": [
             {
-              "system": "https://www.hl7.org/fhir/codesystem-snomedct.html",
-              "code": "417746004",
-              "display": "Traumatic injury"
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+              "code": "PPRF",
+              "display": "primary performer"
             }
           ],
-          "text": "Physical Condition after intervention"
-        },
-        "encounter": {
-          "reference": "/Encounter/04810b11-382b-47ec-a1b1-df9be9af572c",
-          "type": "Encounter",
-          "display": "Encounter intervention"
-        },
-        "stage": [
-          {
-            "assessment": [
-              {
-                "reference": "/Observation/024ab61d-8c8f-4d7b-b935-8eb7b5b2d187",
-                "type": "Observation",
-                "display": "Total Iss Score: 17"
-              }
-            ],
-            "type": {
-              "coding": [
-                {
-                  "system": "http://www.snomed.org/",
-                  "code": "273533008",
-                  "display": "Injury severity score (assessment scale)"
-                }
-              ]
+          "text": "Trauma Leader"
+        }
+      ],
+      "individual": {
+        "reference": "#39ad729e-95ec-4027-a197-6a36f0ce50d2",
+        "type": "Practitioner",
+        "display": "Vanni Agnoletti"
+      }
+    },
+    {
+      "type": [
+        {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+              "code": "SPRF",
+              "display": "secondary performer"
             }
+          ],
+          "text": "Trauma team members"
+        }
+      ],
+      "individual": {
+        "type": "Practitioner",
+        "display": "Medico PS"
+      }
+    },
+    {
+      "type": [
+        {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+              "code": "SPRF",
+              "display": "secondary performer"
+            }
+          ],
+          "text": "Trauma team members"
+        }
+      ],
+      "individual": {
+        "type": "Practitioner",
+        "display": "Anestesista"
+      }
+    },
+    {
+      "type": [
+        {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+              "code": "SPRF",
+              "display": "secondary performer"
+            }
+          ],
+          "text": "Trauma team members"
+        }
+      ],
+      "individual": {
+        "type": "Practitioner",
+        "display": "Radiologo"
+      }
+    },
+    {
+      "type": [
+        {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+              "code": "SPRF",
+              "display": "secondary performer"
+            }
+          ],
+          "text": "Trauma team members"
+        }
+      ],
+      "individual": {
+        "type": "Practitioner",
+        "display": "Chirurgo Urgenze"
+      }
+    },
+    {
+      "type": [
+        {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+              "code": "SPRF",
+              "display": "secondary performer"
+            }
+          ],
+          "text": "Trauma team members"
+        }
+      ],
+      "individual": {
+        "type": "Practitioner",
+        "display": "Neurochirurgo"
+      }
+    },
+    {
+      "type": [
+        {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+              "code": "SPRF",
+              "display": "secondary performer"
+            }
+          ],
+          "text": "Trauma team members"
+        }
+      ],
+      "individual": {
+        "type": "Practitioner",
+        "display": "Chirurgo Ortopedico"
+      }
+    },
+    {
+      "type": [
+        {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+              "code": "SPRF",
+              "display": "secondary performer"
+            }
+          ],
+          "text": "Trauma team members"
+        }
+      ],
+      "individual": {
+        "type": "Practitioner",
+        "display": "Maxillo-Facciale"
+      }
+    },
+    {
+      "type": [
+        {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+              "code": "SPRF",
+              "display": "secondary performer"
+            }
+          ],
+          "text": "Trauma team members"
+        }
+      ],
+      "individual": {
+        "type": "Practitioner",
+        "display": "Urologo"
+      }
+    }
+  ],
+  "period": {
+    "start": "2020-02-04T02:56:25Z",
+    "end": "2020-02-04T02:59:48Z"
+  },
+  "reasonCode": [
+    {
+      "coding": [
+        {
+          "system": "http://www.snomed.org/",
+          "code": "417163006",
+          "display": "Traumatic AND/OR non-traumatic injury (disorder)"
+        },
+        {
+          "system": "http://www.snomed.org/",
+          "code": "418399005",
+          "display": "Motor vehicle accident"
+        }
+      ],
+      "text": "Trauma Condition gestione pre ospedaliera"
+    }
+  ],
+  "diagnosis": [
+    {
+      "condition": {
+        "reference": "/Condition/0368dfc5-8465-4f7b-a7cd-baa923310a80",
+        "type": "Condition",
+        "display": "Trauma Condition"
+      },
+      "use": {
+        "coding": [
+          {
+            "system": "https://www.hl7.org/fhir/codesystem-diagnosis-role.html",
+            "code": "AD",
+            "display": "Admission diagnosis"
+          }
+        ],
+        "text": "Trauma Condition"
+      }
+    },
+    {
+      "condition": {
+        "reference": "/Condition/0e01308e-9845-46ec-baa5-704adf2df08e",
+        "type": "Condition",
+        "display": "Patient Initial Condition"
+      },
+      "use": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/diagnosis-role",
+            "code": "pre-op",
+            "display": "pre-op diagnosis"
           }
         ]
       }
-    ],
-    "practitioners": [],
-    "observations": [
-      {
-        "id": "024ab61d-8c8f-4d7b-b935-8eb7b5b2d187",
-        "meta": {
-          "versionId": "9e897a87-f144-4cc1-91e9-3e37ff83bcef",
-          "lastUpdated": "2020-02-11T19:15:30.127346Z"
-        },
-        "resourceType": "Observation",
-        "component": [
+    },
+    {
+      "condition": {
+        "reference": "/fhirAPI/Condition/d7574c00-8834-4e47-b210-8c8f2072b64b",
+        "type": "Condition",
+        "display": "Injury Severity Score"
+      },
+      "use": {
+        "coding": [
           {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "Group Total Iss headGroup iss score"
-            },
-            "valueInteger": 16
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "headNeckAis iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "brainAis iss score"
-            },
-            "valueInteger": 4
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "cervicalSpineAis iss score"
-            },
-            "valueInteger": 1
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "Group Total Iss faceGroup iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "faceAis iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "Group Total Iss toraxGroup iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "toraxAis iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "spineAis iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "Group Total Iss abdomenGroup iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "abdomenAis iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "lumbarSpineAis iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "Group Total Iss extremitiesGroup iss score"
-            },
-            "valueInteger": 1
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "upperExtremitiesAis iss score"
-            },
-            "valueInteger": 1
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "lowerExtremitiesAis iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "pelvicGirdleAis iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "Group Total Iss externaGroup iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "externaAis iss score"
-            },
-            "valueInteger": 0
+            "code": "post-op",
+            "display": "post-op diagnosis"
           }
-        ],
-        "status": "final",
-        "code": {
-          "coding": [
-            {
-              "system": "https://www.loinc.org",
-              "code": "74471-4",
-              "display": "Injury severity score Calculated"
-            }
-          ],
-          "text": "Total Iss"
-        },
-        "encounter": {
-          "reference": "/Encounter/04810b11-382b-47ec-a1b1-df9be9af572c",
-          "type": "Encounter",
-          "display": "Encounter intervention"
-        },
-        "valueInteger": 17
-      },
-      {
-        "id": "c50d64c6-3505-4d43-a217-7e99903ad643",
-        "meta": {
-          "versionId": "cc4733e2-a433-4b25-95b5-ed8e7bbf55ea",
-          "lastUpdated": "2020-02-11T19:15:30.128539Z"
-        },
-        "resourceType": "Observation",
-        "status": "final",
-        "code": {
-          "coding": [
-            {
-              "system": "https://loinc.org/",
-              "code": "67494-5",
-              "display": "General mechanism of the forces which caused the injury (observation)"
-            }
-          ],
-          "text": "Accident Type Observation"
-        },
-        "encounter": {
-          "reference": "/Encounter/a92375f9-d7f3-4530-960a-792188b09d60",
-          "display": "Encounter pre ospedalizzazione"
-        },
-        "valueString": "chiuso"
-      },
-      {
-        "id": "eb2c4aa6-924e-4f1f-851e-fea15673ae43",
-        "meta": {
-          "versionId": "55f73a6d-e85e-4d85-a5ca-7bef24e95d5d",
-          "lastUpdated": "2020-02-11T19:15:30.135984Z"
-        },
-        "resourceType": "Observation",
-        "partOf": [
-          {
-            "reference": "/Procedure/e352adfa-16bf-4ab2-947d-d7f39732406d",
-            "type": "Procedure"
-          }
-        ],
-        "status": "final",
-        "code": {
-          "coding": [
-            {
-              "system": "https://loinc.org/",
-              "code": "29497-5",
-              "display": "Platelet associated IgG Ab [Presence] in Blood by Flow cytometry (FC)"
-            }
-          ],
-          "text": "Use of anti-platelets"
-        },
-        "encounter": {
-          "reference": "/Encounter/a92375f9-d7f3-4530-960a-792188b09d60",
-          "type": "Encounter",
-          "display": "Encounter pre ospedalizzazione"
-        },
-        "valueBoolean": true
-      },
-      {
-        "id": "4cd3c408-7056-44e3-b978-145dd1384a33",
-        "meta": {
-          "versionId": "c673d8c7-0457-45ab-9ee2-b3b259ac2a10",
-          "lastUpdated": "2020-02-11T19:15:30.136097Z"
-        },
-        "resourceType": "Observation",
-        "partOf": [
-          {
-            "reference": "/Procedure/e352adfa-16bf-4ab2-947d-d7f39732406d",
-            "type": "Procedure"
-          }
-        ],
-        "status": "final",
-        "code": {
-          "coding": [
-            {
-              "system": "https://loinc.org/",
-              "code": "89063-2",
-              "display": "Type of anticoagulant medication used"
-            }
-          ],
-          "text": "Use of anticoagulants"
-        },
-        "encounter": {
-          "reference": "/Encounter/a92375f9-d7f3-4530-960a-792188b09d60",
-          "type": "Encounter",
-          "display": "Encounter pre ospedalizzazione"
-        },
-        "valueBoolean": true
-      },
-      {
-        "id": "47dcb409-5c4b-40f3-a8e9-274e2a0e53cc",
-        "meta": {
-          "versionId": "079de76c-585e-4c0b-aa57-bcc5412d486c",
-          "lastUpdated": "2020-02-11T19:15:30.136188Z"
-        },
-        "resourceType": "Observation",
-        "partOf": [
-          {
-            "reference": "/Procedure/e352adfa-16bf-4ab2-947d-d7f39732406d",
-            "type": "Procedure"
-          }
-        ],
-        "status": "final",
-        "code": {
-          "coding": [
-            {
-              "system": "https://loinc.org/",
-              "code": "89063-2",
-              "display": "Type of anticoagulant medication used"
-            }
-          ],
-          "text": "Use of new oral anti-coagulants"
-        },
-        "encounter": {
-          "reference": "/Encounter/a92375f9-d7f3-4530-960a-792188b09d60",
-          "type": "Encounter",
-          "display": "Encounter pre ospedalizzazione"
-        },
-        "valueBoolean": true
-      },
-      {
-        "id": "80849be7-4743-443f-bc07-e331add085a4",
-        "meta": {
-          "versionId": "c7064dbf-ca1a-4f9d-8d19-9e49cff2f083",
-          "lastUpdated": "2020-02-11T19:15:30.136654Z"
-        },
-        "resourceType": "Observation",
-        "status": "final",
-        "code": {
-          "coding": [
-            {
-              "system": "http://www.snomed.org/",
-              "code": "13045009",
-              "display": "Anisocoria (disorder)"
-            }
-          ],
-          "text": "Anisocoria"
-        },
-        "subject": {
-          "reference": "#44acf11f-7b56-452a-b65b-8c609f9d53d9",
-          "type": "Patient",
-          "display": "Mario Rossi età 40"
-        },
-        "encounter": {
-          "reference": "/Encounter/a92375f9-d7f3-4530-960a-792188b09d60",
-          "type": "Encounter",
-          "display": "Encounter pre ospedalizzazione"
-        },
-        "valueBoolean": true
-      },
-      {
-        "id": "b86e6ed0-4ab2-4acd-a6b9-3ca4dbd3dc8c",
-        "meta": {
-          "versionId": "5271e6ea-d32d-427a-bf4d-5f8f1062739e",
-          "lastUpdated": "2020-02-11T19:15:30.137836Z"
-        },
-        "resourceType": "Observation",
-        "status": "final",
-        "code": {
-          "coding": [
-            {
-              "system": "http://www.snomed.org/",
-              "code": "404649002",
-              "display": "Traumatic mydriasis (disorder)"
-            }
-          ],
-          "text": "Mydriasis"
-        },
-        "subject": {
-          "reference": "#44acf11f-7b56-452a-b65b-8c609f9d53d9",
-          "type": "Patient",
-          "display": "Mario Rossi età 40"
-        },
-        "encounter": {
-          "reference": "/Encounter/a92375f9-d7f3-4530-960a-792188b09d60",
-          "type": "Encounter",
-          "display": "Encounter pre ospedalizzazione"
-        },
-        "valueBoolean": true
-      },
-      {
-        "id": "1dd8be95-f74c-4c04-a1de-ba7f2e6fb1fd",
-        "meta": {
-          "versionId": "2c94c9c0-a5e1-4ead-8f0d-f6cdee8323c7",
-          "lastUpdated": "2020-02-11T19:15:30.137966Z"
-        },
-        "resourceType": "Observation",
-        "status": "final",
-        "code": {
-          "coding": [
-            {
-              "system": "http://www.snomed.org/",
-              "code": "398598008",
-              "display": "Motility (observable entity)"
-            }
-          ],
-          "text": "Motility"
-        },
-        "subject": {
-          "reference": "#44acf11f-7b56-452a-b65b-8c609f9d53d9",
-          "type": "Patient",
-          "display": "Mario Rossi età 40"
-        },
-        "encounter": {
-          "reference": "/Encounter/a92375f9-d7f3-4530-960a-792188b09d60"
-        },
-        "valueBoolean": true
-      },
-      {
-        "id": "08dd4e25-f57d-4d02-99c9-f34327315ae5",
-        "meta": {
-          "versionId": "8858c00c-59b3-492a-9b64-96a6bd8e8e61",
-          "lastUpdated": "2020-02-11T19:15:30.138717Z"
-        },
-        "resourceType": "Observation",
-        "status": "final",
-        "code": {
-          "coding": [
-            {
-              "system": "https://loinc.org/",
-              "code": "35088-4",
-              "display": "Glasgow Coma Scale"
-            }
-          ],
-          "text": "Glasgow Coma Scale Total"
-        },
-        "subject": {
-          "reference": "#44acf11f-7b56-452a-b65b-8c609f9d53d9",
-          "type": "Patient",
-          "display": "Mario Rossi età 40"
-        },
-        "encounter": {
-          "reference": "/Encounter/a92375f9-d7f3-4530-960a-792188b09d60",
-          "type": "Encounter",
-          "display": "Encounter pre ospedalizzazione"
-        },
-        "valueInteger": 8
-      },
-      {
-        "id": "751a689e-e5a9-4a92-93f3-1fdddbfb84f6",
-        "meta": {
-          "versionId": "19b1a24f-051f-4795-a807-7358e902479d",
-          "lastUpdated": "2020-02-11T19:15:30.139469Z"
-        },
-        "resourceType": "Observation",
-        "status": "final",
-        "code": {
-          "coding": [
-            {
-              "system": "https://loinc.org/",
-              "code": "8480-6",
-              "display": "Systolic blood pressure"
-            }
-          ],
-          "text": "Worst Blood Pressure Observation"
-        },
-        "subject": {
-          "reference": "#44acf11f-7b56-452a-b65b-8c609f9d53d9",
-          "type": "Patient",
-          "display": "Mario Rossi età 40"
-        },
-        "encounter": {
-          "reference": "/Encounter/a92375f9-d7f3-4530-960a-792188b09d60",
-          "type": "Encounter",
-          "display": "Encounter pre ospedalizzazione"
-        },
-        "valueQuantity": {
-          "value": 89,
-          "unit": "mmHg",
-          "system": "https://www.britannica.com/science/torr",
-          "code": "Torr"
-        }
-      },
-      {
-        "id": "ab6b5ba9-9392-4ff3-b78e-355e84c07532",
-        "meta": {
-          "versionId": "5b7a4f51-67d3-4223-bfc6-50a001e1ddc3",
-          "lastUpdated": "2020-02-11T19:15:30.139611Z"
-        },
-        "resourceType": "Observation",
-        "status": "final",
-        "code": {
-          "coding": [
-            {
-              "system": "https://loinc.org/",
-              "code": "9279-1",
-              "display": "Respiratory rate"
-            }
-          ],
-          "text": "Worst Respiratory Rate Observation"
-        },
-        "subject": {
-          "reference": "#44acf11f-7b56-452a-b65b-8c609f9d53d9",
-          "type": "Patient",
-          "display": "Mario Rossi età 40"
-        },
-        "encounter": {
-          "reference": "/Encounter/a92375f9-d7f3-4530-960a-792188b09d60",
-          "type": "Encounter",
-          "display": "Encounter pre ospedalizzazione"
-        },
-        "valueQuantity": {
-          "value": 53,
-          "unit": "Lungs Volume per minute"
-        }
-      },
-      {
-        "id": "7c5405fb-1fcd-4fcf-92ea-7b9359da3059",
-        "meta": {
-          "versionId": "6b1db921-5fa6-4d65-8542-1576627348b2",
-          "lastUpdated": "2020-02-11T19:15:30.139818Z"
-        },
-        "resourceType": "Observation",
-        "component": [
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://loinc.org/",
-                  "code": "8310-5",
-                  "display": "Body temperature"
-                }
-              ],
-              "text": "Temperatura"
-            },
-            "valueString": "Normotermico"
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://loinc.org/",
-                  "code": "8867-4",
-                  "display": "Heart rate"
-                }
-              ],
-              "text": "Frequenza cardiaca (hr)"
-            },
-            "valueString": "Normale"
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://loinc.org/",
-                  "code": "8480-6",
-                  "display": "Systolic blood pressure"
-                }
-              ],
-              "text": "Pressione Arteriosa Sistolica (bp)"
-            },
-            "valueString": "Ipoteso"
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://loinc.org/",
-                  "code": "20564-1",
-                  "display": "Oxygen saturation in Blood"
-                }
-              ],
-              "text": "Saturazione ossigeno (spO2)"
-            },
-            "valueString": "Normale"
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://loinc.org/",
-                  "code": "20564-1",
-                  "display": "Oxygen saturation in Blood"
-                }
-              ],
-              "text": "Saturazione ossigeno (spO2)"
-            },
-            "valueString": "Normale"
-          }
-        ],
-        "status": "final",
-        "code": {
-          "coding": [
-            {
-              "system": "http://loinc.org",
-              "code": "85353-1",
-              "display": "Vital Signs"
-            }
-          ],
-          "text": "Vital Signs"
-        },
-        "encounter": {
-          "reference": "/Encounter/04810b11-382b-47ec-a1b1-df9be9af572c",
-          "type": "Encounter",
-          "display": "Encounter intervention"
-        }
-      },
-      {
-        "id": "4cb38799-3faa-426d-92b4-06b0924ebf67",
-        "meta": {
-          "versionId": "7c6a4cb8-96ef-4ae1-b9a4-61b8e9a6920e",
-          "lastUpdated": "2020-02-11T19:15:30.139962Z"
-        },
-        "resourceType": "Observation",
-        "component": [
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://loinc.org/",
-                  "code": "9268-4",
-                  "display": "Glasgow coma score motor"
-                }
-              ],
-              "text": "Glasgow Coma Scale Motor"
-            },
-            "valueString": "(6) ESEGUE"
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://loinc.org/",
-                  "code": "9270-0",
-                  "display": "Glasgow coma score verbal"
-                }
-              ],
-              "text": "Glasgow Coma Scale Verbal"
-            },
-            "valueString": "(3) INAPPROPRIATE"
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://loinc.org/",
-                  "code": "9267-6",
-                  "display": "Glasgow coma score eye opening"
-                }
-              ],
-              "text": "Glasgow Coma Scale Eyes"
-            },
-            "valueString": "(3) CHIAMATA"
-          }
-        ],
-        "status": "final",
-        "code": {
-          "coding": [
-            {
-              "system": "https://loinc.org/",
-              "code": "35088-4",
-              "display": "Glasgow Coma Scale"
-            }
-          ],
-          "text": "Glasgow Coma Scale Totale"
-        },
-        "encounter": {
-          "reference": "/Encounter/04810b11-382b-47ec-a1b1-df9be9af572c",
-          "type": "Encounter",
-          "display": "Encounter intervention"
-        },
-        "valueInteger": 12
-      },
-      {
-        "id": "c9388fc1-02d5-48e9-94cb-2d8f173258e4",
-        "meta": {
-          "versionId": "a44b757c-3a8b-4d03-b5e9-b67607f9d6c4",
-          "lastUpdated": "2020-02-11T19:15:30.140064Z"
-        },
-        "resourceType": "Observation",
-        "status": "final",
-        "code": {
-          "coding": [
-            {
-              "system": "http://www.snomed.org/",
-              "code": "17971005 ",
-              "display": "Sedated (finding)"
-            }
-          ],
-          "text": "Sedated Patient"
-        },
-        "encounter": {
-          "reference": "/Encounter/04810b11-382b-47ec-a1b1-df9be9af572c",
-          "type": "Encounter",
-          "display": "Encounter intervention"
-        },
-        "valueBoolean": false
-      },
-      {
-        "id": "a64a6124-e94b-44eb-bc90-9c1536aa0e54",
-        "meta": {
-          "versionId": "4f6af8cd-b999-40f3-a79b-c283705258d1",
-          "lastUpdated": "2020-02-11T19:15:30.140166Z"
-        },
-        "resourceType": "Observation",
-        "status": "final",
-        "code": {
-          "coding": [
-            {
-              "system": "https://loinc.org/",
-              "code": "79897-5",
-              "display": "Eye Physical findings panel"
-            }
-          ],
-          "text": "Pupils"
-        },
-        "encounter": {
-          "reference": "/Encounter/04810b11-382b-47ec-a1b1-df9be9af572c",
-          "type": "Encounter",
-          "display": "Encounter intevention"
-        },
-        "valueString": "Aniso"
-      },
-      {
-        "id": "57ed814b-bc78-415f-96b4-702ec1453dc6",
-        "meta": {
-          "versionId": "61e24a01-6138-4b88-bd84-66c4195741cd",
-          "lastUpdated": "2020-02-11T19:15:30.145563Z"
-        },
-        "resourceType": "Observation",
-        "status": "final",
-        "code": {
-          "coding": [
-            {
-              "system": "https://loinc.org/",
-              "code": "9304-7",
-              "display": "Respiration rhythm"
-            }
-          ],
-          "text": "Airways"
-        },
-        "encounter": {
-          "reference": "/Encounter/04810b11-382b-47ec-a1b1-df9be9af572c",
-          "type": "Encounter",
-          "display": "Encounter intervention"
-        },
-        "valueString": "Respiro Spontaneo"
-      },
-      {
-        "id": "c2e727b8-d9be-4957-b315-b5036cb964c0",
-        "meta": {
-          "versionId": "ae6af3c5-6747-4671-9fe4-88ea20ac707a",
-          "lastUpdated": "2020-02-11T19:15:30.145827Z"
-        },
-        "resourceType": "Observation",
-        "status": "final",
-        "code": {
-          "text": "Positive Inhalation"
-        },
-        "encounter": {
-          "reference": "/Encounter/04810b11-382b-47ec-a1b1-df9be9af572c",
-          "type": "Encounter",
-          "display": "Encounter intervention"
-        },
-        "valueBoolean": false
-      },
-      {
-        "id": "ea2f891e-af06-49c8-b4d2-8d5044ead2b4",
-        "meta": {
-          "versionId": "639d3907-dfad-4720-86bc-a40672dbc391",
-          "lastUpdated": "2020-02-11T19:15:30.146151Z"
-        },
-        "resourceType": "Observation",
-        "status": "final",
-        "code": {
-          "coding": [
-            {
-              "system": "http://www.snomed.org/",
-              "code": "264957007",
-              "display": "Insertion of pleural tube drain (procedure)"
-            }
-          ],
-          "text": "Chest Tube"
-        },
-        "encounter": {
-          "reference": "/Encounter/04810b11-382b-47ec-a1b1-df9be9af572c",
-          "type": "Encounter",
-          "display": "Encounter intervention"
-        },
-        "valueString": "Non Presente"
-      },
-      {
-        "id": "48e0679c-af3f-402a-bd62-e1bac3ac284e",
-        "meta": {
-          "versionId": "1433d881-251b-4084-b943-e62d7ad0e11d",
-          "lastUpdated": "2020-02-11T19:15:30.146265Z"
-        },
-        "resourceType": "Observation",
-        "status": "final",
-        "code": {
-          "coding": [
-            {
-              "system": "http://www.snomed.org/",
-              "code": "131148009",
-              "display": "Bleeding (finding)"
-            }
-          ],
-          "text": "External Hemorrhage"
-        },
-        "encounter": {
-          "reference": "/Encounter/04810b11-382b-47ec-a1b1-df9be9af572c",
-          "type": "Encounter",
-          "display": "Encounter intervention"
-        },
-        "valueBoolean": false
-      },
-      {
-        "id": "adbff705-187e-430f-b5ae-096573c997cb",
-        "meta": {
-          "versionId": "fe3ce331-8df7-4e74-a853-81be099026b1",
-          "lastUpdated": "2020-02-11T19:15:30.146392Z"
-        },
-        "resourceType": "Observation",
-        "status": "final",
-        "code": {
-          "coding": [
-            {
-              "system": "http://www.snomed.org/",
-              "code": "125605004",
-              "display": "Fracture of bone (disorder)"
-            }
-          ],
-          "text": "Limbs Fracture"
-        },
-        "encounter": {
-          "reference": "/Encounter/04810b11-382b-47ec-a1b1-df9be9af572c",
-          "type": "Encounter",
-          "display": "Encounter intervention"
-        },
-        "valueBoolean": false
-      },
-      {
-        "id": "22024429-c4d9-49e3-bf06-211e4cd7ecec",
-        "meta": {
-          "versionId": "c61fa999-a3ad-4e67-b5ab-391935c37dd8",
-          "lastUpdated": "2020-02-11T19:15:30.146478Z"
-        },
-        "resourceType": "Observation",
-        "status": "final",
-        "code": {
-          "coding": [
-            {
-              "system": "http://www.snomed.org/",
-              "code": "52329006",
-              "display": "Fracture, open (morphologic abnormality)"
-            }
-          ],
-          "text": "Fracture Exposition"
-        },
-        "encounter": {
-          "reference": "/Encounter/04810b11-382b-47ec-a1b1-df9be9af572c",
-          "type": "Encounter",
-          "display": "Encounter intervention"
-        },
-        "valueBoolean": false
-      },
-      {
-        "id": "d8f2cfea-1a3a-4b6b-8490-bd599d7b30df",
-        "meta": {
-          "versionId": "46fdde05-083f-4303-9a50-8e6c9ee640ef",
-          "lastUpdated": "2020-02-11T19:15:30.146569Z"
-        },
-        "resourceType": "Observation",
-        "status": "final",
-        "code": {
-          "coding": [
-            {
-              "code": "48333001",
-              "display": "Burn injury (morphologic abnormality)"
-            }
-          ],
-          "text": "Burn"
-        },
-        "encounter": {
-          "reference": "/Encounter/04810b11-382b-47ec-a1b1-df9be9af572c",
-          "type": "Encounter",
-          "display": "Encounter intervention"
-        },
-        "valueString": "Non Presente"
+        ]
       }
-    ],
-    "procedures": [
-      {
-        "id": "e352adfa-16bf-4ab2-947d-d7f39732406d",
-        "meta": {
-          "versionId": "2d2d2cad-d6d0-4916-bf11-039e6d331865",
-          "lastUpdated": "2020-02-11T19:15:30.135793Z"
-        },
-        "resourceType": "Procedure",
-        "status": "completed",
-        "code": {
-          "coding": [
-            {
-              "system": "http://www.snomed.org/",
-              "code": "311791003",
-              "display": "Information gathering (procedure)"
-            }
-          ],
-          "text": "Anamnesis"
-        },
-        "subject": {
-          "reference": "#44acf11f-7b56-452a-b65b-8c609f9d53d9",
-          "type": "Patient",
-          "display": "Mario Rossi età 40"
-        },
-        "encounter": {
-          "reference": "/Encounter/a92375f9-d7f3-4530-960a-792188b09d60",
-          "type": "Encounter",
-          "display": "Encounter pre ospedalizzazione"
-        }
+    }
+  ],
+  "hospitalization": {
+    "destination": {
+      "display": "Pronto Soccorso"
+    }
+  },
+  "location": [
+    {
+      "location": {
+        "display": "Elicottero"
       },
-      {
-        "id": "157f342d-b952-4046-9724-547e6b9e6c79",
-        "meta": {
-          "versionId": "9f7dd79c-d3c4-4bba-a4a7-3839d0bc5062",
-          "lastUpdated": "2020-02-11T19:15:30.136292Z"
-        },
-        "resourceType": "Procedure",
-        "status": "completed",
-        "code": {
-          "coding": [
-            {
-              "system": "http://www.snomed.org/",
-              "code": "91602002",
-              "display": "Thoracentesis (procedure)"
-            }
-          ],
-          "text": "Pleural Decompression"
-        },
-        "subject": {
-          "reference": "#44acf11f-7b56-452a-b65b-8c609f9d53d9"
-        },
-        "encounter": {
-          "reference": "/Encounter/a92375f9-d7f3-4530-960a-792188b09d60",
-          "type": "Encounter",
-          "display": "Encounter pre ospedalizzazione"
-        }
-      },
-      {
-        "id": "3997b8b4-867e-4ebf-85e0-d99d89dfe4f3",
-        "meta": {
-          "versionId": "8eb5b2e7-25f0-4d1c-ad36-9d9f3ac03cf0",
-          "lastUpdated": "2020-02-11T19:15:30.136394Z"
-        },
-        "resourceType": "Procedure",
-        "status": "completed",
-        "code": {
-          "coding": [
-            {
-              "system": "http://www.snomed.org/",
-              "code": "5447007",
-              "display": "Transfusion"
-            }
-          ],
-          "text": "Blood Protocol"
-        },
-        "subject": {
-          "reference": "#44acf11f-7b56-452a-b65b-8c609f9d53d9",
-          "type": "Patient",
-          "display": "Mario Rossi età 40"
-        },
-        "encounter": {
-          "reference": "/Encounter/a92375f9-d7f3-4530-960a-792188b09d60",
-          "type": "Encounter",
-          "display": "Encounter pre ospedalizzazione"
-        }
-      },
-      {
-        "id": "1b9bf9d7-d15f-4ab0-a050-717ab895fe7c",
-        "meta": {
-          "versionId": "0338dbbb-145d-47a7-b7a5-571d091d8626",
-          "lastUpdated": "2020-02-11T19:15:30.136532Z"
-        },
-        "resourceType": "Procedure",
-        "usedCode": [
+      "status": "completed",
+      "physicalType": {
+        "coding": [
           {
-            "text": "T-Pod Responder"
+            "system": "https://www.hl7.org/fhir/valueset-location-physical-type.html",
+            "code": "ve",
+            "display": "Vehicle"
           }
         ],
-        "status": "completed",
-        "code": {
-          "coding": [
-            {
-              "system": "http://www.snomed.org/",
-              "code": "771392003",
-              "display": "Stability of joint structure of pelvic girdle"
-            }
-          ],
-          "text": "Tpod Responder"
-        },
-        "subject": {
-          "reference": "#44acf11f-7b56-452a-b65b-8c609f9d53d9",
-          "type": "Patient",
-          "display": "Mario Rossi età 40"
-        },
-        "encounter": {
-          "reference": "/Encounter/a92375f9-d7f3-4530-960a-792188b09d60",
-          "type": "Encounter",
-          "display": "Encounter pre ospedalizzazione"
-        }
-      },
-      {
-        "id": "90fda598-a8ab-41e9-a635-4a9c3c848dfc",
-        "meta": {
-          "versionId": "09068710-5418-49ad-b36a-b90f629d20fa",
-          "lastUpdated": "2020-02-11T19:15:30.146031Z"
-        },
-        "resourceType": "Procedure",
-        "status": "completed",
-        "code": {
-          "coding": [
-            {
-              "system": "http://www.snomed.org/",
-              "code": "112798008",
-              "display": "Insertion of endotracheal tube (procedure)"
-            }
-          ],
-          "text": "Intubation"
-        },
-        "encounter": {
-          "reference": "/Encounter/04810b11-382b-47ec-a1b1-df9be9af572c",
-          "type": "Encounter",
-          "display": "Encounter intervention"
-        },
-        "outcome": {
-          "coding": [
-            {
-              "code": "385669000",
-              "display": "Successful"
-            }
-          ]
-        }
+        "text": "Trasporto con Elicottero"
       }
-    ],
-    "_id": "5e42fd52c890f15fd51b0877"
+    },
+    {
+      "location": {
+        "display": "Territorial Area: Cesena"
+      },
+      "physicalType": {
+        "coding": [
+          {
+            "system": "https://www.hl7.org/fhir/codesystem-location-physical-type.html",
+            "code": "si",
+            "display": "Site"
+          }
+        ],
+        "text": "Territorial Area"
+      }
+    },
+    {
+      "location": {
+        "display": "PRE-H"
+      },
+      "period": {
+        "start": "2020-02-04T02:56:25Z"
+      }
+    },
+    {
+      "location": {
+        "display": "PRE-H"
+      },
+      "period": {
+        "start": "2020-02-04T02:57:59Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Trasporto"
+      },
+      "period": {
+        "start": "2020-02-04T02:59:24Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Trasporto"
+      },
+      "period": {
+        "start": "2020-02-04T02:59:35Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:57:59Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:58:16Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:58:17Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:58:19Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:58:20Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:58:22Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:58:23Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:58:27Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:58:28Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:58:29Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:58:34Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:58:36Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:58:37Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:58:39Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:58:41Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:58:50Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:59:01Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:59:13Z"
+      }
+    },
+    {
+      "location": {
+        "display": "TAC PS"
+      },
+      "period": {
+        "start": "2020-02-04T02:59:13Z"
+      }
+    },
+    {
+      "location": {
+        "display": "TAC PS"
+      },
+      "period": {
+        "start": "2020-02-04T02:59:24Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:59:35Z"
+      }
+    },
+    {
+      "location": {
+        "display": "Shock-Room"
+      },
+      "period": {
+        "start": "2020-02-04T02:59:48Z"
+      }
+    }
+  ],
+  "serviceProvider": {
+    "display": "Ospedale Bufalini"
+  },
+  "class": {
+    "code": "EMER",
+    "display": "Emergency"
   }
 }
