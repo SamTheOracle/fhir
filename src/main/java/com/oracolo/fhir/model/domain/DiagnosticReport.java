@@ -27,13 +27,13 @@ public class DiagnosticReport extends DomainResource {
   private CodeableConcept code;
   private Reference subject;
   private Reference encounter;
-  private String effectiveDatetime;
+  private String effectiveDateTime;
   private Extension _effectiveDateTime;
   private Period effectivePeriod;
   private Instant issued;
   private Extension _issued;
   private List<Reference> performer, resultsInterpreter, specimen, result, imagingStudy;
-  private DiagnosticReportMedia media;
+  private List<DiagnosticReportMedia> media;
   private String conclusion;
   private Extension _conclusion;
   private List<CodeableConcept> conclusionCode;
@@ -111,12 +111,12 @@ public class DiagnosticReport extends DomainResource {
     this.subject = subject;
   }
 
-  public String getEffectiveDatetime() {
-    return effectiveDatetime;
+  public String getEffectiveDateTime() {
+    return effectiveDateTime;
   }
 
-  public DiagnosticReport setEffectiveDatetime(String effectiveDatetime) {
-    this.effectiveDatetime = effectiveDatetime;
+  public DiagnosticReport setEffectiveDateTime(String effectiveDateTime) {
+    this.effectiveDateTime = effectiveDateTime;
     return this;
   }
 
@@ -192,11 +192,11 @@ public class DiagnosticReport extends DomainResource {
     this.imagingStudy = imagingStudy;
   }
 
-  public DiagnosticReportMedia getMedia() {
+  public List<DiagnosticReportMedia> getMedia() {
     return media;
   }
 
-  public void setMedia(DiagnosticReportMedia media) {
+  public void setMedia(List<DiagnosticReportMedia> media) {
     this.media = media;
   }
 

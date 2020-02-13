@@ -577,7 +577,7 @@ public class TraumaTracker extends BaseRestInterface {
           Boolean hyperfibrinolysis = content.getBoolean("hyperfibrinolysis");
           DiagnosticReport diagnosticReport = new DiagnosticReport()
             .setId(String.valueOf(eventId))
-            .setEffectiveDatetime(date + " " + time)
+            .setEffectiveDateTime(date + " " + time)
             .setCode(new CodeableConcept()
               .setText(diagnosticId))
             .setStatus("final")

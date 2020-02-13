@@ -1,552 +1,66 @@
 {
-  "resourceType": "Bundle",
-  "type": "searchset",
-  "timestamp": "2020-02-11T21:56:17.853Z",
-  "total": 2,
-  "entry": [
+  "resourceType": "DiagnosticReport",
+  "id": "ghp",
+  "meta": {
+    "lastUpdated": "2015-08-16T10:35:23Z"
+  },
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>Generated Narrative with Details</b></p><p><b>id</b>: ghp</p><p><b>meta</b>: </p><p><b>identifier</b>: ghp-example</p><p><b>status</b>: final</p><p><b>code</b>: General Health Profile <span>(Details : {http://acme.com/labs/reports code 'GHP' = 'GHP', given as 'General Health Profile'})</span></p><p><b>subject</b>: <a>Patient/pat2</a></p><p><b>effective</b>: 16/08/2015 6:40:17 AM</p><p><b>issued</b>: 17/08/2015 6:40:17 AM</p><p><b>performer</b>: <a>Acme Laboratory, Inc</a></p><p><b>specimen</b>: </p><ul><li><a>Red Top Tube</a></li><li><a>Lavender Top Tube</a></li><li><a>Urine Sample</a></li></ul><p><b>result</b>: </p><ul><li><a>Chemistry Panel</a></li><li><a>CBC</a></li><li><a>Urinalysis</a></li></ul></div>"
+  },
+  "identifier": [
     {
-      "resource": {
-        "id": "46d69f8d-2561-4c92-b2af-f0bacee010d8",
-        "resourceType": "Observation",
-        "component": [
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "Group Total Iss headGroup iss score"
-            },
-            "valueInteger": 16
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "headNeckAis iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "brainAis iss score"
-            },
-            "valueInteger": 4
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "cervicalSpineAis iss score"
-            },
-            "valueInteger": 1
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "Group Total Iss faceGroup iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "faceAis iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "Group Total Iss toraxGroup iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "toraxAis iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "spineAis iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "Group Total Iss abdomenGroup iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "abdomenAis iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "lumbarSpineAis iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "Group Total Iss extremitiesGroup iss score"
-            },
-            "valueInteger": 1
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "upperExtremitiesAis iss score"
-            },
-            "valueInteger": 1
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "lowerExtremitiesAis iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "pelvicGirdleAis iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "Group Total Iss externaGroup iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "externaAis iss score"
-            },
-            "valueInteger": 0
-          }
-        ],
-        "status": "final",
-        "code": {
-          "coding": [
-            {
-              "system": "https://www.loinc.org",
-              "code": "74471-4",
-              "display": "Injury severity score Calculated"
-            }
-          ],
-          "text": "Total Iss"
-        },
-        "encounter": {
-          "reference": "/Encounter/4d60228a-229a-457a-aa75-a9a712060a68",
-          "type": "Encounter",
-          "display": "Encounter intervention"
-        },
-        "valueInteger": 17,
-        "meta": {
-          "versionId": "f7380264-9cb9-42e7-b477-2a4c9fe52bac",
-          "lastUpdated": "2020-02-11T21:15:24.685Z"
-        },
-        "subject": {
-          "reference": "#04fc90fd-be4b-4a8f-96a2-d69448623ace",
-          "type": "Patient",
-          "display": "Mario Rossi età 40"
-        }
-      },
-      "response": {
-        "etag": "f7380264-9cb9-42e7-b477-2a4c9fe52bac",
-        "lastModified": "2020-02-11T21:15:24.685Z"
+      "system": "http://acme.com/lab/reports",
+      "value": "ghp-example"
+    }
+  ],
+  "status": "final",
+  "code": {
+    "coding": [
+      {
+        "system": "http://acme.com/labs/reports",
+        "code": "GHP",
+        "display": "General Health Profile"
       }
+    ]
+  },
+  "subject": {
+    "reference": "Patient/pat2"
+  },
+  "effectiveDateTime": "2015-08-16T06:40:17Z",
+  "issued": "2015-08-17T06:40:17Z",
+  "performer": [
+    {
+      "reference": "Organization/1832473e-2fe0-452d-abe9-3cdb9879522f",
+      "display": "Acme Laboratory, Inc"
+    }
+  ],
+  "specimen": [
+    {
+      "reference": "Specimen/rtt",
+      "display": "Red Top Tube"
     },
     {
-      "resource": {
-        "id": "0c71a6e2-f3fe-4c4b-93dc-00672d5ef394",
-        "resourceType": "Observation",
-        "component": [
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "Group Total Iss headGroup iss score"
-            },
-            "valueInteger": 16
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "headNeckAis iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "brainAis iss score"
-            },
-            "valueInteger": 4
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "cervicalSpineAis iss score"
-            },
-            "valueInteger": 1
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "Group Total Iss faceGroup iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "faceAis iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "Group Total Iss toraxGroup iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "toraxAis iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "spineAis iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "Group Total Iss abdomenGroup iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "abdomenAis iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "lumbarSpineAis iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "Group Total Iss extremitiesGroup iss score"
-            },
-            "valueInteger": 1
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "upperExtremitiesAis iss score"
-            },
-            "valueInteger": 1
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "lowerExtremitiesAis iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "pelvicGirdleAis iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "Group Total Iss externaGroup iss score"
-            },
-            "valueInteger": 0
-          },
-          {
-            "code": {
-              "coding": [
-                {
-                  "system": "https://www.loinc.org",
-                  "code": "74471-4",
-                  "display": "Injury severity score Calculated"
-                }
-              ],
-              "text": "externaAis iss score"
-            },
-            "valueInteger": 0
-          }
-        ],
-        "status": "final",
-        "code": {
-          "coding": [
-            {
-              "system": "https://www.loinc.org",
-              "code": "74471-4",
-              "display": "Injury severity score Calculated"
-            }
-          ],
-          "text": "Total Iss"
-        },
-        "encounter": {
-          "reference": "/Encounter/3b440053-aac4-4178-9231-9ee45eb2f926",
-          "type": "Encounter",
-          "display": "Encounter intervention"
-        },
-        "valueInteger": 17,
-        "meta": {
-          "versionId": "18bf6cdf-bd68-4744-afac-3ee2f4d0a9d2",
-          "lastUpdated": "2020-02-11T21:56:11.396Z"
-        },
-        "subject": {
-          "reference": "#f470ded6-6c4c-4f33-b2fd-5da0b0ea6365",
-          "type": "Patient",
-          "display": "Mario Rossi età 40"
-        }
-      },
-      "response": {
-        "etag": "18bf6cdf-bd68-4744-afac-3ee2f4d0a9d2",
-        "lastModified": "2020-02-11T21:56:11.396Z"
-      }
+      "reference": "Specimen/ltt",
+      "display": "Lavender Top Tube"
+    },
+    {
+      "reference": "Specimen/urine",
+      "display": "Urine Sample"
+    }
+  ],
+  "result": [
+    {
+      "reference": "Observation/p1",
+      "display": "Chemistry Panel"
+    },
+    {
+      "reference": "Observation/p2",
+      "display": "CBC"
+    },
+    {
+      "reference": "Observation/p3",
+      "display": "Urinalysis"
     }
   ]
 }

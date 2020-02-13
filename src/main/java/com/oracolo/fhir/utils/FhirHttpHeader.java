@@ -10,7 +10,7 @@ public class FhirHttpHeader {
   public static final FhirHttpHeader APPLICATION_JSON_VERSION = of("Content-Type", "application/fhir+json; fhirVersion=4.0");
   public static final FhirHttpHeader PREFER_MINIMAL = of("Prefer", "return=minimal");
   public static final FhirHttpHeader PREFER_REPRESENTATION = of("Prefer", "return=representation");
-  public static final FhirHttpHeader PREFER_OUTCOME = of("Prefer", "return=outcome");
+  public static final FhirHttpHeader PREFER_OUTCOME = of("Prefer", "return=OperationOutcome");
   public static final FhirHttpHeader APPLICATION_XML = of("Content-Type", "application/fhir+xml");
   public static final FhirHttpHeader TEXT = of("Content-Type", "text/plain");
 
