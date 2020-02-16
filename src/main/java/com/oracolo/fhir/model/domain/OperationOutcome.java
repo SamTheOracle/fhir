@@ -1,7 +1,7 @@
 package com.oracolo.fhir.model.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.oracolo.fhir.model.DomainResource;
+import com.oracolo.fhir.model.FhirDomainResourceAbstract;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.List;
  * A collection of error, warning, or information messages that result from a system action.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class OperationOutcome extends DomainResource {
+public class OperationOutcome extends FhirDomainResourceAbstract {
   /**
    * Resource type
    * <p>Cardinality: 1..1</p>

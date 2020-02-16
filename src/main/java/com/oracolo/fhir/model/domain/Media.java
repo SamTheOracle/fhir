@@ -1,6 +1,6 @@
 package com.oracolo.fhir.model.domain;
 
-import com.oracolo.fhir.model.DomainResource;
+import com.oracolo.fhir.model.FhirDomainResourceAbstract;
 import com.oracolo.fhir.model.Resource;
 import com.oracolo.fhir.model.datatypes.Attachment;
 import com.oracolo.fhir.model.datatypes.Identifier;
@@ -13,7 +13,7 @@ import com.oracolo.fhir.model.elements.Reference;
 import java.time.Instant;
 import java.util.List;
 
-public class Media extends DomainResource implements Resource {
+public class Media extends FhirDomainResourceAbstract implements Resource {
   private String resourceType = "Media";
 
   private List<Identifier> identifier;

@@ -1,8 +1,8 @@
 package com.oracolo.fhir.model.domain;
 
-import com.oracolo.fhir.model.DomainResource;
+import com.oracolo.fhir.model.FhirDomainResourceAbstract;
 
-public class Location extends DomainResource {
+public class Location extends FhirDomainResourceAbstract {
 
   private String resourceType = "Location";
 

@@ -296,12 +296,7 @@ public class TraumaTracker extends BaseRestInterface {
       .future()
       .onSuccess(aggregationEncounterJson -> routingContext.response()
         .putHeader(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON)
-        .setStatusCode(HttpResponseStatus.CREATED.code()).end(new JsonObject()
-          .put("encounterAllId", encounterAll.getId())
-          .put("encounterShockId", encounterIntervention.getId())
-          .put("encounterPrehId", encounterPreh.getId())
-          .put("aggregatedEncounter", aggregationEncounterJson)
-          .toBuffer()))
+        .setStatusCode(HttpResponseStatus.CREATED.code()).end(JsonObject.mapFrom(aggregationEncounterJson).encodePrettily()))
       .onFailure(throwable -> routingContext.response()
         .putHeader(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON)
         .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
@@ -461,13 +456,13 @@ public class TraumaTracker extends BaseRestInterface {
               preH.addNewContained(procedure.setEncounter(new Reference()
                 .setType(ResourceType.ENCOUNTER.typeName())
                 .setDisplay("Encounter pre ospedalizzazione")
-                .setReference("#" + preH)));
+                .setReference("#" + preH.getId())));
 
             } else {
               intervention.addNewContained(procedure.setEncounter(new Reference()
                 .setType(ResourceType.ENCOUNTER.typeName())
                 .setDisplay("Encounter intervention")
-                .setReference("#" + intervention)));
+                .setReference("#" + intervention.getId())));
             }
           }
           if (procedureId != null) {

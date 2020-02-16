@@ -312,6 +312,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
       mongoClient.insert("aggregations", aggregationJson, res -> {
         if (res.succeeded()) {
+          aggregationJson.remove("_id");
           handler.handle(Future.succeededFuture(aggregationJson));
         } else {
           handler
@@ -409,6 +410,7 @@ public class DatabaseServiceImpl implements DatabaseService {
     });
     return this;
   }
+
 
   private boolean checkJsonObjects(JsonObject j1, JsonObject j2) {
     j1.remove("meta");

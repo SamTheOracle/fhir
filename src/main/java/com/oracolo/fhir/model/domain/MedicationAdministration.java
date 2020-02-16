@@ -1,6 +1,6 @@
 package com.oracolo.fhir.model.domain;
 
-import com.oracolo.fhir.model.DomainResource;
+import com.oracolo.fhir.model.FhirDomainResourceAbstract;
 import com.oracolo.fhir.model.backboneelements.MedicationAdministrationDosage;
 import com.oracolo.fhir.model.backboneelements.MedicationAdministrationPerformer;
 import com.oracolo.fhir.model.datatypes.Identifier;
@@ -12,7 +12,7 @@ import com.oracolo.fhir.model.elements.Reference;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MedicationAdministration extends DomainResource {
+public class MedicationAdministration extends FhirDomainResourceAbstract {
   private String resourceType = "MedicationAdministration";
 
   private List<Identifier> identifier;

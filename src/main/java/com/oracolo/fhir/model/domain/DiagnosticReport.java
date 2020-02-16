@@ -1,7 +1,7 @@
 package com.oracolo.fhir.model.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.oracolo.fhir.model.DomainResource;
+import com.oracolo.fhir.model.FhirDomainResourceAbstract;
 import com.oracolo.fhir.model.backboneelements.DiagnosticReportMedia;
 import com.oracolo.fhir.model.datatypes.Attachment;
 import com.oracolo.fhir.model.datatypes.Identifier;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class DiagnosticReport extends DomainResource {
+public class DiagnosticReport extends FhirDomainResourceAbstract {
 
   private String resourceType = "DiagnosticReport";
 

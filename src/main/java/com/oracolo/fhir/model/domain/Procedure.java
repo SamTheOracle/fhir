@@ -1,7 +1,7 @@
 package com.oracolo.fhir.model.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.oracolo.fhir.model.DomainResource;
+import com.oracolo.fhir.model.FhirDomainResourceAbstract;
 import com.oracolo.fhir.model.backboneelements.ProcedureFocalDevice;
 import com.oracolo.fhir.model.backboneelements.ProcedurePerformer;
 import com.oracolo.fhir.model.datatypes.Identifier;
@@ -18,7 +18,7 @@ import java.util.List;
  * <p>code is mandatory</p>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Procedure extends DomainResource {
+public class Procedure extends FhirDomainResourceAbstract {
 
   private String resourceType = "Procedure";
   /**
@@ -558,7 +558,7 @@ public class Procedure extends DomainResource {
     return this;
   }
 
-  public Procedure addNewContained(DomainResource dom) {
+  public Procedure addNewContained(FhirDomainResourceAbstract dom) {
     if (contained == null) {
       contained = new ArrayList<>();
     }

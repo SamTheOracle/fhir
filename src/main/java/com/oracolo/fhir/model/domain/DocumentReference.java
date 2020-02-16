@@ -1,7 +1,7 @@
 package com.oracolo.fhir.model.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.oracolo.fhir.model.DomainResource;
+import com.oracolo.fhir.model.FhirDomainResourceAbstract;
 import com.oracolo.fhir.model.backboneelements.DocumentReferenceContent;
 import com.oracolo.fhir.model.backboneelements.DocumentReferenceContext;
 import com.oracolo.fhir.model.backboneelements.DocumentReferenceRelatesTo;
@@ -21,7 +21,7 @@ import java.util.List;
  * The DocumentReference resource can be used with any document format that has a recognized mime type and that conforms to this definition.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class DocumentReference extends DomainResource {
+public class DocumentReference extends FhirDomainResourceAbstract {
   private String resourceType = "DocumentReference";
 
   @Override

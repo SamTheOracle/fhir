@@ -3,7 +3,7 @@ package com.oracolo.fhir.model.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.oracolo.fhir.model.DomainResource;
+import com.oracolo.fhir.model.FhirDomainResourceAbstract;
 import com.oracolo.fhir.model.backboneelements.*;
 import com.oracolo.fhir.model.datatypes.Coding;
 import com.oracolo.fhir.model.datatypes.Identifier;
@@ -25,7 +25,7 @@ import java.util.List;
  * <p>During the encounter the patient may move from practitioner to practitioner and location to location.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Encounter extends DomainResource {
+public class Encounter extends FhirDomainResourceAbstract {
 
   @JsonIgnore
   public final static String everything = "$everything";

@@ -414,7 +414,9 @@ public class FhirServer extends BaseRestInterface {
     String collection = type.getCollection();
     String acceptableType = routingContext.getAcceptableContentType();
     String preferHeader = routingContext.request().headers().get(FhirHttpHeader.PREFER);
-
+    if (preferHeader == null) {
+      preferHeader = "";
+    }
     if (acceptableType == null) {
       acceptableType = FhirHttpHeader.APPLICATION_JSON.value();
     }
@@ -498,6 +500,9 @@ public class FhirServer extends BaseRestInterface {
       //Db operation using service proxy
       String acceptableType = routingContext.getAcceptableContentType();
       String preferHeader = routingContext.request().headers().get(FhirHttpHeader.PREFER);
+      if (preferHeader == null) {
+        preferHeader = "";
+      }
       if (acceptableType == null) {
         acceptableType = FhirHttpHeader.APPLICATION_JSON.value();
       }

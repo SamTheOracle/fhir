@@ -1,6 +1,6 @@
 package com.oracolo.fhir.utils;
 
-import com.oracolo.fhir.model.DomainResource;
+import com.oracolo.fhir.model.FhirDomainResourceAbstract;
 import com.oracolo.fhir.model.FhirResourceAbstract;
 import com.oracolo.fhir.model.domain.*;
 
@@ -20,7 +20,7 @@ public enum ResourceType {
   private final Class<? extends FhirResourceAbstract> clazz;
   private final String value;
 
-  ResourceType(String value, String collection, Class<? extends DomainResource> clazz) {
+  ResourceType(String value, String collection, Class<? extends FhirDomainResourceAbstract> clazz) {
     this.collection = collection;
     this.clazz = clazz;
     this.value = value;

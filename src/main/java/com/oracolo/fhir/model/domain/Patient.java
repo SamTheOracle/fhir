@@ -1,7 +1,7 @@
 package com.oracolo.fhir.model.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.oracolo.fhir.model.DomainResource;
+import com.oracolo.fhir.model.FhirDomainResourceAbstract;
 import com.oracolo.fhir.model.backboneelements.PatientContact;
 import com.oracolo.fhir.model.datatypes.*;
 import com.oracolo.fhir.model.elements.CodeableConcept;
@@ -43,10 +43,9 @@ import java.util.List;
  * </p>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Patient extends DomainResource {
+public class Patient extends FhirDomainResourceAbstract {
 
-  public static final String SEARCH_PARAM_GIVEN = "_given";
-  public static final String SEARCH_PARAM_FAMILY = "_family";
+
   /**
    * Resource type is "Patient"
    * <p>Cardinality: 1..1</p>

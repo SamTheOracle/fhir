@@ -10,7 +10,7 @@ import java.util.List;
  * A resource that includes narrative, extensions, and contained resources.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public abstract class DomainResource extends FhirResourceAbstract implements Resource {
+public abstract class FhirDomainResourceAbstract extends FhirResourceAbstract implements Resource {
 
   /**
    * A human-readable narrative that contains a summary of the resource and can be used to represent the response of the resource
@@ -50,7 +50,7 @@ public abstract class DomainResource extends FhirResourceAbstract implements Res
   protected List<Extension> modifierExtension;
 
 
-  public DomainResource() {
+  public FhirDomainResourceAbstract() {
   }
 
 

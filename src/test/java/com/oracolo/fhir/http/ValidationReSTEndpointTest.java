@@ -24,6 +24,7 @@ class ValidationReSTEndpointTest {
 
   @BeforeAll
   static void bootstrapServer(Vertx vertx, VertxTestContext vertxTestContext) {
+    System.setProperty("db", "fhir_db_test");
     vertx.deployVerticle(new ApplicationBootstrap(), vertxTestContext.completing());
   }
 

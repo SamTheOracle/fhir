@@ -1,7 +1,7 @@
 package com.oracolo.fhir.model.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.oracolo.fhir.model.DomainResource;
+import com.oracolo.fhir.model.FhirDomainResourceAbstract;
 import com.oracolo.fhir.model.backboneelements.PractitionerQualification;
 import com.oracolo.fhir.model.datatypes.*;
 import com.oracolo.fhir.model.elements.CodeableConcept;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Practitioner extends DomainResource {
+public class Practitioner extends FhirDomainResourceAbstract {
   private String resourceType = "Practitioner";
 
 

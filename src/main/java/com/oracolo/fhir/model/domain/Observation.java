@@ -2,7 +2,7 @@ package com.oracolo.fhir.model.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.oracolo.fhir.model.DomainResource;
+import com.oracolo.fhir.model.FhirDomainResourceAbstract;
 import com.oracolo.fhir.model.backboneelements.ObservationComponent;
 import com.oracolo.fhir.model.backboneelements.ObservationReferenceRange;
 import com.oracolo.fhir.model.backboneelements.Timing;
@@ -20,7 +20,7 @@ import java.util.List;
  * <p>Code is mandatory</p>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Observation extends DomainResource {
+public class Observation extends FhirDomainResourceAbstract {
 
   private String resourceType = "Observation";
   /**

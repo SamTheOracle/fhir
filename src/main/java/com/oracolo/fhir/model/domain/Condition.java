@@ -1,7 +1,7 @@
 package com.oracolo.fhir.model.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.oracolo.fhir.model.DomainResource;
+import com.oracolo.fhir.model.FhirDomainResourceAbstract;
 import com.oracolo.fhir.model.backboneelements.ConditionEvidence;
 import com.oracolo.fhir.model.backboneelements.ConditionStage;
 import com.oracolo.fhir.model.datatypes.Identifier;
@@ -16,7 +16,7 @@ import java.util.List;
  * concept that has risen to a level of concern.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Condition extends DomainResource {
+public class Condition extends FhirDomainResourceAbstract {
   private String resourceType = "Condition";
   /**
    * Business identifiers assigned to this condition by the performer or other systems which remain
