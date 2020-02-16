@@ -50,13 +50,12 @@ class MongoDBOperatorsTest {
     } else {
       vertxTestContext.failNow(new NullPointerException());
     }
-
-
   }
 
 
   @Test
   public void testGreaterEqual(Vertx vertx, VertxTestContext vertxTestContext) {
     vertxTestContext.completeNow();
+
   }
 }
