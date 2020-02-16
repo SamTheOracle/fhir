@@ -57,5 +57,6 @@ class MongoDBOperatorsTest {
 
   @Test
   public void testGreaterEqual(Vertx vertx, VertxTestContext vertxTestContext) {
+    vertxTestContext.completeNow();
   }
 }
