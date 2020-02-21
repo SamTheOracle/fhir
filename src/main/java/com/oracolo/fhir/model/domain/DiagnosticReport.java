@@ -3,12 +3,8 @@ package com.oracolo.fhir.model.domain;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.oracolo.fhir.model.FhirDomainResourceAbstract;
 import com.oracolo.fhir.model.backboneelements.DiagnosticReportMedia;
-import com.oracolo.fhir.model.datatypes.Attachment;
-import com.oracolo.fhir.model.datatypes.Identifier;
-import com.oracolo.fhir.model.datatypes.Period;
-import com.oracolo.fhir.model.elements.CodeableConcept;
+import com.oracolo.fhir.model.datatypes.*;
 import com.oracolo.fhir.model.elements.Extension;
-import com.oracolo.fhir.model.elements.Reference;
 
 import java.time.Instant;
 import java.util.ArrayList;

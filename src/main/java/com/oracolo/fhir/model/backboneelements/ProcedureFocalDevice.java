@@ -2,8 +2,8 @@ package com.oracolo.fhir.model.backboneelements;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.oracolo.fhir.model.BackboneElement;
-import com.oracolo.fhir.model.elements.CodeableConcept;
-import com.oracolo.fhir.model.elements.Reference;
+import com.oracolo.fhir.model.datatypes.CodeableConcept;
+import com.oracolo.fhir.model.datatypes.Reference;
 
 /**
  * A device that is implanted, removed or otherwise manipulated (calibration, battery replacement, fitting a prosthesis,

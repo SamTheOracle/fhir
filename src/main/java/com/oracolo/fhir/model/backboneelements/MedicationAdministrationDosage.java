@@ -2,10 +2,10 @@ package com.oracolo.fhir.model.backboneelements;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.oracolo.fhir.model.BackboneElement;
+import com.oracolo.fhir.model.datatypes.CodeableConcept;
+import com.oracolo.fhir.model.datatypes.Quantity;
+import com.oracolo.fhir.model.datatypes.Ratio;
 import com.oracolo.fhir.model.datatypes.SimpleQuantity;
-import com.oracolo.fhir.model.elements.CodeableConcept;
-import com.oracolo.fhir.model.elements.Quantity;
-import com.oracolo.fhir.model.elements.Ratio;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 

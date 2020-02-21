@@ -4,11 +4,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.oracolo.fhir.model.FhirDomainResourceAbstract;
 import com.oracolo.fhir.model.backboneelements.EpisodeOfCareDiagnosis;
 import com.oracolo.fhir.model.backboneelements.EpisodeOfCareStatusHistory;
+import com.oracolo.fhir.model.datatypes.CodeableConcept;
 import com.oracolo.fhir.model.datatypes.Identifier;
 import com.oracolo.fhir.model.datatypes.Period;
-import com.oracolo.fhir.model.elements.CodeableConcept;
+import com.oracolo.fhir.model.datatypes.Reference;
 import com.oracolo.fhir.model.elements.Extension;
-import com.oracolo.fhir.model.elements.Reference;
 
 import java.util.List;
 

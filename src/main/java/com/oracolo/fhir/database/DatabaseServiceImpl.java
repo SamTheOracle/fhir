@@ -4,8 +4,8 @@ import com.oracolo.fhir.model.aggregations.AggregationEncounter;
 import com.oracolo.fhir.model.aggregations.AggregationType;
 import com.oracolo.fhir.model.backboneelements.BundleEntry;
 import com.oracolo.fhir.model.backboneelements.BundleResponse;
+import com.oracolo.fhir.model.datatypes.Metadata;
 import com.oracolo.fhir.model.domain.*;
-import com.oracolo.fhir.model.elements.Metadata;
 import com.oracolo.fhir.model.resources.Bundle;
 import com.oracolo.fhir.utils.FhirUtils;
 import com.oracolo.fhir.utils.ResourceType;
@@ -216,15 +216,26 @@ public class DatabaseServiceImpl implements DatabaseService {
 
       } else {
         handler.handle(
-            ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), result.cause().getMessage()));
+          ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), result.cause().getMessage()));
       }
     });
     return this;
   }
 
   @Override
+  public DatabaseService aggregate(String collection, JsonArray pipeline,
+                                   Handler<AsyncResult<JsonObject>> handler) {
+    JsonObject command = new JsonObject().put("aggregate", collection).put("pipeline", pipeline).put("cursor",
+      new JsonObject());
+    mongoClient.runCommand("aggregation", command, asyncRes -> {
+
+    });
+    return this;
+  }
+
+  @Override
   public DatabaseService fetchDomainResourcesWithQuery(String collection, JsonObject query,
-      Handler<AsyncResult<JsonObject>> handler) {
+                                                       Handler<AsyncResult<JsonObject>> handler) {
     mongoClient.find(collection, query, result -> {
       if (result.succeeded() && result.result() != null && result.result().size() > 0) {
 

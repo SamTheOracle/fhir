@@ -3,11 +3,7 @@ package com.oracolo.fhir.model.domain;
 import com.oracolo.fhir.model.FhirDomainResourceAbstract;
 import com.oracolo.fhir.model.backboneelements.MedicationAdministrationDosage;
 import com.oracolo.fhir.model.backboneelements.MedicationAdministrationPerformer;
-import com.oracolo.fhir.model.datatypes.Identifier;
-import com.oracolo.fhir.model.datatypes.Period;
-import com.oracolo.fhir.model.elements.Annotation;
-import com.oracolo.fhir.model.elements.CodeableConcept;
-import com.oracolo.fhir.model.elements.Reference;
+import com.oracolo.fhir.model.datatypes.*;
 
 import java.util.ArrayList;
 import java.util.List;

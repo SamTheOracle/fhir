@@ -1,6 +1,5 @@
 package com.oracolo.fhir.model.datatypes;
 
-import com.oracolo.fhir.model.elements.CodeableConcept;
 import com.oracolo.fhir.model.elements.Extension;
 
 import java.util.List;

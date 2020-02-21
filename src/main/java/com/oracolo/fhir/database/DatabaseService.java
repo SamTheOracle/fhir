@@ -1,17 +1,17 @@
 package com.oracolo.fhir.database;
 
-import java.util.List;
-
 import com.oracolo.fhir.model.aggregations.AggregationType;
-
 import io.vertx.codegen.annotations.Fluent;
 import io.vertx.codegen.annotations.ProxyGen;
 import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
+
+import java.util.List;
 
 @ProxyGen
 @VertxGen
@@ -29,19 +29,23 @@ public interface DatabaseService {
 
   @Fluent
   DatabaseService conditionalCreateUpdate(String collection, JsonObject body, JsonObject query,
-      Handler<AsyncResult<JsonObject>> handler);
+                                          Handler<AsyncResult<JsonObject>> handler);
 
   @Fluent
   DatabaseService fetchDomainResourceWithQuery(String collection, JsonObject query, JsonObject fields,
-      Handler<AsyncResult<JsonObject>> handler);
+                                               Handler<AsyncResult<JsonObject>> handler);
+
+  @Fluent
+  DatabaseService aggregate(String collection, JsonArray pipeline,
+                            Handler<AsyncResult<JsonObject>> handler);
 
   @Fluent
   DatabaseService fetchDomainResourcesWithQuery(String collection, JsonObject query,
-      Handler<AsyncResult<JsonObject>> handler);
+                                                Handler<AsyncResult<JsonObject>> handler);
 
   @Fluent
   DatabaseService executeWriteBulkOperations(String collection, List<JsonObject> resources,
-      Handler<AsyncResult<JsonObject>> handler);
+                                             Handler<AsyncResult<JsonObject>> handler);
 
   @Fluent
   DatabaseService createUpdateResource(String collection, JsonObject body, Handler<AsyncResult<JsonObject>> handler);
@@ -51,13 +55,14 @@ public interface DatabaseService {
 
   @Fluent
   DatabaseService createAggregationResource(AggregationType aggregationType, JsonObject mainResource,
-      List<JsonObject> resources, Handler<AsyncResult<JsonObject>> handler);
+                                            List<JsonObject> resources, Handler<AsyncResult<JsonObject>> handler);
 
   @Fluent
   DatabaseService findAggregationResource(AggregationType aggregationType, JsonObject query,
-      Handler<AsyncResult<JsonObject>> handler);
+                                          Handler<AsyncResult<JsonObject>> handler);
 
   @Fluent
   DatabaseService fetchDomainResourceVersion(String collection, JsonObject query, JsonObject fields,
-  Handler<AsyncResult<JsonObject>> handler);
+                                             Handler<AsyncResult<JsonObject>> handler);
+
 }

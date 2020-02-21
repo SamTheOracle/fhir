@@ -1,8 +1,8 @@
 package com.oracolo.fhir.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.oracolo.fhir.model.datatypes.Narrative;
 import com.oracolo.fhir.model.elements.Extension;
-import com.oracolo.fhir.model.elements.Narrative;
 
 import java.util.List;
 

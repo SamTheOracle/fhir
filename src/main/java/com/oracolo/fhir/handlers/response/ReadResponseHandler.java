@@ -2,7 +2,7 @@ package com.oracolo.fhir.handlers.response;
 
 import com.oracolo.fhir.database.DatabaseService;
 import com.oracolo.fhir.handlers.response.format.Format;
-import com.oracolo.fhir.model.elements.Metadata;
+import com.oracolo.fhir.model.datatypes.Metadata;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.Promise;

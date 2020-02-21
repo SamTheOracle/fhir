@@ -1,12 +1,7 @@
 package com.oracolo.fhir.model.backboneelements;
 
 import com.oracolo.fhir.model.BackboneElement;
-import com.oracolo.fhir.model.datatypes.Address;
-import com.oracolo.fhir.model.datatypes.ContactPoint;
-import com.oracolo.fhir.model.datatypes.HumanName;
-import com.oracolo.fhir.model.datatypes.Period;
-import com.oracolo.fhir.model.elements.CodeableConcept;
-import com.oracolo.fhir.model.elements.Reference;
+import com.oracolo.fhir.model.datatypes.*;
 
 import java.util.List;
 

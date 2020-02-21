@@ -2,8 +2,10 @@ package com.oracolo.fhir.http;
 
 import com.oracolo.fhir.ApplicationBootstrap;
 import com.oracolo.fhir.model.aggregations.AggregationEncounter;
+import com.oracolo.fhir.model.resources.Bundle;
 import com.oracolo.fhir.utils.FhirUtils;
 import io.vertx.core.Vertx;
+import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.junit5.VertxExtension;
@@ -14,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.InputStream;
+import java.time.Instant;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -56,7 +59,21 @@ class MongoDBOperatorsTest {
 
 
   @Test
-  public void testGreaterEqual(Vertx vertx, VertxTestContext vertxTestContext) {
-    vertxTestContext.completeNow();
+  public void testGreaterEqualWithDates(Vertx vertx, VertxTestContext vertxTestContext) {
+    int port = Optional.ofNullable(Integer.getInteger("http.port")).orElse(8000);
+    String host = "localhost";
+    WebClient.create(vertx)
+      .get(port, host, "/" + FhirUtils.BASE + "/Observation")
+      .addQueryParam("_lastUpdated", "lt" + Instant.now())
+      .addQueryParam("_content", "iss")
+      .send(vertxTestContext.succeeding((response) -> vertxTestContext.verify(() -> {
+        Assertions.assertNotEquals("OperationOutcome", response
+          .bodyAsJsonObject()
+          .getString("resourceType"));
+        Assertions.assertDoesNotThrow(() -> Json.decodeValue(response.body(), Bundle.class));
+        Bundle responseBundle = Json.decodeValue(response.body(), Bundle.class);
+        Assertions.assertNotEquals(responseBundle.getEntry().size(), 0);
+        vertxTestContext.completeNow();
+      })));
   }
 }

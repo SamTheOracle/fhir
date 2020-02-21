@@ -2,10 +2,10 @@ package com.oracolo.fhir.model.backboneelements;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.oracolo.fhir.model.BackboneElement;
+import com.oracolo.fhir.model.datatypes.CodeableConcept;
 import com.oracolo.fhir.model.datatypes.Period;
-import com.oracolo.fhir.model.elements.CodeableConcept;
+import com.oracolo.fhir.model.datatypes.Reference;
 import com.oracolo.fhir.model.elements.Extension;
-import com.oracolo.fhir.model.elements.Reference;
 
 /**
  * List of locations where the patient has been during this encounter.

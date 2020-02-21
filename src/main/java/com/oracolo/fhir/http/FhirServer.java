@@ -7,10 +7,10 @@ import com.oracolo.fhir.handlers.response.ResponseHandler;
 import com.oracolo.fhir.handlers.response.format.BaseFormatHandler;
 import com.oracolo.fhir.handlers.validator.ValidationHandler;
 import com.oracolo.fhir.model.aggregations.AggregationType;
+import com.oracolo.fhir.model.datatypes.Metadata;
 import com.oracolo.fhir.model.domain.Encounter;
 import com.oracolo.fhir.model.domain.OperationOutcome;
 import com.oracolo.fhir.model.domain.OperationOutcomeIssue;
-import com.oracolo.fhir.model.elements.Metadata;
 import com.oracolo.fhir.utils.ErrorFormat;
 import com.oracolo.fhir.utils.FhirHttpHeader;
 import com.oracolo.fhir.utils.FhirUtils;
@@ -599,9 +599,8 @@ public class FhirServer extends BaseRestInterface {
     }
 
     JsonObject query = QueryHandler
-      .fromResourceType(type)
-      .query(queryParams)
-      .createMongoDbQuery();
+      .createMongoDbQuery(queryParams);
+
     HttpServerResponse serverResponse = routingContext.response();
     ResponseHandler
       .createSearchResponseHandler()
