@@ -5,10 +5,10 @@ import com.oracolo.fhir.model.FhirDomainResourceAbstract;
 import com.oracolo.fhir.model.backboneelements.DocumentReferenceContent;
 import com.oracolo.fhir.model.backboneelements.DocumentReferenceContext;
 import com.oracolo.fhir.model.backboneelements.DocumentReferenceRelatesTo;
+import com.oracolo.fhir.model.datatypes.CodeableConcept;
 import com.oracolo.fhir.model.datatypes.Identifier;
-import com.oracolo.fhir.model.elements.CodeableConcept;
+import com.oracolo.fhir.model.datatypes.Reference;
 import com.oracolo.fhir.model.elements.Extension;
-import com.oracolo.fhir.model.elements.Reference;
 
 import java.time.Instant;
 import java.util.ArrayList;

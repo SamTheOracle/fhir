@@ -8,7 +8,6 @@ import com.oracolo.fhir.model.backboneelements.*;
 import com.oracolo.fhir.model.datatypes.Period;
 import com.oracolo.fhir.model.datatypes.*;
 import com.oracolo.fhir.model.domain.*;
-import com.oracolo.fhir.model.elements.*;
 import com.oracolo.fhir.utils.FhirUtils;
 import com.oracolo.fhir.utils.ResourceType;
 import io.netty.handler.codec.http.HttpHeaderNames;
@@ -244,7 +243,16 @@ public class TraumaTracker extends BaseRestInterface {
         .setValue(reportJson.getString("_id")))
       .addNewIdentifier(new Identifier()
         .setValue(reportJson.getString("_version")));
-
+    encounterPreh
+      .addNewIdentifier(new Identifier()
+        .setValue(reportJson.getString("_id")))
+      .addNewIdentifier(new Identifier()
+        .setValue(reportJson.getString("_version")));
+    encounterIntervention
+      .addNewIdentifier(new Identifier()
+        .setValue(reportJson.getString("_id")))
+      .addNewIdentifier(new Identifier()
+        .setValue(reportJson.getString("_version")));
 
     if (encounterPreh.getLocation() != null) {
       encounterPreh.getLocation().forEach(encounterAll::addNewLocation);

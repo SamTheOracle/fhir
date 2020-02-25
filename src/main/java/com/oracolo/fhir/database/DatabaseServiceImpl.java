@@ -4,8 +4,8 @@ import com.oracolo.fhir.model.aggregations.AggregationEncounter;
 import com.oracolo.fhir.model.aggregations.AggregationType;
 import com.oracolo.fhir.model.backboneelements.BundleEntry;
 import com.oracolo.fhir.model.backboneelements.BundleResponse;
+import com.oracolo.fhir.model.datatypes.Metadata;
 import com.oracolo.fhir.model.domain.*;
-import com.oracolo.fhir.model.elements.Metadata;
 import com.oracolo.fhir.model.resources.Bundle;
 import com.oracolo.fhir.utils.FhirUtils;
 import com.oracolo.fhir.utils.ResourceType;
@@ -36,7 +36,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
   @Override
   public DatabaseService createDeletedResource(String collection, JsonObject query,
-      Handler<AsyncResult<JsonObject>> handler) {
+                                               Handler<AsyncResult<JsonObject>> handler) {
     fetchDomainResourceWithQuery(collection, query, null, res -> {
       // if it is successfull, the resource is not deleted
       if (res.succeeded() && res.result() != null) {
@@ -44,7 +44,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
 
         resultFromFetch.getJsonObject("meta").put("tag", new JsonArray().add(FhirUtils.DELETED)).put("lastUpdated",
-            Instant.now());
+          Instant.now());
         this.mongoClient.insert(collection, resultFromFetch, insertRes -> {
           if (insertRes.succeeded()) {
 
@@ -68,7 +68,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
   @Override
   public DatabaseService createUpdateResource(String collection, JsonObject body,
-      Handler<AsyncResult<JsonObject>> handler) {
+                                              Handler<AsyncResult<JsonObject>> handler) {
     this.mongoClient.insert(collection, body, insertRes -> {
       if (insertRes.succeeded()) {
         // vertx mongo client insert _id, when saving, need to get it out
@@ -76,7 +76,7 @@ public class DatabaseServiceImpl implements DatabaseService {
         handler.handle(Future.succeededFuture(body));
       } else {
         handler.handle(
-            ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), insertRes.cause().getMessage()));
+          ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), insertRes.cause().getMessage()));
       }
     });
     return this;
@@ -86,85 +86,85 @@ public class DatabaseServiceImpl implements DatabaseService {
   public DatabaseService findEverythingAboutEncounter(String id, Handler<AsyncResult<JsonObject>> handler) {
 
     mongoClient.find(ResourceType.ENCOUNTER.getCollection(),
-        new JsonObject().put("partOf.reference", "/Encounter/" + id), subEncounterRes -> {
-          JsonArray pipeline = new JsonArray();
+      new JsonObject().put("partOf.reference", "/Encounter/" + id), subEncounterRes -> {
+        JsonArray pipeline = new JsonArray();
 
-          if (subEncounterRes.succeeded() && subEncounterRes.result() != null && subEncounterRes.result().size() > 0) {
+        if (subEncounterRes.succeeded() && subEncounterRes.result() != null && subEncounterRes.result().size() > 0) {
 
-            List<String> encountersIds = new ArrayList<>();
-            encountersIds.add(id);
-            subEncounterRes.result().stream().peek(jsonObject -> jsonObject.remove("_id"))
-                .map(jsonObject -> jsonObject.getString("id")).peek(encountersIds::add).forEach(encounterId -> {
+          List<String> encountersIds = new ArrayList<>();
+          encountersIds.add(id);
+          subEncounterRes.result().stream().peek(jsonObject -> jsonObject.remove("_id"))
+            .map(jsonObject -> jsonObject.getString("id")).peek(encountersIds::add).forEach(encounterId -> {
+            for (ResourceType type : ResourceType.values()) {
+              pipeline.add(new JsonObject().put("$lookup",
+                new JsonObject().put("from", type.getCollection())
+                  .put("pipeline", new JsonArray().add(new JsonObject().put("$match",
+                    new JsonObject().put("$expr", new JsonObject().put("$eq",
+                      new JsonArray().add("$encounter.reference").add("/Encounter/" + encounterId))))))
+                  .put("as", type.getCollection())));
+            }
+          });
+          JsonObject command = new JsonObject().put("aggregate", "encounters").put("pipeline", pipeline).put("cursor",
+            new JsonObject());
+          mongoClient.runCommand("aggregate", command, res -> {
+            if (res.succeeded()) {
+              Bundle bundle = new Bundle().setTimestamp(Instant.now());
+              JsonObject r = res.result();
+              r.getJsonObject("cursor").getJsonArray("firstBatch").stream().map(JsonObject::mapFrom)
+                .filter(jsonObject -> encountersIds.contains(jsonObject.getString("id")))
+                .forEach(encounterJsonObject -> {
                   for (ResourceType type : ResourceType.values()) {
-                    pipeline.add(new JsonObject().put("$lookup",
-                        new JsonObject().put("from", type.getCollection())
-                            .put("pipeline", new JsonArray().add(new JsonObject().put("$match",
-                                new JsonObject().put("$expr", new JsonObject().put("$eq",
-                                    new JsonArray().add("$encounter.reference").add("/Encounter/" + encounterId))))))
-                            .put("as", type.getCollection())));
-                  }
-                });
-            JsonObject command = new JsonObject().put("aggregate", "encounters").put("pipeline", pipeline).put("cursor",
-                new JsonObject());
-            mongoClient.runCommand("aggregate", command, res -> {
-              if (res.succeeded()) {
-                Bundle bundle = new Bundle().setTimestamp(Instant.now());
-                JsonObject r = res.result();
-                r.getJsonObject("cursor").getJsonArray("firstBatch").stream().map(JsonObject::mapFrom)
-                    .filter(jsonObject -> encountersIds.contains(jsonObject.getString("id")))
-                    .forEach(encounterJsonObject -> {
-                      for (ResourceType type : ResourceType.values()) {
-                        JsonArray resources = encounterJsonObject.getJsonArray(type.getCollection());
-                        if (resources != null) {
-                          resources.stream().map(JsonObject::mapFrom).forEach(resource -> {
+                    JsonArray resources = encounterJsonObject.getJsonArray(type.getCollection());
+                    if (resources != null) {
+                      resources.stream().map(JsonObject::mapFrom).forEach(resource -> {
 
-                            Metadata meta = Json.decodeValue(resource.getJsonObject("meta").encode(), Metadata.class);
-                            if (meta.getTag() == null
-                                || (meta.getTag() != null && !meta.getTag().contains(FhirUtils.DELETED))) {
-                              bundle
-                                  .addNewEntry(
-                                      new BundleEntry()
-                                          .setResponse(new BundleResponse().setEtag(meta.getVersionId())
-                                              .setLastModified(meta.getLastUpdated().toString()))
-                                          .setResource(resource));
-                            }
-                          });
-                          encounterJsonObject.remove(type.getCollection());
+                        Metadata meta = Json.decodeValue(resource.getJsonObject("meta").encode(), Metadata.class);
+                        if (meta.getTag() == null
+                          || (meta.getTag() != null && !meta.getTag().contains(FhirUtils.DELETED))) {
+                          bundle
+                            .addNewEntry(
+                              new BundleEntry()
+                                .setResponse(new BundleResponse().setEtag(meta.getVersionId())
+                                  .setLastModified(meta.getLastUpdated().toString()))
+                                .setResource(resource));
                         }
-                      }
-                      Metadata metaEncounter = Json.decodeValue(encounterJsonObject.getJsonObject("meta").encode(),
-                          Metadata.class);
-                      bundle.addNewEntry(new BundleEntry()
-                          .setResponse(new BundleResponse().setEtag(metaEncounter.getVersionId())
-                              .setLastModified(metaEncounter.getLastUpdated().toString()))
-                          .setResource(encounterJsonObject));
-                    });
-                bundle.setTotal(bundle.getEntry().size());
-                handler.handle(Future.succeededFuture(JsonObject.mapFrom(bundle)));
-              } else if (res.succeeded() && res.result() != null
-                  && res.result().getJsonObject("cursor").getJsonArray("firstBatch").size() == 0) {
-                handler.handle(ServiceException.fail(HttpResponseStatus.NOT_FOUND.code(), "No resource found"));
+                      });
+                      encounterJsonObject.remove(type.getCollection());
+                    }
+                  }
+                  Metadata metaEncounter = Json.decodeValue(encounterJsonObject.getJsonObject("meta").encode(),
+                    Metadata.class);
+                  bundle.addNewEntry(new BundleEntry()
+                    .setResponse(new BundleResponse().setEtag(metaEncounter.getVersionId())
+                      .setLastModified(metaEncounter.getLastUpdated().toString()))
+                    .setResource(encounterJsonObject));
+                });
+              bundle.setTotal(bundle.getEntry().size());
+              handler.handle(Future.succeededFuture(JsonObject.mapFrom(bundle)));
+            } else if (res.succeeded() && res.result() != null
+              && res.result().getJsonObject("cursor").getJsonArray("firstBatch").size() == 0) {
+              handler.handle(ServiceException.fail(HttpResponseStatus.NOT_FOUND.code(), "No resource found"));
 
-              } else {
-                handler.handle(ServiceException.fail(FhirUtils.MONGODB_CONNECTION_FAIL, res.cause().getMessage()));
-              }
-            });
-          } else if (subEncounterRes.result() != null) {
-            handler.handle(ServiceException.fail(HttpResponseStatus.NOT_FOUND.code(), "Resources not found"));
-          } else {
-            handler
-                .handle(ServiceException.fail(FhirUtils.MONGODB_CONNECTION_FAIL, subEncounterRes.cause().getMessage()));
+            } else {
+              handler.handle(ServiceException.fail(FhirUtils.MONGODB_CONNECTION_FAIL, res.cause().getMessage()));
+            }
+          });
+        } else if (subEncounterRes.result() != null) {
+          handler.handle(ServiceException.fail(HttpResponseStatus.NOT_FOUND.code(), "Resources not found"));
+        } else {
+          handler
+            .handle(ServiceException.fail(FhirUtils.MONGODB_CONNECTION_FAIL, subEncounterRes.cause().getMessage()));
 
-          }
+        }
 
-        });
+      });
 
     return this;
   }
 
   @Override
   public DatabaseService conditionalCreateUpdate(String collection, JsonObject body, JsonObject query,
-      Handler<AsyncResult<JsonObject>> handler) {
+                                                 Handler<AsyncResult<JsonObject>> handler) {
     // JsonObject copy = body.copy();
     // copy.remove("id");
     // copy.remove("meta");
@@ -185,7 +185,7 @@ public class DatabaseServiceImpl implements DatabaseService {
             handler.handle(Future.succeededFuture(body));
           } else {
             handler.handle(
-                ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), insertRes.cause().getMessage()));
+              ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), insertRes.cause().getMessage()));
           }
         });
       }
@@ -196,13 +196,13 @@ public class DatabaseServiceImpl implements DatabaseService {
   @SuppressWarnings("OptionalGetWithoutIsPresent")
   @Override
   public DatabaseService fetchDomainResourceWithQuery(String collection, JsonObject query, JsonObject fields,
-      Handler<AsyncResult<JsonObject>> handler) {
+                                                      Handler<AsyncResult<JsonObject>> handler) {
     this.mongoClient.find(collection, query, result -> {
       if (result.succeeded() && result.result() != null && result.result().size() > 0) {
         JsonObject jsonObjectResult = result.result().stream().peek(json -> json.remove("_id"))
-            .max(Comparator.comparing(jsonObject -> Json
-                .decodeValue(jsonObject.getJsonObject("meta").encode(), Metadata.class).getLastUpdated()))
-            .get();
+          .max(Comparator.comparing(jsonObject -> Json
+            .decodeValue(jsonObject.getJsonObject("meta").encode(), Metadata.class).getLastUpdated()))
+          .get();
 
         Metadata metadata = Json.decodeValue(jsonObjectResult.getJsonObject("meta").encode(), Metadata.class);
         if (metadata.getTag() != null && metadata.getTag().contains(FhirUtils.DELETED)) {
@@ -216,15 +216,69 @@ public class DatabaseServiceImpl implements DatabaseService {
 
       } else {
         handler.handle(
-            ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), result.cause().getMessage()));
+          ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), result.cause().getMessage()));
       }
     });
     return this;
   }
 
   @Override
+  public DatabaseService executeAggregationCommand(String collection,
+                                                   JsonObject command,
+                                                   Handler<AsyncResult<JsonObject>> handler) {
+    command.put("aggregate", collection);
+    JsonArray aggregationOutputFields = (JsonArray) command.remove("aggregationOutputFields");
+
+    mongoClient.runCommand("aggregate", command, asyncRes -> {
+      if (asyncRes.succeeded() && asyncRes.result() != null) {
+        JsonObject mongoDbBatch = asyncRes.result();
+        List<JsonObject> results = mongoDbBatch.getJsonObject("cursor")
+          .getJsonArray("firstBatch")
+          .stream()
+          .map(JsonObject::mapFrom)
+          .filter(json -> {
+            JsonArray mergeJsonArray = new JsonArray();
+            aggregationOutputFields.stream().map(obj -> (String) obj)
+              .forEach(aggrPath -> mergeJsonArray.addAll(json.getJsonArray(aggrPath)));
+            return mergeJsonArray.size() > 0;
+          }).peek(json -> {
+            json.remove("_id");
+            aggregationOutputFields.stream().map(obj -> (String) obj).forEach(json::remove);
+          }).collect(Collectors.toList());
+        Bundle bundle = new Bundle().setTimestamp(Instant.now()).setTotal(results.size());
+        results.forEach(json -> {
+          Metadata meta = Json.decodeValue(json.getJsonObject("meta").encode(), Metadata.class);
+          if (meta.getTag() != null && meta.getTag().contains(FhirUtils.DELETED)) {
+            String resourceType = json.getString("resourceType");
+            String id = json.getString("id");
+            String vid = meta.getVersionId();
+            String lastModified = meta.getLastUpdated().toString();
+            bundle.addNewEntry(new BundleEntry()
+              .setResponse(new BundleResponse().setLastModified(lastModified).setEtag(vid)
+                .setLocation("/" + resourceType + "/" + id + "/_history/" + vid))
+              .setResource(new OperationOutcome().addNewIssue(new OperationOutcomeIssue().setCode("deleted")
+                .setSeverity("error").setDiagnostics("Resource already deleted"))));
+          } else {
+            bundle.addNewEntry(new BundleEntry()
+              .setResponse(
+                new BundleResponse().setLastModified(meta.getLastUpdated().toString()).setEtag(meta.getVersionId()))
+              .setResource(json));
+          }
+
+        });
+        //  .filter(json->)
+        handler.handle(Future.succeededFuture(JsonObject.mapFrom(bundle)));
+      } else {
+        handler.handle(ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), asyncRes.cause().getMessage()));
+      }
+
+    });
+    return this;
+  }
+
+  @Override
   public DatabaseService fetchDomainResourcesWithQuery(String collection, JsonObject query,
-      Handler<AsyncResult<JsonObject>> handler) {
+                                                       Handler<AsyncResult<JsonObject>> handler) {
     mongoClient.find(collection, query, result -> {
       if (result.succeeded() && result.result() != null && result.result().size() > 0) {
 
@@ -238,15 +292,15 @@ public class DatabaseServiceImpl implements DatabaseService {
             String vid = meta.getVersionId();
             String lastModified = meta.getLastUpdated().toString();
             bundle.addNewEntry(new BundleEntry()
-                .setResponse(new BundleResponse().setLastModified(lastModified).setEtag(vid)
-                    .setLocation("/" + resourceType + "/" + id + "/_history/" + vid))
-                .setResource(new OperationOutcome().addNewIssue(new OperationOutcomeIssue().setCode("deleted")
-                    .setSeverity("error").setDiagnostics("Resource already deleted"))));
+              .setResponse(new BundleResponse().setLastModified(lastModified).setEtag(vid)
+                .setLocation("/" + resourceType + "/" + id + "/_history/" + vid))
+              .setResource(new OperationOutcome().addNewIssue(new OperationOutcomeIssue().setCode("deleted")
+                .setSeverity("error").setDiagnostics("Resource already deleted"))));
           } else {
             bundle.addNewEntry(new BundleEntry()
-                .setResponse(
-                    new BundleResponse().setLastModified(meta.getLastUpdated().toString()).setEtag(meta.getVersionId()))
-                .setResource(json));
+              .setResponse(
+                new BundleResponse().setLastModified(meta.getLastUpdated().toString()).setEtag(meta.getVersionId()))
+              .setResource(json));
           }
 
         });
@@ -265,7 +319,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
   @Override
   public DatabaseService executeWriteBulkOperations(String collection, List<JsonObject> resources,
-      Handler<AsyncResult<JsonObject>> handler) {
+                                                    Handler<AsyncResult<JsonObject>> handler) {
     List<BulkOperation> operations = new ArrayList<>();
     resources.forEach(domainResource -> operations.add(BulkOperation.createInsert(domainResource)));
     mongoClient.bulkWrite(collection, operations, res -> {
@@ -280,48 +334,48 @@ public class DatabaseServiceImpl implements DatabaseService {
 
   @Override
   public DatabaseService createAggregationResource(AggregationType aggregationType, JsonObject mainResource,
-      List<JsonObject> resources, Handler<AsyncResult<JsonObject>> handler) {
+                                                   List<JsonObject> resources, Handler<AsyncResult<JsonObject>> handler) {
 
     switch (aggregationType) {
-    case ENCOUNTER:
-      List<Observation> observations = resources.stream()
+      case ENCOUNTER:
+        List<Observation> observations = resources.stream()
           .filter(jsonObject -> jsonObject.getString("resourceType").equals(ResourceType.OBSERVATION.typeName()))
           .map(json -> Json.decodeValue(json.encode(), Observation.class)).collect(Collectors.toList());
-      List<Condition> conditions = resources.stream()
+        List<Condition> conditions = resources.stream()
           .filter(jsonObject -> jsonObject.getString("resourceType").equals(ResourceType.CONDITION.typeName()))
           .map(json -> Json.decodeValue(json.encode(), Condition.class)).collect(Collectors.toList());
-      List<Procedure> procedures = resources.stream()
+        List<Procedure> procedures = resources.stream()
           .filter(jsonObject -> jsonObject.getString("resourceType").equals(ResourceType.PROCEDURE.typeName()))
           .map(json -> Json.decodeValue(json.encode(), Procedure.class)).collect(Collectors.toList());
-      List<Encounter> encounters = resources.stream()
+        List<Encounter> encounters = resources.stream()
           .filter(jsonObject -> jsonObject.getString("resourceType").equals(ResourceType.ENCOUNTER.typeName()))
           .map(json -> Json.decodeValue(json.encode(), Encounter.class)).collect(Collectors.toList());
-      List<Practitioner> practitioners = resources.stream()
+        List<Practitioner> practitioners = resources.stream()
           .filter(jsonObject -> jsonObject.getString("resourceType").equals(ResourceType.PRACTITIONER.typeName()))
           .map(json -> Json.decodeValue(json.encode(), Practitioner.class)).collect(Collectors.toList());
 
-      AggregationEncounter aggregationEncounter = new AggregationEncounter()
-        .setIds(encounters.stream()
-          .map(Encounter::getId)
-          .collect(Collectors.toList()))
-        .setMainEncounter(Json.decodeValue(mainResource.encode(), Encounter.class))
-        .setSubEncounters(encounters)
+        AggregationEncounter aggregationEncounter = new AggregationEncounter()
+          .setIds(encounters.stream()
+            .map(Encounter::getId)
+            .collect(Collectors.toList()))
+          .setMainEncounter(Json.decodeValue(mainResource.encode(), Encounter.class))
+          .setSubEncounters(encounters)
           .setObservations(observations).setProcedures(procedures).setPractitioners(practitioners)
           .setConditions(conditions);
-      JsonObject aggregationJson = JsonObject.mapFrom(aggregationEncounter);
+        JsonObject aggregationJson = JsonObject.mapFrom(aggregationEncounter);
 
-      mongoClient.insert("aggregations", aggregationJson, res -> {
-        if (res.succeeded()) {
-          aggregationJson.remove("_id");
-          handler.handle(Future.succeededFuture(aggregationJson));
-        } else {
-          handler
+        mongoClient.insert("aggregations", aggregationJson, res -> {
+          if (res.succeeded()) {
+            aggregationJson.remove("_id");
+            handler.handle(Future.succeededFuture(aggregationJson));
+          } else {
+            handler
               .handle(ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), res.cause().getMessage()));
-        }
-      });
-      break;
-    default:
-      handler.handle(ServiceException.fail(HttpResponseStatus.BAD_REQUEST.code(), "Unknown Aggregation Resource"));
+          }
+        });
+        break;
+      default:
+        handler.handle(ServiceException.fail(HttpResponseStatus.BAD_REQUEST.code(), "Unknown Aggregation Resource"));
 
     }
     return this;
@@ -329,7 +383,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
   @Override
   public DatabaseService findAggregationResource(AggregationType aggregationType, JsonObject query,
-      Handler<AsyncResult<JsonObject>> handler) {
+                                                 Handler<AsyncResult<JsonObject>> handler) {
     mongoClient.findOne("aggregations", query, null, res -> {
       if (res.succeeded() && res.result() != null) {
         JsonObject aggregationJsonObject = res.result();
@@ -361,32 +415,32 @@ public class DatabaseServiceImpl implements DatabaseService {
             String vid = meta.getVersionId();
             String lastModified = meta.getLastUpdated().toString();
             bundle.addNewEntry(new BundleEntry()
-                .setResponse(new BundleResponse().setLastModified(lastModified).setEtag(vid)
-                    .setLocation("/" + resourceType + "/" + id + "/_history/" + vid))
-                .setResource(new OperationOutcome().addNewIssue(new OperationOutcomeIssue().setCode("deleted")
-                    .setSeverity("error").setDiagnostics("Resource already deleted"))));
+              .setResponse(new BundleResponse().setLastModified(lastModified).setEtag(vid)
+                .setLocation("/" + resourceType + "/" + id + "/_history/" + vid))
+              .setResource(new OperationOutcome().addNewIssue(new OperationOutcomeIssue().setCode("deleted")
+                .setSeverity("error").setDiagnostics("Resource already deleted"))));
           } else {
             bundle
-                .addNewEntry(
-                    new BundleEntry()
-                        .setResponse(new BundleResponse().setLastModified(meta.getLastUpdated().toString())
-                            .setEtag(meta.getVersionId()).setLocation("/" + resourceType + "/" + id))
-                        .setResource(json));
+              .addNewEntry(
+                new BundleEntry()
+                  .setResponse(new BundleResponse().setLastModified(meta.getLastUpdated().toString())
+                    .setEtag(meta.getVersionId()).setLocation("/" + resourceType + "/" + id))
+                  .setResource(json));
           }
         });
         Metadata meta = Json.decodeValue(
-            aggregationJsonObject.getJsonObject("mainEncounter").getJsonObject("meta").encode(), Metadata.class);
+          aggregationJsonObject.getJsonObject("mainEncounter").getJsonObject("meta").encode(), Metadata.class);
         bundle.addNewEntry(new BundleEntry().setResource(aggregationJsonObject.getJsonObject("mainEncounter"))
-            .setResponse(new BundleResponse().setEtag(meta.getVersionId())
-                .setLastModified(meta.getLastUpdated().toString()).setLocation("/" + ResourceType.ENCOUNTER.typeName()
-                    + "/" + aggregationJsonObject.getJsonObject("mainEncounter").getString("id"))));
+          .setResponse(new BundleResponse().setEtag(meta.getVersionId())
+            .setLastModified(meta.getLastUpdated().toString()).setLocation("/" + ResourceType.ENCOUNTER.typeName()
+              + "/" + aggregationJsonObject.getJsonObject("mainEncounter").getString("id"))));
         bundle.setTotal(bundle.getEntry().size());
         handler.handle(Future.succeededFuture(JsonObject.mapFrom(bundle)));
       } else if (res.succeeded()) {
         handler.handle(ServiceException.fail(HttpResponseStatus.NOT_FOUND.code(), "No resource found"));
       } else {
         handler
-            .handle(ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), res.cause().getMessage()));
+          .handle(ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), res.cause().getMessage()));
 
       }
     });
@@ -396,7 +450,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
   @Override
   public DatabaseService fetchDomainResourceVersion(String collection, JsonObject query, JsonObject fields,
-      Handler<AsyncResult<JsonObject>> handler) {
+                                                    Handler<AsyncResult<JsonObject>> handler) {
     this.mongoClient.findOne(collection, query, fields, result -> {
       if (result.succeeded() && result.result() != null) {
         JsonObject jsonObjectResult = result.result();
@@ -405,7 +459,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
       } else {
         handler.handle(
-            ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), result.cause().getMessage()));
+          ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), result.cause().getMessage()));
       }
     });
     return this;

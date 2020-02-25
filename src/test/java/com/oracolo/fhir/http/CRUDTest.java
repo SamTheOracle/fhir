@@ -61,7 +61,7 @@ class CRUDTest {
     String host = "localhost";
     WebClient.create(vertx)
       .get(port, host, "/" + FhirUtils.BASE + "/" + ResourceType.PATIENT.typeName() + "/" + id)
-      .putHeader(FhirHttpHeader.APPLICATION_JSON.name(), FhirHttpHeader.APPLICATION_JSON.value())
+     // .putHeader(FhirHttpHeader.APPLICATION_JSON.name(), FhirHttpHeader.APPLICATION_JSON.value())
       .send(vertxTestContext.succeeding(response -> vertxTestContext.verify(() -> {
         assertDoesNotThrow(() -> Json.decodeValue(response.body(), Patient.class));
 

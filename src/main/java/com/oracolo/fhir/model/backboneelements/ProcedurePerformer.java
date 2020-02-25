@@ -1,8 +1,8 @@
 package com.oracolo.fhir.model.backboneelements;
 
 import com.oracolo.fhir.model.BackboneElement;
-import com.oracolo.fhir.model.elements.CodeableConcept;
-import com.oracolo.fhir.model.elements.Reference;
+import com.oracolo.fhir.model.datatypes.CodeableConcept;
+import com.oracolo.fhir.model.datatypes.Reference;
 
 /**
  * Limited to "real" people rather than equipment.

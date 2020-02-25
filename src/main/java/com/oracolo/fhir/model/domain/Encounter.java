@@ -5,13 +5,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.oracolo.fhir.model.FhirDomainResourceAbstract;
 import com.oracolo.fhir.model.backboneelements.*;
-import com.oracolo.fhir.model.datatypes.Coding;
-import com.oracolo.fhir.model.datatypes.Identifier;
-import com.oracolo.fhir.model.datatypes.Period;
-import com.oracolo.fhir.model.elements.CodeableConcept;
-import com.oracolo.fhir.model.elements.Duration;
+import com.oracolo.fhir.model.datatypes.*;
 import com.oracolo.fhir.model.elements.Extension;
-import com.oracolo.fhir.model.elements.Reference;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -6,9 +6,8 @@ import com.oracolo.fhir.model.FhirDomainResourceAbstract;
 import com.oracolo.fhir.model.backboneelements.ObservationComponent;
 import com.oracolo.fhir.model.backboneelements.ObservationReferenceRange;
 import com.oracolo.fhir.model.backboneelements.Timing;
-import com.oracolo.fhir.model.datatypes.Identifier;
-import com.oracolo.fhir.model.datatypes.Period;
-import com.oracolo.fhir.model.elements.*;
+import com.oracolo.fhir.model.datatypes.*;
+import com.oracolo.fhir.model.elements.Extension;
 
 import java.time.Instant;
 import java.util.ArrayList;

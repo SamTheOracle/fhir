@@ -1,9 +1,9 @@
 package com.oracolo.fhir.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.oracolo.fhir.model.datatypes.Metadata;
 import com.oracolo.fhir.model.domain.Patient;
 import com.oracolo.fhir.model.elements.Extension;
-import com.oracolo.fhir.model.elements.Metadata;
 
 /**
  * This specification defines a series of different types of resource that can be used to exchange and/or store data in order to solve a wide range of healthcare related problems, both clinical and administrative. In addition, this specification defines several different ways of exchanging the resources.

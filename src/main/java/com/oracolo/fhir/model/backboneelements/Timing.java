@@ -1,9 +1,9 @@
 package com.oracolo.fhir.model.backboneelements;
 
 import com.oracolo.fhir.model.BackboneElement;
-import com.oracolo.fhir.model.elements.CodeableConcept;
+import com.oracolo.fhir.model.datatypes.CodeableConcept;
+import com.oracolo.fhir.model.datatypes.RepeatTiming;
 import com.oracolo.fhir.model.elements.Extension;
-import com.oracolo.fhir.model.elements.RepeatTiming;
 
 import java.util.Date;
 import java.util.List;

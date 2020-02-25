@@ -7,10 +7,10 @@ import com.oracolo.fhir.handlers.response.ResponseHandler;
 import com.oracolo.fhir.handlers.response.format.BaseFormatHandler;
 import com.oracolo.fhir.handlers.validator.ValidationHandler;
 import com.oracolo.fhir.model.aggregations.AggregationType;
+import com.oracolo.fhir.model.datatypes.Metadata;
 import com.oracolo.fhir.model.domain.Encounter;
 import com.oracolo.fhir.model.domain.OperationOutcome;
 import com.oracolo.fhir.model.domain.OperationOutcomeIssue;
-import com.oracolo.fhir.model.elements.Metadata;
 import com.oracolo.fhir.utils.ErrorFormat;
 import com.oracolo.fhir.utils.FhirHttpHeader;
 import com.oracolo.fhir.utils.FhirUtils;
@@ -106,9 +106,9 @@ public class FhirServer extends BaseRestInterface {
 
         response
           .putHeader(HttpHeaderNames.CONTENT_TYPE, FhirHttpHeader.APPLICATION_JSON.value())
-        .setStatusCode(routingContext.statusCode())
-        .end(JsonObject.mapFrom(operationOutcome).encodePrettily());
-    });
+          .setStatusCode(routingContext.statusCode())
+          .end(JsonObject.mapFrom(operationOutcome).encodePrettily());
+      });
 
     loadRoutes(restApi);
 
@@ -599,9 +599,8 @@ public class FhirServer extends BaseRestInterface {
     }
 
     JsonObject query = QueryHandler
-      .fromResourceType(type)
-      .query(queryParams)
-      .createMongoDbQuery();
+      .createMongoDbQuery(queryParams);
+
     HttpServerResponse serverResponse = routingContext.response();
     ResponseHandler
       .createSearchResponseHandler()
@@ -609,7 +608,7 @@ public class FhirServer extends BaseRestInterface {
       .withFormatHandler(new BaseFormatHandler()
         .withAcceptHeader(acceptableType))
       .createResponseAsync(serverResponse, (service, promise)
-        -> service.fetchDomainResourcesWithQuery(collection, query, promise))
+        -> service.executeAggregationCommand(collection, query, promise))
       .releaseAsync()
       .future()
       .onSuccess(HttpServerResponse::end)
@@ -636,10 +635,8 @@ public class FhirServer extends BaseRestInterface {
 
   private void handleResourceValidation(RoutingContext routingContext) {
     JsonObject resourceToValidate = null;
-    ResourceType type;
     try {
       resourceToValidate = routingContext.getBodyAsJson() == null ? new JsonObject() : routingContext.getBodyAsJson();
-      type = ResourceType.valueOf(resourceToValidate.getString("resourceType").toUpperCase());
     } catch (IllegalArgumentException e) {
       routingContext
         .put("code", "exception")

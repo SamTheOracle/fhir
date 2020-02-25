@@ -2,8 +2,8 @@ package com.oracolo.fhir.model.backboneelements;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.oracolo.fhir.model.BackboneElement;
+import com.oracolo.fhir.model.datatypes.Reference;
 import com.oracolo.fhir.model.elements.Extension;
-import com.oracolo.fhir.model.elements.Reference;
 
 /**
  * Relationships that this document has with other document references that already exist.

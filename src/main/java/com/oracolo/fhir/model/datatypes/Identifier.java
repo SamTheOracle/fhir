@@ -2,9 +2,7 @@ package com.oracolo.fhir.model.datatypes;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.oracolo.fhir.model.Element;
-import com.oracolo.fhir.model.elements.CodeableConcept;
 import com.oracolo.fhir.model.elements.Extension;
-import com.oracolo.fhir.model.elements.Reference;
 
 /**
  * A numeric or alphanumeric string that is associated with a single object or entity within a given system. Typically, identifiers are

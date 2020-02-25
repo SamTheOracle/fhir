@@ -1,7 +1,7 @@
 package com.oracolo.fhir.model.domain;
 
+import com.oracolo.fhir.model.datatypes.Reference;
 import com.oracolo.fhir.model.elements.Extension;
-import com.oracolo.fhir.model.elements.Reference;
 
 /**
  * An object representing a link to another duplicate resource

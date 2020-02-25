@@ -2,8 +2,8 @@ package com.oracolo.fhir.model.backboneelements;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.oracolo.fhir.model.BackboneElement;
-import com.oracolo.fhir.model.elements.CodeableConcept;
-import com.oracolo.fhir.model.elements.Reference;
+import com.oracolo.fhir.model.datatypes.CodeableConcept;
+import com.oracolo.fhir.model.datatypes.Reference;
 
 import java.util.ArrayList;
 import java.util.List;

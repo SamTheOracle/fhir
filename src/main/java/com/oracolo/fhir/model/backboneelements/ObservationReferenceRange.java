@@ -1,10 +1,10 @@
 package com.oracolo.fhir.model.backboneelements;
 
 import com.oracolo.fhir.model.BackboneElement;
-import com.oracolo.fhir.model.elements.CodeableConcept;
+import com.oracolo.fhir.model.datatypes.CodeableConcept;
+import com.oracolo.fhir.model.datatypes.Quantity;
+import com.oracolo.fhir.model.datatypes.Range;
 import com.oracolo.fhir.model.elements.Extension;
-import com.oracolo.fhir.model.elements.Quantity;
-import com.oracolo.fhir.model.elements.Range;
 
 import java.util.List;
 

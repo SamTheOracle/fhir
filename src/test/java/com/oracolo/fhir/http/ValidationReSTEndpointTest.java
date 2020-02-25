@@ -1,9 +1,9 @@
 package com.oracolo.fhir.http;
 
 import com.oracolo.fhir.ApplicationBootstrap;
+import com.oracolo.fhir.model.datatypes.Reference;
 import com.oracolo.fhir.model.domain.OperationOutcome;
 import com.oracolo.fhir.model.domain.Procedure;
-import com.oracolo.fhir.model.elements.Reference;
 import com.oracolo.fhir.utils.FhirHttpHeader;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.Json;
