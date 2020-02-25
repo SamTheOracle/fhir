@@ -37,23 +37,34 @@ public class MongoDbQueryHandler implements QueryHandler {
         lookUpStages.add(chainQuery);
         aggregationOutputFields.add(chainParserResult.getCollection());
       }
-      for (MongoDbQuery mongoDbQuery : MongoDbQuery.values()) {
-        if (mongoDbQuery.getQueryName().equals(queryName)) {
-          new QueryPrefixHandler();
-          QueryPrefixResult queryPrefixResult = QueryPrefixHandler
-            .parsePrefix(params.get(queryName));
-          JsonObject fhirQuery = mongoDbQuery.getFhirQuery()
-            .setPrefix(queryPrefixResult.prefix())
-            .setValue(queryPrefixResult.parsedValue())
-            .mongoDbQuery();
-          andOperations.add(fhirQuery);
+      //text base search must be in first stage of the overall pipeline
+      if (queryName.equals(MongoDbQuery._content.getQueryName())) {
+        pipeline.add(new JsonObject()
+          .put("$match", MongoDbQuery._content
+            .getFhirQuery()
+            .setValue(params.get(queryName))
+            .mongoDbPipelineStageQuery()));
+      } else {
+        for (MongoDbQuery mongoDbQuery : MongoDbQuery.values()) {
+          if (mongoDbQuery.getQueryName().equals(queryName)) {
+            QueryPrefixResult queryPrefixResult = QueryPrefixHandler
+              .parsePrefix(params.get(queryName));
+            JsonObject fhirQuery = mongoDbQuery.getFhirQuery()
+              .setPrefix(queryPrefixResult.prefix())
+              .setValue(queryPrefixResult.parsedValue())
+              .mongoDbPipelineStageQuery();
+            andOperations.add(fhirQuery);
+          }
         }
       }
+
     });
     andOperations.add(new JsonObject());
     pipeline.add(new JsonObject()
       .put("$match", new JsonObject()
-        .put("$and", andOperations)))
+        .put("$expr", new JsonObject()
+          .put("$and", andOperations))
+      ))
       .addAll(lookUpStages);
     JsonObject command = new JsonObject()
       .put("aggregationOutputFields", aggregationOutputFields)

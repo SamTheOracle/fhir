@@ -99,6 +99,24 @@ public class QuerySearchTest {
       .get(port, host, "/" + FhirUtils.BASE + "/Observation")
       .addQueryParam("valueInteger", "gt4")
       .send(vertxTestContext.succeeding((response) -> {
+        JsonObject r = response.bodyAsJsonObject();
+        Assertions.assertDoesNotThrow(() -> Json.decodeValue(response.body(), Bundle.class));
+        Bundle bundle = Json.decodeValue(response.body(), Bundle.class);
+        Assertions.assertTrue(bundle.getEntry().size() > 0);
+        vertxTestContext.completeNow();
+      }));
+
+  }
+
+  @Test
+  public void searchContent(Vertx vertx, VertxTestContext vertxTestContext) {
+    String host = "localhost";
+    int port = Optional.ofNullable(Integer.getInteger("http.port")).orElse(8000);
+    WebClient.create(vertx)
+      .get(port, host, "/" + FhirUtils.BASE + "/Observation")
+      .addQueryParam("_content", "injury")
+      .send(vertxTestContext.succeeding((response) -> {
+        JsonObject r = response.bodyAsJsonObject();
         Assertions.assertDoesNotThrow(() -> Json.decodeValue(response.body(), Bundle.class));
         Bundle bundle = Json.decodeValue(response.body(), Bundle.class);
         Assertions.assertTrue(bundle.getEntry().size() > 0);

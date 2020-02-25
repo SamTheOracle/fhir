@@ -1,4 +1,8 @@
-package com.oracolo.fhir.handlers.query.mongo.queries.reference;
+package com.oracolo.fhir.handlers.query.mongo.queries;
+
+import com.oracolo.fhir.handlers.query.mongo.queries.reference.DiagnosisReferenceQuery;
+import com.oracolo.fhir.handlers.query.mongo.queries.reference.EncounterReferenceQuery;
+import com.oracolo.fhir.handlers.query.mongo.queries.reference.SubjectReferenceQuery;
 
 public enum ChainReferenceQuery {
   subject("subject", new SubjectReferenceQuery()),

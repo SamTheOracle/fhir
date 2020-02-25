@@ -21,7 +21,7 @@ public class IdQuery extends BaseMongoDbQuery {
   @Override
   public JsonObject mongoDbPipelineStageQuery() {
     return new JsonObject()
-      .put(prefix.operator(), new JsonArray()
+      .put("$eq", new JsonArray()
         .add("$id")
         .add(value));
   }

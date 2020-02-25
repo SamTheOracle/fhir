@@ -22,9 +22,11 @@ public class FamilyQuery extends BaseMongoDbQuery {
   @Override
   public JsonObject mongoDbPipelineStageQuery() {
     return new JsonObject()
-      .put("$name.family", new JsonObject()
-        .put("$regex", value)
-        .put("$options", "i"));
+      .put("$regexMatch",
+        new JsonObject()
+          .put("input", "$name.family")
+          .put("regex", value)
+          .put("options", "i"));
   }
 
 
