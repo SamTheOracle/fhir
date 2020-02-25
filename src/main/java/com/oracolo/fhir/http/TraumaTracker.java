@@ -243,7 +243,16 @@ public class TraumaTracker extends BaseRestInterface {
         .setValue(reportJson.getString("_id")))
       .addNewIdentifier(new Identifier()
         .setValue(reportJson.getString("_version")));
-
+    encounterPreh
+      .addNewIdentifier(new Identifier()
+        .setValue(reportJson.getString("_id")))
+      .addNewIdentifier(new Identifier()
+        .setValue(reportJson.getString("_version")));
+    encounterIntervention
+      .addNewIdentifier(new Identifier()
+        .setValue(reportJson.getString("_id")))
+      .addNewIdentifier(new Identifier()
+        .setValue(reportJson.getString("_version")));
 
     if (encounterPreh.getLocation() != null) {
       encounterPreh.getLocation().forEach(encounterAll::addNewLocation);

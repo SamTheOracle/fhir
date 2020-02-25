@@ -1,4 +1,4 @@
-package com.oracolo.fhir.handlers.query.parser.prefix;
+package com.oracolo.fhir.handlers.query.mongo.parser.prefix;
 
 public class QueryPrefixHandler {
 

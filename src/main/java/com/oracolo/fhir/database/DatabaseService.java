@@ -7,7 +7,6 @@ import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.mongo.MongoClient;
 
@@ -36,8 +35,9 @@ public interface DatabaseService {
                                                Handler<AsyncResult<JsonObject>> handler);
 
   @Fluent
-  DatabaseService aggregate(String collection, JsonArray pipeline,
-                            Handler<AsyncResult<JsonObject>> handler);
+  DatabaseService executeAggregationCommand(String collection,
+                                            JsonObject command,
+                                            Handler<AsyncResult<JsonObject>> handler);
 
   @Fluent
   DatabaseService fetchDomainResourcesWithQuery(String collection, JsonObject query,
