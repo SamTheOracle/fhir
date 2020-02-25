@@ -237,12 +237,13 @@ public class DatabaseServiceImpl implements DatabaseService {
           .stream()
           .map(JsonObject::mapFrom)
           .filter(json -> {
-            if (aggregationOutputFields.size() > 0) {
-              JsonArray mergeJsonArray = new JsonArray();
-              aggregationOutputFields.stream().map(obj -> (String) obj)
-                .forEach(aggrPath -> mergeJsonArray.addAll(json.getJsonArray(aggrPath)));
-              return mergeJsonArray.size() > 0;
-            } else return true;
+            boolean emptyResults = true;
+            for (Object obj : aggregationOutputFields) {
+              if (json.getJsonArray((String) obj).size() == 0) {
+                emptyResults = false;
+              }
+            }
+            return emptyResults;
           }).peek(json -> {
             json.remove("_id");
             aggregationOutputFields.stream().map(obj -> (String) obj).forEach(json::remove);

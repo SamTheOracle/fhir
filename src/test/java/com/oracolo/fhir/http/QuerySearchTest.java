@@ -132,6 +132,7 @@ public class QuerySearchTest {
     WebClient.create(vertx)
       .get(port, host, "/" + FhirUtils.BASE + "/Condition")
       .addQueryParam("encounter:Encounter.identifier", "rep-20200204-145625")
+      .addQueryParam("evidence-detail:Observation.code", "67494-5")
       // .addQueryParam("diagnosis:Condition.code","417746004")
       .addQueryParam("_lastUpdated", "le" + Instant.now())
       .send(vertxTestContext.succeeding((response) -> {

@@ -22,17 +22,19 @@ public class ChainParserHandler {
         String queryName = split[1];
         QueryPrefixResult result = QueryPrefixHandler.parsePrefix(paramValue);
         FhirQuery fhirQuery = MongoDbQuery
-          .valueOf(queryName)
+          .valueOf(queryName.replace("-", "_"))
           .getFhirQuery();
-        ChainReference reference = ChainReferenceQuery
-          .valueOf(fieldToCompare)
+        ChainReferenceQuery chainReferenceQuery = ChainReferenceQuery
+          .valueOf(fieldToCompare.replace("-", "_"));
+        ChainReference reference = chainReferenceQuery
           .getChainReference();
         return new ChainParserResult(type.getCollection(),
           new JsonObject()
             .put("$lookup", new JsonObject()
               .put("from", type.getCollection())
               .put("let", new JsonObject()
-                .put("searchParam", "$" + fieldToCompare))
+                .put("searchParam", "$" + chainReferenceQuery
+                  .getFhirResourceField()))
               .put("pipeline", new JsonArray()
                 .add(new JsonObject()
                   .put("$match", new JsonObject()

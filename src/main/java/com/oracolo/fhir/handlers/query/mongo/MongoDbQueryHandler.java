@@ -48,7 +48,7 @@ public class MongoDbQueryHandler implements QueryHandler {
         for (MongoDbQuery mongoDbQuery : MongoDbQuery.values()) {
           if (mongoDbQuery.getQueryName().equals(queryName)) {
             QueryPrefixResult queryPrefixResult = QueryPrefixHandler
-              .parsePrefix(params.get(queryName));
+              .parsePrefix(params.get(queryName.replace("-", "_")));
             JsonObject fhirQuery = mongoDbQuery.getFhirQuery()
               .setPrefix(queryPrefixResult.prefix())
               .setValue(queryPrefixResult.parsedValue())
@@ -70,7 +70,8 @@ public class MongoDbQueryHandler implements QueryHandler {
       .put("aggregationOutputFields", aggregationOutputFields)
       .put("pipeline", pipeline)
       .put("cursor",
-        new JsonObject());
+        new JsonObject())
+      .put("allowDiskUse", true);
     return command;
 
   }
