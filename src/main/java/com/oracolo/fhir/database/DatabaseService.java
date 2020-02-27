@@ -26,9 +26,6 @@ public interface DatabaseService {
   @Fluent
   DatabaseService createDeletedResource(String collection, JsonObject query, Handler<AsyncResult<JsonObject>> handler);
 
-  @Fluent
-  DatabaseService conditionalCreateUpdate(String collection, JsonObject body, JsonObject query,
-                                          Handler<AsyncResult<JsonObject>> handler);
 
   @Fluent
   DatabaseService fetchDomainResourceWithQuery(String collection, JsonObject query, JsonObject fields,
@@ -40,15 +37,11 @@ public interface DatabaseService {
                                             Handler<AsyncResult<JsonObject>> handler);
 
   @Fluent
-  DatabaseService fetchDomainResourcesWithQuery(String collection, JsonObject query,
-                                                Handler<AsyncResult<JsonObject>> handler);
-
-  @Fluent
   DatabaseService executeWriteBulkOperations(String collection, List<JsonObject> resources,
                                              Handler<AsyncResult<JsonObject>> handler);
 
   @Fluent
-  DatabaseService createUpdateResource(String collection, JsonObject body, Handler<AsyncResult<JsonObject>> handler);
+  DatabaseService createResource(String collection, JsonObject body, Handler<AsyncResult<JsonObject>> handler);
 
   @Fluent
   DatabaseService updateResource(String collection,
@@ -56,8 +49,6 @@ public interface DatabaseService {
                                  JsonObject matchQuery,
                                  Handler<AsyncResult<JsonObject>> handler);
 
-  @Fluent
-  DatabaseService findEverythingAboutEncounter(String encounterId, Handler<AsyncResult<JsonObject>> handler);
 
   @Fluent
   DatabaseService createAggregationResource(AggregationType aggregationType, JsonObject mainResource,

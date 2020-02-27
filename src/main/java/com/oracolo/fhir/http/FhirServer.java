@@ -444,7 +444,7 @@ public class FhirServer extends BaseRestInterface {
         .withFormatHandler(new BaseFormatHandler()
           .withAcceptHeader(acceptableType)
           .withPreferHeader(preferHeader))
-        .createResponseAsync(serverResponse, (service, promise) -> service.createUpdateResource(collection, finalResourceJson, promise))
+        .createResponseAsync(serverResponse, (service, promise) -> service.createResource(collection, finalResourceJson, promise))
         .releaseAsync()
         .future()
         .onSuccess(HttpServerResponse::end)

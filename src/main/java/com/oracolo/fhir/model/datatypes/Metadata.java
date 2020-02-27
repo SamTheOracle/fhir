@@ -46,13 +46,13 @@ public class Metadata extends Element {
    * and infrastructure. Security tags can be updated when the resource changes, or whenever the security sub-system chooses to.
    * <p>Cardinality: 0..*</p>
    */
-  private List<String> security;
+  private List<Coding> security;
   /**
    * Tags applied to this resource. Tags are used to relate resources to process and workflow.
    * Applications are not required to consider the tags when interpreting the meaning of a resource.
    * <p>Cardinality: 0..*</p>
    */
-  private List<String> tag;
+  private List<Coding> tag;
 
   public String getVersionId() {
     return versionId;
@@ -88,23 +88,23 @@ public class Metadata extends Element {
     this.profile = profile;
   }
 
-  public List<String> getSecurity() {
+  public List<Coding> getSecurity() {
     return security;
   }
 
-  public void setSecurity(List<String> security) {
+  public void setSecurity(List<Coding> security) {
     this.security = security;
   }
 
-  public List<String> getTag() {
+  public List<Coding> getTag() {
     return tag;
   }
 
-  public void setTag(List<String> tag) {
+  public void setTag(List<Coding> tag) {
     this.tag = tag;
   }
 
-  public Metadata addNewTag(String tagValue) {
+  public Metadata addNewTag(Coding tagValue) {
     if (tag == null) {
       tag = new ArrayList<>();
     }

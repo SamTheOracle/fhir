@@ -10,6 +10,8 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AggregationEncounter implements AggregationResource {
 
+  private String resourceType = "AggregationEncounter";
+
   private List<String> ids;
 
   private Encounter mainEncounter;
@@ -27,7 +29,7 @@ public class AggregationEncounter implements AggregationResource {
   private List<Location> locations;
 
   public String getResourceType() {
-    return "AggregationEncounter";
+    return resourceType;
   }
 
 
