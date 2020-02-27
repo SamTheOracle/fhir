@@ -4,5 +4,4 @@ services:
 before_script:
   - sleep 15
   - mongo fhir_db_test --eval 'db.procedures.createIndex({"$**":"text"});db.conditions.createIndex({"$**":"text"});db.observations.createIndex({"$**":"text"});db.encounters.createIndex({"$**":"text"})'
-after_script:
-  - mongo fhir_db_test --eval 'db.dropDatabase();'
+
