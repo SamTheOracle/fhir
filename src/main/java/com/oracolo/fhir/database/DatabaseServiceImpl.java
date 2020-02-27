@@ -4,6 +4,7 @@ import com.oracolo.fhir.model.aggregations.AggregationEncounter;
 import com.oracolo.fhir.model.aggregations.AggregationType;
 import com.oracolo.fhir.model.backboneelements.BundleEntry;
 import com.oracolo.fhir.model.backboneelements.BundleResponse;
+import com.oracolo.fhir.model.datatypes.Coding;
 import com.oracolo.fhir.model.datatypes.Metadata;
 import com.oracolo.fhir.model.domain.*;
 import com.oracolo.fhir.model.resources.Bundle;
@@ -41,10 +42,12 @@ public class DatabaseServiceImpl implements DatabaseService {
       // if it is successfull, the resource is not deleted
       if (res.succeeded() && res.result() != null) {
         JsonObject resultFromFetch = res.result();
+        Metadata metadata = Json.decodeValue(resultFromFetch.getJsonObject("meta").encode(), Metadata.class);
+        metadata.addNewTag(new Coding()
+          .setCode(FhirUtils.DELETED))
+          .setLastUpdated(Instant.now());
 
-
-        resultFromFetch.getJsonObject("meta").put("tag", new JsonArray().add(FhirUtils.DELETED)).put("lastUpdated",
-          Instant.now());
+        resultFromFetch.put("meta", JsonObject.mapFrom(metadata));
         this.mongoClient.insert(collection, resultFromFetch, insertRes -> {
           if (insertRes.succeeded()) {
 
@@ -119,7 +122,6 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     return this;
   }
-
 
 
   @SuppressWarnings("OptionalGetWithoutIsPresent")
@@ -209,7 +211,6 @@ public class DatabaseServiceImpl implements DatabaseService {
     });
     return this;
   }
-
 
 
   @Override
