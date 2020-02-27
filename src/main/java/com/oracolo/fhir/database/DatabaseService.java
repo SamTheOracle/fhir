@@ -51,6 +51,12 @@ public interface DatabaseService {
   DatabaseService createUpdateResource(String collection, JsonObject body, Handler<AsyncResult<JsonObject>> handler);
 
   @Fluent
+  DatabaseService updateResource(String collection,
+                                 JsonObject body,
+                                 JsonObject matchQuery,
+                                 Handler<AsyncResult<JsonObject>> handler);
+
+  @Fluent
   DatabaseService findEverythingAboutEncounter(String encounterId, Handler<AsyncResult<JsonObject>> handler);
 
   @Fluent

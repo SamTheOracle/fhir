@@ -26,6 +26,7 @@ public class FhirUtils {
   public static final String DELETED = "DELETED";
   public static final int MONGODB_CONNECTION_FAIL = 12;
   public static final String AGGREGATION_SERVICE_ADDRESS = "aggregation-service";
+  public static final String DELETE_MESSAGE = "Resource has been deleted";
 
 
   public static MongoClient createFhirMongoDbConnection(Vertx vertx) {

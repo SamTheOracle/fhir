@@ -178,7 +178,7 @@ public class TraumaTracker extends BaseRestInterface {
     Condition issCondition = new Condition()
       .setId(UUID.randomUUID().toString());
     if (iss != null) {
-      addIssToEncounterShock(iss, encounterIntervention, issCondition, domainResources);
+      addIssToEncounterIntervention(iss, encounterIntervention, issCondition, domainResources);
     }
 
     //aggiunta della final destination del encounter all
@@ -2152,7 +2152,7 @@ public class TraumaTracker extends BaseRestInterface {
     }
   }
 
-  private void addIssToEncounterShock(JsonObject iss, Encounter encounter, Condition conditionIssAssessment, List<Resource> resources) {
+  private void addIssToEncounterIntervention(JsonObject iss, Encounter encounter, Condition conditionIssAssessment, List<Resource> resources) {
     //Condition for iss, referenced in encounter resource
     conditionIssAssessment
       .setCode(new CodeableConcept()
@@ -2160,11 +2160,11 @@ public class TraumaTracker extends BaseRestInterface {
           .setCode("417746004")
           .setSystem("https://www.hl7.org/fhir/codesystem-snomedct.html")
           .setDisplay("Traumatic injury"))
-        .setText("Physical Condition after intervention")
-      ).setEncounter(new Reference()
-      .setType(ResourceType.ENCOUNTER.typeName())
-      .setDisplay("Encounter intervention")
-      .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounter.getId()))
+        .setText("Physical Condition after intervention"))
+      .setEncounter(new Reference()
+        .setType(ResourceType.ENCOUNTER.typeName())
+        .setDisplay("Encounter intervention")
+        .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounter.getId()))
       .addNewCategory(new CodeableConcept()
         .addNewCoding(new Coding()
           .setDisplay("Encounter Diagnosis")
@@ -2174,13 +2174,11 @@ public class TraumaTracker extends BaseRestInterface {
         .addNewCoding(new Coding()
           .setCode("active")
           .setDisplay("Active")
-          .setSystem("http://terminology.hl7.org/CodeSystem/condition-clinicalversion4.0.1")))
-      .setSubject(encounter.getSubject());
+          .setSystem("http://terminology.hl7.org/CodeSystem/condition-clinicalversion4.0.1")));
 
     Integer totalIssScore = iss.getInteger("totalIss");
-    Observation totalIssObservation = new Observation();
-
-    totalIssObservation.setStatus("final")
+    Observation totalIssObservation = new Observation()
+      .setStatus("final")
       .setCode(new CodeableConcept()
         .addNewCoding(new Coding()
           .setDisplay("Injury severity score Calculated")
@@ -2227,11 +2225,7 @@ public class TraumaTracker extends BaseRestInterface {
         JsonObject value = (JsonObject) entry.getValue();
         //create a new reference of observation about each of the body part, then create and persist the observation
         value.forEach(entryGroup -> {
-
-
           if (!entryGroup.getKey().equalsIgnoreCase("groupTotalIss")) {
-
-
             totalIssObservation
               .addNewObservationComponent(new ObservationComponent()
                 .setCode(new CodeableConcept()
@@ -2241,7 +2235,6 @@ public class TraumaTracker extends BaseRestInterface {
                     .setSystem("https://www.loinc.org"))
                   .setText(entryGroup.getKey() + " iss score"))
                 .setValueInteger((Integer) entryGroup.getValue()));
-
           } else {
             totalIssObservation
               .addNewObservationComponent(new ObservationComponent()

@@ -248,7 +248,7 @@ public class FhirServer extends BaseRestInterface {
 
     HttpServerResponse serverResponse = routingContext.response();
     ResponseHandler
-      .createSearchResponseHandler()
+      .searchResponseHandler()
       .withService(databaseService)
       .withFormatHandler(new BaseFormatHandler()
         .withAcceptHeader(acceptableType))
@@ -302,7 +302,7 @@ public class FhirServer extends BaseRestInterface {
     }
     String collection = type.getCollection();
     ResponseHandler
-      .createReadResponseHandler()
+      .readResponseHandler()
       .withService(databaseService)
       .withFormatHandler(new BaseFormatHandler()
         .withAcceptHeader(acceptableType))
@@ -355,7 +355,7 @@ public class FhirServer extends BaseRestInterface {
       .put("id", id)
       .put("meta.versionId", vId);
     ResponseHandler
-      .createReadResponseHandler()
+      .readResponseHandler()
       .withService(databaseService)
       .withFormatHandler(new BaseFormatHandler()
         .withAcceptHeader(acceptableType))
@@ -439,7 +439,7 @@ public class FhirServer extends BaseRestInterface {
       }
       JsonObject finalResourceJson = resourceJson;
       ResponseHandler
-        .createUpdateCreateResponseHandler()
+        .createResponseHandler()
         .withService(databaseService)
         .withFormatHandler(new BaseFormatHandler()
           .withAcceptHeader(acceptableType)
@@ -522,13 +522,14 @@ public class FhirServer extends BaseRestInterface {
         resourceJson.put("contained", containedResources);
         JsonObject finalResourceJson = resourceJson;
         ResponseHandler
-          .createUpdateCreateResponseHandler()
+          .updateResponseHandler()
           .withService(databaseService)
           .withFormatHandler(new BaseFormatHandler()
             .withAcceptHeader(acceptableType)
             .withPreferHeader(preferHeader))
           .createResponseAsync(serverResponse, (service, promise)
-            -> service.createUpdateResource(collection, finalResourceJson, promise))
+            -> service.updateResource(collection, finalResourceJson, new JsonObject()
+            .put("id", id), promise))
           .releaseAsync()
           .future()
           .onSuccess(HttpServerResponse::end)
@@ -564,8 +565,9 @@ public class FhirServer extends BaseRestInterface {
 
     HttpServerResponse serverResponse = routingContext.response();
     ResponseHandler
-      .createDeleteResponseHandler()
+      .deleteResponseHandler()
       .withService(databaseService)
+      .withFormatHandler(new BaseFormatHandler())
       .createResponseAsync(serverResponse, (service, promise) ->
         service.createDeletedResource(collection, query, promise))
       .releaseAsync()
@@ -603,7 +605,7 @@ public class FhirServer extends BaseRestInterface {
 
     HttpServerResponse serverResponse = routingContext.response();
     ResponseHandler
-      .createSearchResponseHandler()
+      .searchResponseHandler()
       .withService(databaseService)
       .withFormatHandler(new BaseFormatHandler()
         .withAcceptHeader(acceptableType))

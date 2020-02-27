@@ -71,7 +71,7 @@ public class DatabaseServiceImpl implements DatabaseService {
                                               Handler<AsyncResult<JsonObject>> handler) {
     this.mongoClient.insert(collection, body, insertRes -> {
       if (insertRes.succeeded()) {
-        // vertx mongo client insert _id, when saving, need to get it out
+        // mongodb insert _id, when saving, need to get it out
         body.remove("_id");
         handler.handle(Future.succeededFuture(body));
       } else {
@@ -79,6 +79,44 @@ public class DatabaseServiceImpl implements DatabaseService {
           ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), insertRes.cause().getMessage()));
       }
     });
+    return this;
+  }
+
+  @Override
+  public DatabaseService updateResource(String collection,
+                                        JsonObject body,
+                                        JsonObject matchQuery,
+                                        Handler<AsyncResult<JsonObject>> handler) {
+    fetchDomainResourceWithQuery(collection, matchQuery, null, asyncRes -> {
+      if (asyncRes.succeeded() && asyncRes.result() != null) {
+        this.mongoClient.insert(collection, body, insertRes -> {
+          if (insertRes.succeeded()) {
+            // vertx mongo client insert _id, when saving, need to get it out
+            body.remove("_id");
+            handler.handle(Future.succeededFuture(JsonObject.mapFrom(new UpdateResult()
+              .setBody(body.encode())
+              .setStatus(HttpResponseStatus.OK.code()))));
+          } else {
+            handler.handle(
+              ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), insertRes.cause().getMessage()));
+          }
+        });
+      } else {
+        this.mongoClient.insert(collection, body, insertRes -> {
+          if (insertRes.succeeded()) {
+            // vertx mongo client insert _id, when saving, need to get it out
+            body.remove("_id");
+            handler.handle(Future.succeededFuture(JsonObject.mapFrom(new UpdateResult()
+              .setBody(body.encode())
+              .setStatus(HttpResponseStatus.CREATED.code()))));
+          } else {
+            handler.handle(
+              ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), insertRes.cause().getMessage()));
+          }
+        });
+      }
+    });
+
     return this;
   }
 
@@ -175,7 +213,7 @@ public class DatabaseServiceImpl implements DatabaseService {
     // .add(copy));
     fetchDomainResourceWithQuery(collection, query, null, checkIfDeletedHandler -> {
       if (checkIfDeletedHandler.succeeded() && checkJsonObjects(checkIfDeletedHandler.result(), body.copy())) {
-        handler.handle(ServiceException.fail(HttpResponseStatus.BAD_REQUEST.code(), "Resource already exists"));
+        handler.handle(ServiceException.fail(HttpResponseStatus.BAD_REQUEST.code(), FhirUtils.DELETE_MESSAGE));
 
       } else {
         this.mongoClient.insert(collection, body, insertRes -> {
@@ -206,7 +244,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
         Metadata metadata = Json.decodeValue(jsonObjectResult.getJsonObject("meta").encode(), Metadata.class);
         if (metadata.getTag() != null && metadata.getTag().contains(FhirUtils.DELETED)) {
-          handler.handle(ServiceException.fail(HttpResponseStatus.GONE.code(), "Resource already deleted"));
+          handler.handle(ServiceException.fail(HttpResponseStatus.GONE.code(), FhirUtils.DELETE_MESSAGE));
         } else {
           handler.handle(Future.succeededFuture(jsonObjectResult));
 
@@ -257,24 +295,14 @@ public class DatabaseServiceImpl implements DatabaseService {
         } else {
           Bundle bundle = new Bundle().setTimestamp(Instant.now()).setTotal(results.size());
           results.forEach(json -> {
-            Metadata meta = Json.decodeValue(json.getJsonObject("meta").encode(), Metadata.class);
-            if (meta.getTag() != null && meta.getTag().contains(FhirUtils.DELETED)) {
-              String resourceType = json.getString("resourceType");
-              String id = json.getString("id");
-              String vid = meta.getVersionId();
-              String lastModified = meta.getLastUpdated().toString();
-              bundle.addNewEntry(new BundleEntry()
-                .setResponse(new BundleResponse().setLastModified(lastModified).setEtag(vid)
-                  .setLocation("/" + resourceType + "/" + id + "/_history/" + vid))
-                .setResource(new OperationOutcome().addNewIssue(new OperationOutcomeIssue().setCode("deleted")
-                  .setSeverity("error").setDiagnostics("Resource already deleted"))));
-            } else {
-              bundle.addNewEntry(new BundleEntry()
-                .setResponse(
-                  new BundleResponse().setLastModified(meta.getLastUpdated().toString()).setEtag(meta.getVersionId()))
-                .setResource(json));
-            }
 
+            Metadata metadata = Json.decodeValue(json.getJsonObject("meta").encode(), Metadata.class);
+            bundle.addNewEntry(new BundleEntry()
+              .setResponse(
+                new BundleResponse()
+                  .setLastModified(metadata.getLastUpdated().toString())
+                  .setEtag(metadata.getVersionId()))
+              .setResource(json));
           });
           handler.handle(Future.succeededFuture(JsonObject.mapFrom(bundle)));
 
@@ -310,7 +338,7 @@ public class DatabaseServiceImpl implements DatabaseService {
               .setResponse(new BundleResponse().setLastModified(lastModified).setEtag(vid)
                 .setLocation("/" + resourceType + "/" + id + "/_history/" + vid))
               .setResource(new OperationOutcome().addNewIssue(new OperationOutcomeIssue().setCode("deleted")
-                .setSeverity("error").setDiagnostics("Resource already deleted"))));
+                .setSeverity("error").setDiagnostics(FhirUtils.DELETE_MESSAGE))));
           } else {
             bundle.addNewEntry(new BundleEntry()
               .setResponse(
@@ -434,7 +462,7 @@ public class DatabaseServiceImpl implements DatabaseService {
               .setResponse(new BundleResponse().setLastModified(lastModified).setEtag(vid)
                 .setLocation("/" + resourceType + "/" + id + "/_history/" + vid))
               .setResource(new OperationOutcome().addNewIssue(new OperationOutcomeIssue().setCode("deleted")
-                .setSeverity("error").setDiagnostics("Resource already deleted"))));
+                .setSeverity("error").setDiagnostics(FhirUtils.DELETE_MESSAGE))));
           } else {
             bundle
               .addNewEntry(

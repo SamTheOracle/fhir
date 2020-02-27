@@ -1,10 +1,10 @@
 package com.oracolo.fhir.handlers.response;
 
 import com.oracolo.fhir.database.DatabaseService;
+import com.oracolo.fhir.database.UpdateResult;
 import com.oracolo.fhir.handlers.response.format.Format;
 import com.oracolo.fhir.model.datatypes.Metadata;
 import io.netty.handler.codec.http.HttpHeaderNames;
-import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.Json;
@@ -13,10 +13,10 @@ import io.vertx.core.json.JsonObject;
 import java.nio.charset.Charset;
 import java.util.function.BiConsumer;
 
-public class CreateUpdateResponseHandler extends BaseResponseHandler implements ResponseHandler {
+public class UpdateResponseHandler extends BaseResponseHandler implements ResponseHandler {
 
 
-  public CreateUpdateResponseHandler() {
+  public UpdateResponseHandler() {
   }
 
 
@@ -28,12 +28,15 @@ public class CreateUpdateResponseHandler extends BaseResponseHandler implements 
     jsonObjectPromise
       .future()
       .onSuccess(jsonObject -> {
-        Metadata metadata = Json.decodeValue(jsonObject.getJsonObject("meta").encode(), Metadata.class);
+        UpdateResult updateResult = Json.decodeValue(jsonObject.encode(), UpdateResult.class);
+        JsonObject body = new JsonObject(updateResult.getBody());
+        Integer statusCode = updateResult.getStatus();
+        Metadata metadata = Json.decodeValue(body.getJsonObject("meta").encode(), Metadata.class);
         String lastModified = metadata.getLastUpdated().toString();
         String versionId = metadata.getVersionId();
-        String id = jsonObject.getString("id");
-        String resourceType = jsonObject.getString("resourceType");
-        Format format = super.responseFormat.createFormat(jsonObject);
+        String id = body.getString("id");
+        String resourceType = body.getString("resourceType");
+        Format format = super.responseFormat.createFormat(body);
         String response = format.getResponse();
         String contentType = format.getContentType();
         String length = String.valueOf(response.getBytes(Charset.defaultCharset()).length);
@@ -41,7 +44,7 @@ public class CreateUpdateResponseHandler extends BaseResponseHandler implements 
           .putHeader(HttpHeaderNames.LOCATION, "/" + resourceType + "/" + id + "/_history/" + versionId)
           .putHeader(HttpHeaderNames.ETAG, versionId)
           .putHeader(HttpHeaderNames.LAST_MODIFIED, lastModified)
-          .setStatusCode(HttpResponseStatus.CREATED.code())
+          .setStatusCode(statusCode)
           .putHeader(HttpHeaderNames.CONTENT_LENGTH, length)
           .putHeader(HttpHeaderNames.CONTENT_TYPE, contentType)
           .write(response);
