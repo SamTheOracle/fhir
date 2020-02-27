@@ -52,7 +52,7 @@ public class BaseFormatHandler implements FormatHandler {
         operationOutcome.addNewIssue(operationOutcomeIssue);
         //possible accept header: application/fhir+json; application/json, application/xml, */json, */xml ecc.
         if (accept != null && accept.value().contains("xml")) {
-          JSONObject jsonObject = new JSONObject(domainResource.encodePrettily());
+          JSONObject jsonObject = new JSONObject(JsonObject.mapFrom(operationOutcome).encodePrettily());
 
           String domainResourceXml = XML
             .toString(jsonObject, "" + jsonObject.getString("resourceType") + " xmlns=\"http://hl7.org/fhir\"");
