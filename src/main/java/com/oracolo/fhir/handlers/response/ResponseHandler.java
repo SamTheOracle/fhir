@@ -33,20 +33,9 @@ public interface ResponseHandler {
 
   ResponseHandler withFormatHandler(FormatHandler responseFormat);
 
-
-  /**
-   * Executes the database service commands and write response body
-   *
-   * @param databaseServiceConsumer
-   * @return
-   */
   ResponseHandler createResponseAsync(HttpServerResponse response, BiConsumer<DatabaseService, Promise<JsonObject>> databaseServiceConsumer);
 
-
   ResponseHandler withService(DatabaseService service);
-
-
-  void reset();
 
   Promise<HttpServerResponse> releaseAsync();
 

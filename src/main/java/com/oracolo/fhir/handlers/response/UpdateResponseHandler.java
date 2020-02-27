@@ -21,7 +21,8 @@ public class UpdateResponseHandler extends BaseResponseHandler implements Respon
 
 
   @Override
-  public ResponseHandler createResponseAsync(HttpServerResponse serverResponse, BiConsumer<DatabaseService, Promise<JsonObject>> databaseServiceConsumer) {
+  public ResponseHandler createResponseAsync(HttpServerResponse serverResponse,
+                                             BiConsumer<DatabaseService, Promise<JsonObject>> databaseServiceConsumer) {
 
     Promise<JsonObject> jsonObjectPromise = Promise.promise();
     databaseServiceConsumer.accept(service, jsonObjectPromise);
@@ -34,14 +35,11 @@ public class UpdateResponseHandler extends BaseResponseHandler implements Respon
         Metadata metadata = Json.decodeValue(body.getJsonObject("meta").encode(), Metadata.class);
         String lastModified = metadata.getLastUpdated().toString();
         String versionId = metadata.getVersionId();
-        String id = body.getString("id");
-        String resourceType = body.getString("resourceType");
         Format format = super.responseFormat.createFormat(body);
         String response = format.getResponse();
         String contentType = format.getContentType();
         String length = String.valueOf(response.getBytes(Charset.defaultCharset()).length);
         serverResponse
-          .putHeader(HttpHeaderNames.LOCATION, "/" + resourceType + "/" + id + "/_history/" + versionId)
           .putHeader(HttpHeaderNames.ETAG, versionId)
           .putHeader(HttpHeaderNames.LAST_MODIFIED, lastModified)
           .setStatusCode(statusCode)
