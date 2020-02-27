@@ -282,6 +282,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
 
       } else if (asyncRes.succeeded() && asyncRes.result() != null) {
+        handler.handle(ServiceException.fail(HttpResponseStatus.NOT_FOUND.code(), "No resource found"));
       } else {
         handler.handle(ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), asyncRes.cause().getMessage()));
       }

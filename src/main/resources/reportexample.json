@@ -1,14 +1,39 @@
 {
-  "aggregationOutputFields": [],
   "pipeline": [
     {
       "$match": {
         "$expr": {
           "$and": [
             {
-              "$gt": [
-                "$valueInteger",
-                4
+              "$or": [
+                {
+                  "$regexMatch": {
+                    "input": "$code.text",
+                    "regex": "4171630326",
+                    "options": "i"
+                  }
+                },
+                {
+                  "$regexMatch": {
+                    "input": {
+                      "$reduce": {
+                        "input": "$code.coding",
+                        "initialValue": "",
+                        "in": {
+                          "$concat": [
+                            "$$value",
+                            "$$this.code",
+                            " ",
+                            "$$this.display",
+                            " "
+                          ]
+                        }
+                      }
+                    },
+                    "regex": "4171630326",
+                    "options": "i"
+                  }
+                }
               ]
             },
             {}
@@ -17,5 +42,7 @@
       }
     }
   ],
-  "cursor": {}
+  "cursor": {},
+  "allowDiskUse": true,
+  "aggregate": "conditions"
 }
