@@ -315,30 +315,44 @@ public class TraumaTracker extends BaseRestInterface {
   }
 
   private void addResourcesOnDatabase(DatabaseService databaseService, List<JsonObject> domainResources, Reference patientReference, Patient patient) {
+    JsonObject patientJson = JsonObject.mapFrom(patient);
     List<JsonObject> observationsJson = domainResources
       .stream()
       .filter(resource -> resource.getString("resourceType").equals(ResourceType.OBSERVATION.typeName()))
-      .peek(json -> json.put("subject", JsonObject.mapFrom(patientReference)))
+      .peek(json -> {
+        json.put("subject", JsonObject.mapFrom(patientReference));
+        json.put("contained", new JsonArray()
+          .add(patientJson));
+      })
       .map(JsonObject::mapFrom)
       .collect(Collectors.toList());
     List<JsonObject> proceduresJson = domainResources
       .stream()
       .filter(resource -> resource.getString("resourceType").equals(ResourceType.PROCEDURE.typeName()))
       .map(JsonObject::mapFrom)
-      .peek(json -> json.put("subject", JsonObject.mapFrom(patientReference)))
-      .collect(Collectors.toList());
+      .peek(json -> {
+        json.put("subject", JsonObject.mapFrom(patientReference));
+        json.put("contained", new JsonArray()
+          .add(patientJson));
+      }).collect(Collectors.toList());
     List<JsonObject> encountersJson = domainResources
       .stream()
       .filter(resource -> resource.getString("resourceType").equals(ResourceType.ENCOUNTER.typeName()))
       .map(JsonObject::mapFrom)
-      .peek(json -> json.put("subject", JsonObject.mapFrom(patientReference)))
-      .collect(Collectors.toList());
+      .peek(json -> {
+        json.put("subject", JsonObject.mapFrom(patientReference));
+        json.put("contained", new JsonArray()
+          .add(patientJson));
+      }).collect(Collectors.toList());
     List<JsonObject> conditionsJson = domainResources
       .stream()
       .filter(resource -> resource.getString("resourceType").equals(ResourceType.CONDITION.typeName()))
       .map(JsonObject::mapFrom)
-      .peek(json -> json.put("subject", JsonObject.mapFrom(patientReference)))
-      .collect(Collectors.toList());
+      .peek(json -> {
+        json.put("subject", JsonObject.mapFrom(patientReference));
+        json.put("contained", new JsonArray()
+          .add(patientJson));
+      }).collect(Collectors.toList());
 
 
     Promise<JsonObject> encountersBulkOperationsPromise = Promise.promise();

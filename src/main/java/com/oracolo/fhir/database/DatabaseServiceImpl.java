@@ -368,7 +368,8 @@ public class DatabaseServiceImpl implements DatabaseService {
             .collect(Collectors.toList()))
           .setMainEncounter(Json.decodeValue(mainResource.encode(), Encounter.class))
           .setSubEncounters(encounters)
-          .setObservations(observations).setProcedures(procedures).setPractitioners(practitioners)
+          .setObservations(observations)
+          .setProcedures(procedures).setPractitioners(practitioners)
           .setConditions(conditions);
         JsonObject aggregationJson = JsonObject.mapFrom(aggregationEncounter);
 
