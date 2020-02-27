@@ -315,7 +315,6 @@ public class TraumaTracker extends BaseRestInterface {
   }
 
   private void addResourcesOnDatabase(DatabaseService databaseService, List<JsonObject> domainResources, Reference patientReference, Patient patient) {
-    JsonObject patientJson = JsonObject.mapFrom(patient);
     List<JsonObject> observationsJson = domainResources
       .stream()
       .filter(resource -> resource.getString("resourceType").equals(ResourceType.OBSERVATION.typeName()))

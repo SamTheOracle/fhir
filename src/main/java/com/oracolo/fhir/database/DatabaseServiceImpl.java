@@ -230,7 +230,10 @@ public class DatabaseServiceImpl implements DatabaseService {
     JsonArray aggregationOutputFields = (JsonArray) command.remove("aggregationOutputFields");
 
     mongoClient.runCommand("aggregate", command, asyncRes -> {
-      if (asyncRes.succeeded() && asyncRes.result() != null) {
+      if (asyncRes.succeeded() && asyncRes.result() != null && asyncRes.result()
+        .getJsonObject("cursors")
+        .getJsonArray("firstBatch")
+        .size() > 0) {
         JsonObject mongoDbBatch = asyncRes.result();
         List<JsonObject> results = mongoDbBatch.getJsonObject("cursor")
           .getJsonArray("firstBatch")
@@ -271,6 +274,8 @@ public class DatabaseServiceImpl implements DatabaseService {
         });
         //  .filter(json->)
         handler.handle(Future.succeededFuture(JsonObject.mapFrom(bundle)));
+      } else if (asyncRes.succeeded() && asyncRes.result() != null) {
+        handler.handle(ServiceException.fail(HttpResponseStatus.NOT_FOUND.code(), "No resource found"));
       } else {
         handler.handle(ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), asyncRes.cause().getMessage()));
       }
