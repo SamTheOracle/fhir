@@ -231,7 +231,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     mongoClient.runCommand("aggregate", command, asyncRes -> {
       if (asyncRes.succeeded() && asyncRes.result() != null && asyncRes.result()
-        .getJsonObject("cursors")
+        .getJsonObject("cursor")
         .getJsonArray("firstBatch")
         .size() > 0) {
         JsonObject mongoDbBatch = asyncRes.result();
@@ -251,31 +251,37 @@ public class DatabaseServiceImpl implements DatabaseService {
             json.remove("_id");
             aggregationOutputFields.stream().map(obj -> (String) obj).forEach(json::remove);
           }).collect(Collectors.toList());
-        Bundle bundle = new Bundle().setTimestamp(Instant.now()).setTotal(results.size());
-        results.forEach(json -> {
-          Metadata meta = Json.decodeValue(json.getJsonObject("meta").encode(), Metadata.class);
-          if (meta.getTag() != null && meta.getTag().contains(FhirUtils.DELETED)) {
-            String resourceType = json.getString("resourceType");
-            String id = json.getString("id");
-            String vid = meta.getVersionId();
-            String lastModified = meta.getLastUpdated().toString();
-            bundle.addNewEntry(new BundleEntry()
-              .setResponse(new BundleResponse().setLastModified(lastModified).setEtag(vid)
-                .setLocation("/" + resourceType + "/" + id + "/_history/" + vid))
-              .setResource(new OperationOutcome().addNewIssue(new OperationOutcomeIssue().setCode("deleted")
-                .setSeverity("error").setDiagnostics("Resource already deleted"))));
-          } else {
-            bundle.addNewEntry(new BundleEntry()
-              .setResponse(
-                new BundleResponse().setLastModified(meta.getLastUpdated().toString()).setEtag(meta.getVersionId()))
-              .setResource(json));
-          }
+        if (results.size() == 0) {
+          handler.handle(ServiceException.fail(HttpResponseStatus.NOT_FOUND.code(), "No resource found"));
 
-        });
-        //  .filter(json->)
-        handler.handle(Future.succeededFuture(JsonObject.mapFrom(bundle)));
+        } else {
+          Bundle bundle = new Bundle().setTimestamp(Instant.now()).setTotal(results.size());
+          results.forEach(json -> {
+            Metadata meta = Json.decodeValue(json.getJsonObject("meta").encode(), Metadata.class);
+            if (meta.getTag() != null && meta.getTag().contains(FhirUtils.DELETED)) {
+              String resourceType = json.getString("resourceType");
+              String id = json.getString("id");
+              String vid = meta.getVersionId();
+              String lastModified = meta.getLastUpdated().toString();
+              bundle.addNewEntry(new BundleEntry()
+                .setResponse(new BundleResponse().setLastModified(lastModified).setEtag(vid)
+                  .setLocation("/" + resourceType + "/" + id + "/_history/" + vid))
+                .setResource(new OperationOutcome().addNewIssue(new OperationOutcomeIssue().setCode("deleted")
+                  .setSeverity("error").setDiagnostics("Resource already deleted"))));
+            } else {
+              bundle.addNewEntry(new BundleEntry()
+                .setResponse(
+                  new BundleResponse().setLastModified(meta.getLastUpdated().toString()).setEtag(meta.getVersionId()))
+                .setResource(json));
+            }
+
+          });
+          handler.handle(Future.succeededFuture(JsonObject.mapFrom(bundle)));
+
+        }
+
+
       } else if (asyncRes.succeeded() && asyncRes.result() != null) {
-        handler.handle(ServiceException.fail(HttpResponseStatus.NOT_FOUND.code(), "No resource found"));
       } else {
         handler.handle(ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), asyncRes.cause().getMessage()));
       }
