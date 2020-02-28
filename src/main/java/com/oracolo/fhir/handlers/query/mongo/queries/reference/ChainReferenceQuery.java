@@ -1,9 +1,4 @@
-package com.oracolo.fhir.handlers.query.mongo.queries;
-
-import com.oracolo.fhir.handlers.query.mongo.queries.reference.DiagnosisReferenceQuery;
-import com.oracolo.fhir.handlers.query.mongo.queries.reference.EncounterReferenceQuery;
-import com.oracolo.fhir.handlers.query.mongo.queries.reference.EvidenceDetailReferenceQuery;
-import com.oracolo.fhir.handlers.query.mongo.queries.reference.SubjectReferenceQuery;
+package com.oracolo.fhir.handlers.query.mongo.queries.reference;
 
 public enum ChainReferenceQuery {
   subject("subject", new SubjectReferenceQuery(), "subject"),
@@ -12,10 +7,10 @@ public enum ChainReferenceQuery {
   evidence_detail("evidence-detail", new EvidenceDetailReferenceQuery(), "evidence");
 
   private String name;
-  private ChainReference chainReference;
+  private ReferenceQuery chainReference;
   private String fhirResourceField;
 
-  ChainReferenceQuery(String name, ChainReference chainReference, String fhirResourceField) {
+  ChainReferenceQuery(String name, ReferenceQuery chainReference, String fhirResourceField) {
     this.name = name;
     this.chainReference = chainReference;
     this.fhirResourceField = fhirResourceField;
@@ -26,7 +21,7 @@ public enum ChainReferenceQuery {
     return name;
   }
 
-  public ChainReference getChainReference() {
+  public ReferenceQuery getChainReference() {
     return chainReference;
   }
 

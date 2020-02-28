@@ -1,11 +1,10 @@
 package com.oracolo.fhir.handlers.query.mongo.queries.reference;
 
 import com.oracolo.fhir.handlers.query.mongo.BaseMongoDbQuery;
-import com.oracolo.fhir.handlers.query.mongo.queries.ChainReference;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-public class SubjectReferenceQuery extends BaseMongoDbQuery implements ChainReference {
+public class SubjectReferenceQuery extends BaseMongoDbQuery implements ReferenceQuery {
 
 
   @Override

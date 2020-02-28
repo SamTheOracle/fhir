@@ -4,8 +4,8 @@ import com.oracolo.fhir.handlers.query.FhirQuery;
 import com.oracolo.fhir.handlers.query.mongo.MongoDbQuery;
 import com.oracolo.fhir.handlers.query.mongo.parser.prefix.QueryPrefixHandler;
 import com.oracolo.fhir.handlers.query.mongo.parser.prefix.QueryPrefixResult;
-import com.oracolo.fhir.handlers.query.mongo.queries.ChainReference;
-import com.oracolo.fhir.handlers.query.mongo.queries.ChainReferenceQuery;
+import com.oracolo.fhir.handlers.query.mongo.queries.reference.ChainReferenceQuery;
+import com.oracolo.fhir.handlers.query.mongo.queries.reference.ReferenceQuery;
 import com.oracolo.fhir.utils.ResourceType;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -26,7 +26,7 @@ public class ChainParserHandler {
           .getFhirQuery();
         ChainReferenceQuery chainReferenceQuery = ChainReferenceQuery
           .valueOf(fieldToCompare.replace("-", "_"));
-        ChainReference reference = chainReferenceQuery
+        ReferenceQuery reference = chainReferenceQuery
           .getChainReference();
         return new ChainParserResult(type.getCollection(),
           new JsonObject()
