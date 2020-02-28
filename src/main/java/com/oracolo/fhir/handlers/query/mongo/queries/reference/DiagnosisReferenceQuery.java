@@ -12,16 +12,16 @@ public class DiagnosisReferenceQuery extends BaseMongoDbQuery implements ChainRe
     return "_content";
   }
 
-  @Override
-  public JsonObject mongoDbQuery() {
-    return new JsonObject()
-      .put("$or", new JsonArray()
-        .add(new JsonObject()
-          .put("diagnosis.condition", new JsonObject()
-            .put("$regex", value)
-            .put("$options", "i")))
-      );
-  }
+//  @Override
+//  public JsonObject mongoDbQuery() {
+//    return new JsonObject()
+//      .put("$or", new JsonArray()
+//        .add(new JsonObject()
+//          .put("diagnosis.condition", new JsonObject()
+//            .put("$regex", value)
+//            .put("$options", "i")))
+//      );
+//  }
 
   @Override
   public JsonObject mongoDbPipelineStageQuery() {

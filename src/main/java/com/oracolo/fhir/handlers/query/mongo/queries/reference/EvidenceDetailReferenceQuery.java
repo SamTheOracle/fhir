@@ -13,11 +13,11 @@ public class EvidenceDetailReferenceQuery extends BaseMongoDbQuery implements Ch
     return "evidence-detail";
   }
 
-  @Override
-  public JsonObject mongoDbQuery() {
-    return new JsonObject()
-      .put("evidence.detail.reference", value);
-  }
+//  @Override
+//  public JsonObject mongoDbQuery() {
+//    return new JsonObject()
+//      .put("evidence.detail.reference", value);
+//  }
 
   @Override
   public JsonObject mongoDbPipelineStageQuery() {

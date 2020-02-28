@@ -11,11 +11,11 @@ public class IdentifierQuery extends BaseMongoDbQuery {
     return "identifier";
   }
 
-  @Override
-  public JsonObject mongoDbQuery() {
-    return new JsonObject()
-      .put("identifier.value", value);
-  }
+//  @Override
+//  public JsonObject mongoDbQuery() {
+//    return new JsonObject()
+//      .put("identifier.value", value);
+//  }
 
   @Override
   public JsonObject mongoDbPipelineStageQuery() {

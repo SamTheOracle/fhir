@@ -12,11 +12,11 @@ public class IdQuery extends BaseMongoDbQuery {
     return "_id";
   }
 
-  @Override
-  public JsonObject mongoDbQuery() {
-    return new JsonObject()
-      .put("id", value);
-  }
+//  @Override
+//  public JsonObject mongoDbQuery() {
+//    return new JsonObject()
+//      .put("id", value);
+//  }
 
   @Override
   public JsonObject mongoDbPipelineStageQuery() {

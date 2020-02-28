@@ -12,11 +12,11 @@ public class ValueIntegerQuery extends BaseMongoDbQuery {
     return "valueInteger";
   }
 
-  @Override
-  public JsonObject mongoDbQuery() {
-    return new JsonObject()
-      .put("valueInteger", new JsonObject().put(prefix.operator(), Integer.parseInt(value)));
-  }
+//  @Override
+//  public JsonObject mongoDbQuery() {
+//    return new JsonObject()
+//      .put("valueInteger", new JsonObject().put(prefix.operator(), Integer.parseInt(value)));
+//  }
 
   @Override
   public JsonObject mongoDbPipelineStageQuery() {

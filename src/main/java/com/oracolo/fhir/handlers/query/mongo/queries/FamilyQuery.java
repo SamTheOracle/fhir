@@ -11,13 +11,13 @@ public class FamilyQuery extends BaseMongoDbQuery {
     return "_content";
   }
 
-  @Override
-  public JsonObject mongoDbQuery() {
-    return new JsonObject()
-      .put("name.family", new JsonObject()
-        .put("$regex", value)
-        .put("$options", "i"));
-  }
+//  @Override
+//  public JsonObject mongoDbQuery() {
+//    return new JsonObject()
+//      .put("name.family", new JsonObject()
+//        .put("$regex", value)
+//        .put("$options", "i"));
+//  }
 
   @Override
   public JsonObject mongoDbPipelineStageQuery() {

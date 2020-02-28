@@ -7,8 +7,6 @@ public interface FhirQuery {
 
   String name();
 
-  JsonObject mongoDbQuery();
-
   JsonObject mongoDbPipelineStageQuery();
 
   FhirQuery setPrefix(Prefix prefix);

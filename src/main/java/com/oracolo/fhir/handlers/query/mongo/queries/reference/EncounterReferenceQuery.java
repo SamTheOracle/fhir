@@ -12,20 +12,20 @@ public class EncounterReferenceQuery extends BaseMongoDbQuery implements ChainRe
     return "_content";
   }
 
-  @Override
-  public JsonObject mongoDbQuery() {
-    return new JsonObject()
-      .put("$or", new JsonArray()
-        .add(new JsonObject()
-          .put("encounter.reference", new JsonObject()
-            .put("$regex", value)
-            .put("$options", "i")))
-        .add(new JsonObject()
-          .put("encounter.display", new JsonObject()
-            .put("$regex", value)
-            .put("$options", "i")))
-      );
-  }
+//  @Override
+//  public JsonObject mongoDbQuery() {
+//    return new JsonObject()
+//      .put("$or", new JsonArray()
+//        .add(new JsonObject()
+//          .put("encounter.reference", new JsonObject()
+//            .put("$regex", value)
+//            .put("$options", "i")))
+//        .add(new JsonObject()
+//          .put("encounter.display", new JsonObject()
+//            .put("$regex", value)
+//            .put("$options", "i")))
+//      );
+//  }
 
   @Override
   public JsonObject mongoDbPipelineStageQuery() {

@@ -11,13 +11,13 @@ public class GivenQuery extends BaseMongoDbQuery {
     return "given";
   }
 
-  @Override
-  public JsonObject mongoDbQuery() {
-    return new JsonObject()
-      .put("name.given", new JsonObject()
-        .put("$regex", value)
-        .put("$options", "i"));
-  }
+//  @Override
+//  public JsonObject mongoDbQuery() {
+//    return new JsonObject()
+//      .put("name.given", new JsonObject()
+//        .put("$regex", value)
+//        .put("$options", "i"));
+//  }
 
   @Override
   public JsonObject mongoDbPipelineStageQuery() {

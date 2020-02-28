@@ -12,19 +12,19 @@ public class LastUpdatedQuery extends BaseMongoDbQuery {
     return "_lastUpdated";
   }
 
-  @Override
-  public JsonObject mongoDbQuery() {
-    return new JsonObject()
-      .put("$expr", new JsonObject()
-        .put(prefix.operator(), new JsonArray()
-          .add(new JsonObject()
-            .put("$dateFromString", new JsonObject()
-              .put("dateString", "$meta.lastUpdated")))
-          .add(new JsonObject()
-            .put("$dateFromString", new JsonObject()
-              .put("dateString", value))
-          )));
-  }
+//  @Override
+//  public JsonObject mongoDbQuery() {
+//    return new JsonObject()
+//      .put("$expr", new JsonObject()
+//        .put(prefix.operator(), new JsonArray()
+//          .add(new JsonObject()
+//            .put("$dateFromString", new JsonObject()
+//              .put("dateString", "$meta.lastUpdated")))
+//          .add(new JsonObject()
+//            .put("$dateFromString", new JsonObject()
+//              .put("dateString", value))
+//          )));
+//  }
 
   @Override
   public JsonObject mongoDbPipelineStageQuery() {

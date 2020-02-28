@@ -12,23 +12,23 @@ public class CodeQuery extends BaseMongoDbQuery {
     return "_id";
   }
 
-  @Override
-  public JsonObject mongoDbQuery() {
-    return new JsonObject()
-      .put("$or", new JsonArray()
-        .add(new JsonObject()
-          .put("code.text", new JsonObject()
-            .put("$regex", value)
-            .put("$options", "i")))
-        .add(new JsonObject()
-          .put("code.coding.display", new JsonObject()
-            .put("$regex", value)
-            .put("$options", "i")))
-        .add(new JsonObject()
-          .put("code.coding.code", new JsonObject()
-            .put("$regex", value)
-            .put("$options", "i"))));
-  }
+//  @Override
+//  public JsonObject mongoDbQuery() {
+//    return new JsonObject()
+//      .put("$or", new JsonArray()
+//        .add(new JsonObject()
+//          .put("code.text", new JsonObject()
+//            .put("$regex", value)
+//            .put("$options", "i")))
+//        .add(new JsonObject()
+//          .put("code.coding.display", new JsonObject()
+//            .put("$regex", value)
+//            .put("$options", "i")))
+//        .add(new JsonObject()
+//          .put("code.coding.code", new JsonObject()
+//            .put("$regex", value)
+//            .put("$options", "i"))));
+//  }
 
 
   @Override

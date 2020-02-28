@@ -11,12 +11,12 @@ public class ContentQuery extends BaseMongoDbQuery {
     return "_content";
   }
 
-  @Override
-  public JsonObject mongoDbQuery() {
-    return new JsonObject()
-      .put("$text", new JsonObject()
-        .put("$search", value));
-  }
+//  @Override
+//  public JsonObject mongoDbQuery() {
+//    return new JsonObject()
+//      .put("$text", new JsonObject()
+//        .put("$search", value));
+//  }
 
   @Override
   public JsonObject mongoDbPipelineStageQuery() {
