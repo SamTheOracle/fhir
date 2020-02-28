@@ -2,7 +2,7 @@ package com.oracolo.fhir.handlers.query.mongo.parser.prefix;
 
 public class QueryPrefixHandler {
 
-  public static final String pattern = "(gt)|(ge)|(lt)|(le)|(eb)|(sa)|(eq)";
+  public static final String pattern = "(gt)|(ge)|(lt)|(le)|(eb)|(sa)|(eq)|(ne)";
 
   public static QueryPrefixResult parsePrefix(String paramValue) {
     for (Prefix p : Prefix.values()) {
