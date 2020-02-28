@@ -41,7 +41,7 @@ public class FhirServer extends BaseRestInterface {
 
 
   @Override
-  public void start(Promise<Void> startPromise) throws Exception {
+  public void start(Promise<Void> startPromise) {
 
     Router restApi = Router.router(vertx);
     restApi.route().handler(BodyHandler.create());
@@ -81,7 +81,7 @@ public class FhirServer extends BaseRestInterface {
             .setSeverity("error")
             .setCode(String.valueOf(HttpResponseStatus.METHOD_NOT_ALLOWED.code()))
             .setDiagnostics(HttpResponseStatus.METHOD_NOT_ALLOWED.reasonPhrase()
-              + " Allowed methods and routes: " + methodsBuilder)
+              + ". Allowed methods and routes: " + methodsBuilder)
           );
 
         JsonObject ooJson = JsonObject.mapFrom(operationOutcome);
@@ -96,7 +96,8 @@ public class FhirServer extends BaseRestInterface {
           .addNewIssue(new OperationOutcomeIssue()
             .setSeverity("error")
             .setCode(String.valueOf(HttpResponseStatus.NOT_ACCEPTABLE.code()))
-            .setDiagnostics(HttpResponseStatus.NOT_ACCEPTABLE.reasonPhrase()));
+            .setDiagnostics(HttpResponseStatus.NOT_ACCEPTABLE.reasonPhrase()
+              + ". Acceptable types: " + " application/json, application/xml, application/fhir+json, application/fhir+xml"));
         response
           .putHeader(HttpHeaderNames.CONTENT_TYPE, FhirHttpHeader.APPLICATION_JSON.value())
           .setStatusCode(routingContext.statusCode())
