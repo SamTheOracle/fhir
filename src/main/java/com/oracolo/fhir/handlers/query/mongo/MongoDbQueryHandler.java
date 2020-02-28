@@ -31,8 +31,9 @@ public class MongoDbQueryHandler implements QueryHandler {
     JsonArray aggregationOutputFields = new JsonArray();
     params.forEach(entry -> {
       String queryName = entry.getKey();
+      String value = entry.getValue();
       if (queryName.contains(".")) {
-        ChainParserResult chainParserResult = ChainParserHandler.createLookupPipelineStage(queryName, entry.getValue());
+        ChainParserResult chainParserResult = ChainParserHandler.createLookupPipelineStage(queryName, value);
         JsonObject chainQuery = Objects.requireNonNull(chainParserResult).getQuery();
         lookUpStages.add(chainQuery);
         aggregationOutputFields.add(chainParserResult.getCollection());
@@ -47,13 +48,34 @@ public class MongoDbQueryHandler implements QueryHandler {
       } else {
         for (MongoDbQuery mongoDbQuery : MongoDbQuery.values()) {
           if (mongoDbQuery.getQueryName().equals(queryName)) {
-            QueryPrefixResult queryPrefixResult = QueryPrefixHandler
-              .parsePrefix(params.get(queryName.replace("-", "_")));
-            JsonObject fhirQuery = mongoDbQuery.getFhirQuery()
-              .setPrefix(queryPrefixResult.prefix())
-              .setValue(queryPrefixResult.parsedValue())
-              .mongoDbPipelineStageQuery();
-            andOperations.add(fhirQuery);
+            //one can make or conditions with "," on param. For each param create normal queries but added in
+            //or condition
+            String[] orCondition = value.split(",");
+            if (orCondition.length > 1) {
+              JsonArray orConditionsJsonArray = new JsonArray();
+
+              for (String valueFromOrCondition : orCondition) {
+                QueryPrefixResult queryPrefixResult = QueryPrefixHandler
+                  .parsePrefix(valueFromOrCondition);
+                JsonObject fhirQuery = mongoDbQuery.getFhirQuery()
+                  .setPrefix(queryPrefixResult.prefix())
+                  .setValue(queryPrefixResult.parsedValue())
+                  .mongoDbPipelineStageQuery();
+                orConditionsJsonArray.add(fhirQuery);
+              }
+              andOperations.add(new JsonObject()
+                .put("$or", orConditionsJsonArray));
+            } else {
+              //normal
+              QueryPrefixResult queryPrefixResult = QueryPrefixHandler
+                .parsePrefix(value);
+              JsonObject fhirQuery = mongoDbQuery.getFhirQuery()
+                .setPrefix(queryPrefixResult.prefix())
+                .setValue(queryPrefixResult.parsedValue())
+                .mongoDbPipelineStageQuery();
+              andOperations.add(fhirQuery);
+            }
+
           }
         }
       }
