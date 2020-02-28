@@ -20,6 +20,7 @@ import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.MultiMap;
 import io.vertx.core.Promise;
+import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -29,6 +30,7 @@ import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.serviceproxy.ServiceException;
 
 import java.time.Instant;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -60,16 +62,33 @@ public class FhirServer extends BaseRestInterface {
     })
       .errorHandler(HttpResponseStatus.METHOD_NOT_ALLOWED.code(), routingContext -> {
         HttpServerResponse response = routingContext.response();
+        StringBuilder methodsBuilder = new StringBuilder();
+        restApi.getRoutes()
+          .stream()
+          .filter(route -> route.methods() != null
+            && route.getPath() != null)
+          .forEach(route -> {
+            Set<HttpMethod> methods = route.methods();
+            methods.forEach(httpMethod -> methodsBuilder
+              .append(httpMethod.name())
+              .append(", ")
+              .append(route.getPath())
+              .append("; ")
+            );
+          });
         OperationOutcome operationOutcome = new OperationOutcome()
           .addNewIssue(new OperationOutcomeIssue()
             .setSeverity("error")
             .setCode(String.valueOf(HttpResponseStatus.METHOD_NOT_ALLOWED.code()))
-            .setDiagnostics(HttpResponseStatus.METHOD_NOT_ALLOWED.reasonPhrase()));
+            .setDiagnostics(HttpResponseStatus.METHOD_NOT_ALLOWED.reasonPhrase()
+              + " Allowed methods and routes: " + methodsBuilder)
+          );
 
+        JsonObject ooJson = JsonObject.mapFrom(operationOutcome);
         response
           .putHeader(HttpHeaderNames.CONTENT_TYPE, FhirHttpHeader.APPLICATION_JSON.value())
           .setStatusCode(routingContext.statusCode())
-          .end(JsonObject.mapFrom(operationOutcome).encodePrettily());
+          .end(ooJson.encodePrettily());
       })
       .errorHandler(HttpResponseStatus.NOT_ACCEPTABLE.code(), routingContext -> {
         HttpServerResponse response = routingContext.response();
@@ -175,7 +194,7 @@ public class FhirServer extends BaseRestInterface {
         .consumes(FhirHttpHeader.APPLICATION_JSON.value())
         .consumes(FhirHttpHeader.APPLICATION_JSON_VERSION.value())
         .produces(HttpHeaderValues.APPLICATION_JSON.toString())
-        .produces(FhirHttpHeader.APPLICATION_JSON.value())
+        .produces(FhirHttpHeader.APPLICATION_JSON_VERSION.value())
         .produces(FhirHttpHeader.APPLICATION_JSON.value())
         .produces("*/json")
         .produces("*/xml")
@@ -194,7 +213,7 @@ public class FhirServer extends BaseRestInterface {
       restApi.get("/" + FhirUtils.BASE + "/" + type.typeName() + "/:" + FhirUtils.ID)
         .produces(HttpHeaderValues.APPLICATION_JSON.toString())
         .produces(FhirHttpHeader.APPLICATION_JSON.value())
-        .produces(FhirHttpHeader.APPLICATION_JSON.value())
+        .produces(FhirHttpHeader.APPLICATION_JSON_VERSION.value())
         .produces("*/json")
         .produces("*/xml")
         .handler(routingContext -> handleResourceRead(routingContext, type))
