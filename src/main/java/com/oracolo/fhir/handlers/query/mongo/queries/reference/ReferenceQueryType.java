@@ -1,6 +1,6 @@
 package com.oracolo.fhir.handlers.query.mongo.queries.reference;
 
-public enum ChainReferenceQuery {
+public enum ReferenceQueryType {
   subject("subject", new SubjectReferenceQuery(), "subject"),
   encounter("encounter", new EncounterReferenceQuery(), "encounter"),
   diagnosis("diagnosis", new DiagnosisReferenceQuery(), "diagnosis"),
@@ -10,7 +10,7 @@ public enum ChainReferenceQuery {
   private ReferenceQuery chainReference;
   private String fhirResourceField;
 
-  ChainReferenceQuery(String name, ReferenceQuery chainReference, String fhirResourceField) {
+  ReferenceQueryType(String name, ReferenceQuery chainReference, String fhirResourceField) {
     this.name = name;
     this.chainReference = chainReference;
     this.fhirResourceField = fhirResourceField;
