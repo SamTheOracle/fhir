@@ -44,10 +44,10 @@ public interface DatabaseService {
   DatabaseService createResource(String collection, JsonObject body, Handler<AsyncResult<JsonObject>> handler);
 
   @Fluent
-  DatabaseService updateResource(String collection,
-                                 JsonObject body,
-                                 JsonObject matchQuery,
-                                 Handler<AsyncResult<JsonObject>> handler);
+  DatabaseService updateDomainResource(String collection,
+                                       JsonObject body,
+                                       JsonObject matchQuery,
+                                       Handler<AsyncResult<JsonObject>> handler);
 
 
   @Fluent

@@ -14,6 +14,7 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
+import io.vertx.core.Promise;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -25,6 +26,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class DatabaseServiceImpl implements DatabaseService {
@@ -86,10 +88,10 @@ public class DatabaseServiceImpl implements DatabaseService {
   }
 
   @Override
-  public DatabaseService updateResource(String collection,
-                                        JsonObject body,
-                                        JsonObject matchQuery,
-                                        Handler<AsyncResult<JsonObject>> handler) {
+  public DatabaseService updateDomainResource(String collection,
+                                              JsonObject body,
+                                              JsonObject matchQuery,
+                                              Handler<AsyncResult<JsonObject>> handler) {
     fetchDomainResourceWithQuery(collection, matchQuery, null, asyncRes -> {
       if (asyncRes.succeeded() && asyncRes.result() != null) {
         this.mongoClient.insert(collection, body, insertRes -> {
@@ -99,6 +101,7 @@ public class DatabaseServiceImpl implements DatabaseService {
             handler.handle(Future.succeededFuture(JsonObject.mapFrom(new UpdateResult()
               .setBody(body.encode())
               .setStatus(HttpResponseStatus.OK.code()))));
+            updateAggregationEncounter(collection, body.getString("id"), body);
           } else {
             handler.handle(
               ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), insertRes.cause().getMessage()));
@@ -112,6 +115,8 @@ public class DatabaseServiceImpl implements DatabaseService {
             handler.handle(Future.succeededFuture(JsonObject.mapFrom(new UpdateResult()
               .setBody(body.encode())
               .setStatus(HttpResponseStatus.CREATED.code()))));
+            updateAggregationEncounter(collection, body.getString("id"), body);
+
           } else {
             handler.handle(
               ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), insertRes.cause().getMessage()));
@@ -119,6 +124,7 @@ public class DatabaseServiceImpl implements DatabaseService {
         });
       }
     });
+
 
     return this;
   }
@@ -232,48 +238,45 @@ public class DatabaseServiceImpl implements DatabaseService {
   public DatabaseService createAggregationResource(AggregationType aggregationType, JsonObject mainResource,
                                                    List<JsonObject> resources, Handler<AsyncResult<JsonObject>> handler) {
 
-    switch (aggregationType) {
-      case ENCOUNTER:
-        List<Observation> observations = resources.stream()
-          .filter(jsonObject -> jsonObject.getString("resourceType").equals(ResourceType.OBSERVATION.typeName()))
-          .map(json -> Json.decodeValue(json.encode(), Observation.class)).collect(Collectors.toList());
-        List<Condition> conditions = resources.stream()
-          .filter(jsonObject -> jsonObject.getString("resourceType").equals(ResourceType.CONDITION.typeName()))
-          .map(json -> Json.decodeValue(json.encode(), Condition.class)).collect(Collectors.toList());
-        List<Procedure> procedures = resources.stream()
-          .filter(jsonObject -> jsonObject.getString("resourceType").equals(ResourceType.PROCEDURE.typeName()))
-          .map(json -> Json.decodeValue(json.encode(), Procedure.class)).collect(Collectors.toList());
-        List<Encounter> encounters = resources.stream()
-          .filter(jsonObject -> jsonObject.getString("resourceType").equals(ResourceType.ENCOUNTER.typeName()))
-          .map(json -> Json.decodeValue(json.encode(), Encounter.class)).collect(Collectors.toList());
-        List<Practitioner> practitioners = resources.stream()
-          .filter(jsonObject -> jsonObject.getString("resourceType").equals(ResourceType.PRACTITIONER.typeName()))
-          .map(json -> Json.decodeValue(json.encode(), Practitioner.class)).collect(Collectors.toList());
+    if (aggregationType == AggregationType.ENCOUNTER) {
+      List<Observation> observations = resources.stream()
+        .filter(jsonObject -> jsonObject.getString("resourceType").equals(ResourceType.OBSERVATION.typeName()))
+        .map(json -> Json.decodeValue(json.encode(), Observation.class)).collect(Collectors.toList());
+      List<Condition> conditions = resources.stream()
+        .filter(jsonObject -> jsonObject.getString("resourceType").equals(ResourceType.CONDITION.typeName()))
+        .map(json -> Json.decodeValue(json.encode(), Condition.class)).collect(Collectors.toList());
+      List<Procedure> procedures = resources.stream()
+        .filter(jsonObject -> jsonObject.getString("resourceType").equals(ResourceType.PROCEDURE.typeName()))
+        .map(json -> Json.decodeValue(json.encode(), Procedure.class)).collect(Collectors.toList());
+      List<Encounter> encounters = resources.stream()
+        .filter(jsonObject -> jsonObject.getString("resourceType").equals(ResourceType.ENCOUNTER.typeName()))
+        .map(json -> Json.decodeValue(json.encode(), Encounter.class)).collect(Collectors.toList());
+      List<Practitioner> practitioners = resources.stream()
+        .filter(jsonObject -> jsonObject.getString("resourceType").equals(ResourceType.PRACTITIONER.typeName()))
+        .map(json -> Json.decodeValue(json.encode(), Practitioner.class)).collect(Collectors.toList());
 
-        AggregationEncounter aggregationEncounter = new AggregationEncounter()
-          .setIds(encounters.stream()
-            .map(Encounter::getId)
-            .collect(Collectors.toList()))
-          .setMainEncounter(Json.decodeValue(mainResource.encode(), Encounter.class))
-          .setSubEncounters(encounters)
-          .setObservations(observations)
-          .setProcedures(procedures).setPractitioners(practitioners)
-          .setConditions(conditions);
-        JsonObject aggregationJson = JsonObject.mapFrom(aggregationEncounter);
+      AggregationEncounter aggregationEncounter = new AggregationEncounter()
+        .setIds(encounters.stream()
+          .map(Encounter::getId)
+          .collect(Collectors.toList()))
+        .setMainEncounter(Json.decodeValue(mainResource.encode(), Encounter.class))
+        .setSubEncounters(encounters)
+        .setObservations(observations)
+        .setProcedures(procedures).setPractitioners(practitioners)
+        .setConditions(conditions);
+      JsonObject aggregationJson = JsonObject.mapFrom(aggregationEncounter);
 
-        mongoClient.insert("aggregations", aggregationJson, res -> {
-          if (res.succeeded()) {
-            aggregationJson.remove("_id");
-            handler.handle(Future.succeededFuture(aggregationJson));
-          } else {
-            handler
-              .handle(ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), res.cause().getMessage()));
-          }
-        });
-        break;
-      default:
-        handler.handle(ServiceException.fail(HttpResponseStatus.BAD_REQUEST.code(), "Unknown Aggregation Resource"));
-
+      mongoClient.insert("aggregations", aggregationJson, res -> {
+        if (res.succeeded()) {
+          aggregationJson.remove("_id");
+          handler.handle(Future.succeededFuture(aggregationJson));
+        } else {
+          handler
+            .handle(ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), res.cause().getMessage()));
+        }
+      });
+    } else {
+      handler.handle(ServiceException.fail(HttpResponseStatus.BAD_REQUEST.code(), "Unknown Aggregation Resource"));
     }
     return this;
   }
@@ -349,6 +352,34 @@ public class DatabaseServiceImpl implements DatabaseService {
       }
     });
     return this;
+  }
+
+  private void updateAggregationEncounter(String collection, String id, JsonObject body) {
+    this.mongoClient.find("aggregations", new JsonObject()
+      .put(collection + ".id", id), aggregationAsyncRes -> {
+      if (aggregationAsyncRes.succeeded() && aggregationAsyncRes.result() != null && aggregationAsyncRes.result().size() > 0) {
+        aggregationAsyncRes.result()
+          .forEach(jsonObject -> {
+            JsonArray resources = jsonObject.getJsonArray(collection);
+            Optional<JsonObject> toRemove = resources.
+              stream()
+              .map(obj -> (JsonObject) obj)
+              .filter(j -> j.getString("id").equals(id))
+              .findAny();
+            toRemove.ifPresent(resources::remove);
+            resources.add(body);
+            JsonObject query = new JsonObject()
+              .put("_id", jsonObject.getString("_id"));
+            mongoClient.findOneAndReplace("aggregations", query, jsonObject, resultHandler -> {
+              if(resultHandler.succeeded()){
+                JsonObject r = resultHandler.result();
+
+              }
+            });
+          });
+
+      }
+    });
   }
 
 

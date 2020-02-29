@@ -1,332 +1,37 @@
 {
-  "resourceType": "Bundle",
-  "type": "searchset",
-  "timestamp": "2020-02-29T16:14:18.121Z",
-  "total": 3,
-  "entry": [
+  "aggregationOutputFields": [],
+  "pipeline": [
     {
-      "resource": {
-        "id": "e4e5c71c-bfba-4d92-81d1-0c1ff69b3cc4",
-        "resourceType": "Condition",
-        "clinicalStatus": {
-          "coding": [
+      "$match": {
+        "$expr": {
+          "$and": [
             {
-              "system": "http://terminology.hl7.org/CodeSystem/condition-clinicalversion4.0.1",
-              "code": "active",
-              "display": "Active"
-            }
-          ]
-        },
-        "category": [
-          {
-            "coding": [
-              {
-                "system": "https://www.hl7.org/fhir/codesystem-condition-category.html",
-                "code": "encounter-diagnosis",
-                "display": "Encounter Diagnosis"
+              "$regexMatch": {
+                "input": {
+                  "$reduce": {
+                    "input": "$identifier.coding",
+                    "initialValue": "",
+                    "in": {
+                      "$concat": [
+                        "$$value",
+                        "$$this.code",
+                        " ",
+                        "$$this.display",
+                        " "
+                      ]
+                    }
+                  }
+                },
+                "regex": "rep-20191015-095451",
+                "options": "i"
               }
-            ]
-          }
-        ],
-        "code": {
-          "coding": [
-            {
-              "system": "https://www.hl7.org/fhir/codesystem-snomedct.html",
-              "code": "417746004",
-              "display": "Traumatic injury"
-            }
-          ],
-          "text": "Physical Condition after intervention"
-        },
-        "encounter": {
-          "reference": "/Encounter/ab35dc1f-0f02-46ce-aa04-f91a762f538b",
-          "type": "Encounter",
-          "display": "Encounter intervention"
-        },
-        "stage": [
-          {
-            "assessment": [
-              {
-                "reference": "/Observation/9a67c768-64aa-4ef8-a1c5-40db7bfc37b8",
-                "type": "Observation",
-                "display": "Total Iss Score: 16"
-              }
-            ],
-            "type": {
-              "coding": [
-                {
-                  "system": "http://www.snomed.org/",
-                  "code": "273533008",
-                  "display": "Injury severity score (assessment scale)"
-                }
-              ]
-            }
-          }
-        ],
-        "meta": {
-          "versionId": "f0d2b729-4e2e-4eea-8fc1-6cb8e0c17535",
-          "lastUpdated": "2020-02-28T16:21:10.477Z"
-        },
-        "subject": {
-          "reference": "#e9e2dbb8-4e43-4341-8c46-20fdf2727b0a",
-          "type": "Patient",
-          "display": "EMANUELE MARCHESE età 39"
-        },
-        "contained": [
-          {
-            "id": "e9e2dbb8-4e43-4341-8c46-20fdf2727b0a",
-            "resourceType": "Patient",
-            "name": [
-              {
-                "family": "MARCHESE",
-                "given": [
-                  "EMANUELE"
-                ]
-              }
-            ],
-            "gender": "M"
-          }
-        ]
-      },
-      "response": {
-        "etag": "f0d2b729-4e2e-4eea-8fc1-6cb8e0c17535",
-        "lastModified": "2020-02-28T16:21:10.477Z"
-      }
-    },
-    {
-      "resource": {
-        "id": "42669529-a722-40a4-be49-d96be2c9f339",
-        "resourceType": "Condition",
-        "code": {
-          "coding": [
-            {
-              "system": "http://www.snomed.org/",
-              "code": "417163006",
-              "display": "Traumatic AND/OR non-traumatic injury (disorder)"
             },
-            {
-              "system": "http://www.snomed.org/",
-              "code": "418399005",
-              "display": "Motor vehicle accident"
-            }
-          ],
-          "text": "Trauma Condition gestione pre ospedaliera"
-        },
-        "encounter": {
-          "reference": "/Encounter/23838d23-7ceb-4153-aa8a-7f4d6415512f",
-          "type": "Encounter",
-          "display": "Encounter pre ospedalizzazione"
-        },
-        "onsetDateTime": "2019-10-15T09:10:33Z",
-        "evidence": [
-          {
-            "code": [
-              {
-                "coding": [
-                  {
-                    "system": "http://www.snomed.org/",
-                    "code": "416886008",
-                    "display": "Closed wound"
-                  }
-                ],
-                "text": "Type of accident chiuso"
-              }
-            ],
-            "detail": [
-              {
-                "reference": "/Observation/483279ed-97a6-4ff9-a74c-08446f14983f",
-                "type": "Observation",
-                "display": "Type of accident chiuso"
-              }
-            ]
-          },
-          {
-            "code": [
-              {
-                "coding": [
-                  {
-                    "system": "http://www.snomed.org/",
-                    "code": "229027002",
-                    "display": "Dynamic"
-                  }
-                ],
-                "text": "Major Trauma Criteria - Dynamic"
-              }
-            ]
-          },
-          {
-            "code": [
-              {
-                "coding": [
-                  {
-                    "system": "http://www.snomed.org/",
-                    "code": "36298004",
-                    "display": "Anatomical "
-                  }
-                ],
-                "text": "Major Trauma Criteria - Anatomical"
-              }
-            ]
-          },
-          {
-            "code": [
-              {
-                "coding": [
-                  {
-                    "system": "http://www.snomed.org/",
-                    "code": "311791003",
-                    "display": "Information gathering (procedure)"
-                  }
-                ],
-                "text": "Anamnesis evidence"
-              }
-            ],
-            "detail": [
-              {
-                "reference": "/Procedure/75a8fe24-c5a5-4b28-aed7-b01cbe296591",
-                "type": "Procedure",
-                "display": "Anamnesi procedure"
-              }
-            ]
-          },
-          {
-            "code": [
-              {
-                "text": "Glasgow Coma Scale Total"
-              }
-            ],
-            "detail": [
-              {
-                "reference": "/Observation/632a5480-a869-4e47-831f-9ca5039bf5b4"
-              }
-            ]
-          },
-          {
-            "code": [
-              {
-                "text": "Worst Blood Pressure Observation"
-              }
-            ],
-            "detail": [
-              {
-                "reference": "/Observation/4741778c-f06c-4bba-830c-9d09f861471b"
-              }
-            ]
-          },
-          {
-            "code": [
-              {
-                "text": "Worst Respiratory Rate Observation"
-              }
-            ],
-            "detail": [
-              {
-                "reference": "/Observation/baf2afa6-ae63-435d-a0e8-1485e4a1211c"
-              }
-            ]
-          }
-        ],
-        "meta": {
-          "versionId": "19a0c79b-77ef-4ac4-a865-cf2115d02b93",
-          "lastUpdated": "2020-02-28T16:21:10.459Z"
-        },
-        "subject": {
-          "reference": "#e9e2dbb8-4e43-4341-8c46-20fdf2727b0a",
-          "type": "Patient",
-          "display": "EMANUELE MARCHESE età 39"
-        },
-        "contained": [
-          {
-            "id": "e9e2dbb8-4e43-4341-8c46-20fdf2727b0a",
-            "resourceType": "Patient",
-            "name": [
-              {
-                "family": "MARCHESE",
-                "given": [
-                  "EMANUELE"
-                ]
-              }
-            ],
-            "gender": "M"
-          }
-        ]
-      },
-      "response": {
-        "etag": "19a0c79b-77ef-4ac4-a865-cf2115d02b93",
-        "lastModified": "2020-02-28T16:21:10.459Z"
-      }
-    },
-    {
-      "resource": {
-        "id": "23c157f4-e8eb-4865-b200-dba3cd3a9e79",
-        "resourceType": "Condition",
-        "code": {
-          "coding": [
-            {
-              "system": "http://www.snomed.org/",
-              "code": "417163006",
-              "display": "Traumatic AND/OR non-traumatic injury (disorder)"
-            }
-          ],
-          "text": "Patient Initial Condition"
-        },
-        "encounter": {
-          "reference": "/Encounter/ab35dc1f-0f02-46ce-aa04-f91a762f538b",
-          "type": "Encounter",
-          "display": "Encounter intervention"
-        },
-        "evidence": [
-          {
-            "code": [
-              {
-                "coding": [
-                  {
-                    "system": "http://loinc.org",
-                    "code": "85353-1",
-                    "display": "Vital Signs"
-                  }
-                ],
-                "text": "Patient Initial Condition Vital Sign"
-              }
-            ],
-            "detail": [
-              {
-                "reference": "/Observation/fe313db2-3f7c-4bc7-b6db-5ff09b7c7caa",
-                "type": "Observation",
-                "display": "Initial Vital Signs"
-              }
-            ]
-          }
-        ],
-        "meta": {
-          "versionId": "15a426f0-5425-4d37-b40e-1f7dfca7e77c",
-          "lastUpdated": "2020-02-28T16:21:10.463Z"
-        },
-        "subject": {
-          "reference": "#e9e2dbb8-4e43-4341-8c46-20fdf2727b0a",
-          "type": "Patient",
-          "display": "EMANUELE MARCHESE età 39"
-        },
-        "contained": [
-          {
-            "id": "e9e2dbb8-4e43-4341-8c46-20fdf2727b0a",
-            "resourceType": "Patient",
-            "name": [
-              {
-                "family": "MARCHESE",
-                "given": [
-                  "EMANUELE"
-                ]
-              }
-            ],
-            "gender": "M"
-          }
-        ]
-      },
-      "response": {
-        "etag": "15a426f0-5425-4d37-b40e-1f7dfca7e77c",
-        "lastModified": "2020-02-28T16:21:10.463Z"
+            {}
+          ]
+        }
       }
     }
-  ]
+  ],
+  "cursor": {},
+  "allowDiskUse": true
 }
