@@ -1,5 +1,6 @@
 package com.oracolo.fhir.handlers.query.mongo;
 
+import com.oracolo.fhir.handlers.query.FhirQuery;
 import com.oracolo.fhir.handlers.query.QueryHandler;
 import com.oracolo.fhir.handlers.query.mongo.parser.chain.ChainParserHandler;
 import com.oracolo.fhir.handlers.query.mongo.parser.chain.ChainParserResult;
@@ -32,13 +33,6 @@ public class MongoDbQueryHandler implements QueryHandler {
     params.forEach(entry -> {
       String queryName = entry.getKey();
       String value = entry.getValue();
-      if (queryName.contains(".")) {
-        ChainParserResult chainParserResult = ChainParserHandler.createLookupPipelineStage(queryName, value);
-        JsonObject chainQuery = Objects.requireNonNull(chainParserResult).getQuery();
-        lookUpStages.add(chainQuery);
-        aggregationOutputFields.add(chainParserResult.getCollection());
-      }
-      //text base search must be in first stage of the overall pipeline
       if (queryName.equals(MongoDbQuery._content.getQueryName())) {
         pipeline.add(new JsonObject()
           .put("$match", MongoDbQuery._content
@@ -47,40 +41,49 @@ public class MongoDbQueryHandler implements QueryHandler {
             .mongoDbPipelineStageQuery()));
       } else {
         for (MongoDbQuery mongoDbQuery : MongoDbQuery.values()) {
-          if (mongoDbQuery.getQueryName().equals(queryName)) {
-            //one can make or conditions with "," on param. For each param create normal queries but added in
-            //or condition
-            String[] orCondition = value.split(",");
-            if (orCondition.length > 1) {
-              JsonArray orConditionsJsonArray = new JsonArray();
+          if (queryName.contains(".") && mongoDbQuery.getType().equals("Reference") && queryName.split(":(.*)\\.")[0].equals(mongoDbQuery.getQueryName())) {
+            QueryPrefixResult result = QueryPrefixHandler.parsePrefix(value);
+            JsonObject fhirQueryJson = mongoDbQuery.getFhirQuery()
+              .setValue(result.parsedValue())
+              .setPrefix(result.prefix())
+              .mongoDbPipelineStageQuery(queryName);
+            lookUpStages.add(fhirQueryJson);
+            aggregationOutputFields.add(fhirQueryJson.getJsonObject("$lookup").getString("as"));
+          } else {
+            if (mongoDbQuery.getQueryName().equals(queryName)) {
+              //one can make or conditions with "," on param. For each param create normal queries but added in
+              //or condition
+              String[] orCondition = value.split(",");
+              if (orCondition.length > 1) {
+                JsonArray orConditionsJsonArray = new JsonArray();
 
-              for (String valueFromOrCondition : orCondition) {
+                for (String valueFromOrCondition : orCondition) {
+                  QueryPrefixResult queryPrefixResult = QueryPrefixHandler
+                    .parsePrefix(valueFromOrCondition);
+                  JsonObject fhirQuery = mongoDbQuery.getFhirQuery()
+                    .setPrefix(queryPrefixResult.prefix())
+                    .setValue(queryPrefixResult.parsedValue())
+                    .mongoDbPipelineStageQuery();
+                  orConditionsJsonArray.add(fhirQuery);
+                }
+                andOperations.add(new JsonObject()
+                  .put("$or", orConditionsJsonArray));
+              } else {
+                //normal
                 QueryPrefixResult queryPrefixResult = QueryPrefixHandler
-                  .parsePrefix(valueFromOrCondition);
+                  .parsePrefix(value);
                 JsonObject fhirQuery = mongoDbQuery.getFhirQuery()
                   .setPrefix(queryPrefixResult.prefix())
                   .setValue(queryPrefixResult.parsedValue())
                   .mongoDbPipelineStageQuery();
-                orConditionsJsonArray.add(fhirQuery);
+                andOperations.add(fhirQuery);
               }
-              andOperations.add(new JsonObject()
-                .put("$or", orConditionsJsonArray));
-            } else {
-              //normal
-              QueryPrefixResult queryPrefixResult = QueryPrefixHandler
-                .parsePrefix(value);
-              JsonObject fhirQuery = mongoDbQuery.getFhirQuery()
-                .setPrefix(queryPrefixResult.prefix())
-                .setValue(queryPrefixResult.parsedValue())
-                .mongoDbPipelineStageQuery();
-              andOperations.add(fhirQuery);
             }
-
           }
         }
       }
-
     });
+
     andOperations.add(new JsonObject());
     pipeline.add(new JsonObject()
       .put("$match", new JsonObject()

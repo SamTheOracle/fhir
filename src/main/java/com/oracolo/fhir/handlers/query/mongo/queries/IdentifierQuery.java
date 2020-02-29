@@ -26,5 +26,10 @@ public class IdentifierQuery extends BaseMongoDbQuery {
         .add("$identifier.value"));
   }
 
+  @Override
+  public JsonObject mongoDbPipelineStageQuery(String paramName) {
+    return null;
+  }
+
 
 }

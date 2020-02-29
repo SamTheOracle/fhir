@@ -20,7 +20,9 @@ public enum MongoDbQuery {
   identifier("identifier", new IdentifierQuery(), "Token"),
   subject("subject", new SubjectReferenceQuery(), "Reference"),
   diagnosis("diagnosis", new DiagnosisReferenceQuery(), "Reference"),
-  evidence_detail("evidence-detail", new EvidenceDetailReferenceQuery(), "Reference");
+  evidence_detail("evidence-detail", new EvidenceDetailReferenceQuery(), "Reference"),
+  valueString("valueString",new ValueStringQuery(),"String"),
+  valueBoolean("valueBoolean",new ValueBooleanQuery(),"String");
 
   private String queryName;
   private FhirQuery query;

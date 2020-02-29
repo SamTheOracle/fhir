@@ -1,11 +1,13 @@
 package com.oracolo.fhir.handlers.query.mongo.queries.reference;
 
+import com.oracolo.fhir.handlers.query.FhirQuery;
 import com.oracolo.fhir.handlers.query.mongo.BaseMongoDbQuery;
-import com.oracolo.fhir.handlers.query.mongo.queries.ChainReference;
+import com.oracolo.fhir.handlers.query.mongo.parser.chain.ChainParserHandler;
+import com.oracolo.fhir.handlers.query.mongo.parser.chain.ChainParserResult;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-public class SubjectReferenceQuery extends BaseMongoDbQuery implements ChainReference {
+public class SubjectReferenceQuery extends BaseMongoDbQuery implements FhirQuery {
 
 
   @Override
@@ -32,23 +34,27 @@ public class SubjectReferenceQuery extends BaseMongoDbQuery implements ChainRefe
     return new JsonObject()
       .put("$or", new JsonArray()
         .add(new JsonObject()
-          .put("subject.reference", new JsonObject()
-            .put("$regex", value)
-            .put("$options", "i")))
+          .put("$regexMatch", new JsonObject()
+            .put("input", "$subject.reference")
+            .put("regex", value)
+            .put("options", "i")))
         .add(new JsonObject()
-          .put("subject.display", new JsonObject()
-            .put("$regex", value)
-            .put("$options", "i")))
+          .put("$regexMatch", new JsonObject()
+            .put("input", "$subject.display")
+            .put("regex", value)
+            .put("options", "i")))
       );
   }
 
   @Override
-  public JsonObject mongoDbMatchQuery(String mongoDbStageVariable) {
-    return new JsonObject()
-      .put("$regexMatch", new JsonObject()
-        .put("input", "$$" + mongoDbStageVariable + ".reference")
-        .put("regex", "$id")
-        .put("options", "i")
-      );
+  public JsonObject mongoDbPipelineStageQuery(String paramName) {
+    return ChainParserHandler.createLookupPipelineStage(paramName, value, prefix, new JsonObject()
+        .put("$regexMatch", new JsonObject()
+          .put("input", "$$searchParam.reference")
+          .put("regex", "$id")
+          .put("options", "i")),
+      "subject");
   }
+
+
 }

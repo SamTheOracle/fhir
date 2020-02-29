@@ -4,25 +4,25 @@ import com.oracolo.fhir.handlers.query.mongo.BaseMongoDbQuery;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-public class IdQuery extends BaseMongoDbQuery {
+public class ValueStringQuery extends BaseMongoDbQuery {
 
 
   @Override
   public String name() {
-    return "_id";
+    return "valueInteger";
   }
 
 //  @Override
 //  public JsonObject mongoDbQuery() {
 //    return new JsonObject()
-//      .put("id", value);
+//      .put("valueInteger", new JsonObject().put(prefix.operator(), Integer.parseInt(value)));
 //  }
 
   @Override
   public JsonObject mongoDbPipelineStageQuery() {
     return new JsonObject()
-      .put("$eq", new JsonArray()
-        .add("$id")
+      .put(prefix.operator(), new JsonArray()
+        .add("$valueString")
         .add(value));
   }
 
@@ -30,6 +30,5 @@ public class IdQuery extends BaseMongoDbQuery {
   public JsonObject mongoDbPipelineStageQuery(String paramName) {
     return null;
   }
-
 
 }

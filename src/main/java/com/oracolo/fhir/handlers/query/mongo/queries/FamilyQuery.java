@@ -29,5 +29,12 @@ public class FamilyQuery extends BaseMongoDbQuery {
           .put("options", "i"));
   }
 
+  @Override
+  public JsonObject mongoDbPipelineStageQuery(String paramName) {
+    return null;
+  }
+
+
+
 
 }
