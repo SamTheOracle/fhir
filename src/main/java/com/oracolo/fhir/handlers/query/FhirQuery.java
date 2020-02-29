@@ -12,7 +12,7 @@ public interface FhirQuery {
   /**
    * Creates a pipelineStageQuery by automatically parsing
    * a complex query parameter.
-   * @param complexParamName complexy query parameter
+   * @param complexParamName complex query parameter
    * @return the query
    */
   JsonObject mongoDbPipelineStageQuery(String complexParamName);
@@ -20,6 +20,7 @@ public interface FhirQuery {
   FhirQuery setPrefix(Prefix prefix);
 
   FhirQuery setValue(String value);
+
 
 
 }
