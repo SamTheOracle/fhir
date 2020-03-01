@@ -45,7 +45,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
         mongoClient.findOne("aggregations", new JsonObject()
           .put(collection + ".id", id), null, resultFromAggregationAsync -> {
-          if (resultFromAggregationAsync.failed()) {
+          if (resultFromAggregationAsync.succeeded() && resultFromAggregationAsync.result().isEmpty()) {
             JsonObject resultFromFetch = res.result();
             Metadata metadata = Json.decodeValue(resultFromFetch.getJsonObject("meta").encode(), Metadata.class);
             metadata.addNewTag(new Coding()
@@ -63,8 +63,13 @@ public class DatabaseServiceImpl implements DatabaseService {
               }
             });
           }
-          else{
+          else if(resultFromAggregationAsync.succeeded()){
             handler.handle(ServiceException.fail(HttpResponseStatus.UNPROCESSABLE_ENTITY.code(),"External client cannot modify traumatracker resources"));
+
+          }
+          else{
+            handler.handle(ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(),resultFromAggregationAsync.cause().getMessage()));
+
           }
 
         });
