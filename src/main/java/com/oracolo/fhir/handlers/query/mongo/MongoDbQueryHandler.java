@@ -6,6 +6,7 @@ import com.oracolo.fhir.handlers.query.mongo.parser.chain.ChainParserHandler;
 import com.oracolo.fhir.handlers.query.mongo.parser.chain.ChainParserResult;
 import com.oracolo.fhir.handlers.query.mongo.parser.prefix.QueryPrefixHandler;
 import com.oracolo.fhir.handlers.query.mongo.parser.prefix.QueryPrefixResult;
+import com.oracolo.fhir.utils.FhirUtils;
 import io.vertx.core.MultiMap;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -25,7 +26,7 @@ public class MongoDbQueryHandler implements QueryHandler {
   }
 
 
-  public JsonObject createMongoDbQuery() {
+  public JsonObject createMongoDbQuery() throws Exception {
     JsonArray andOperations = new JsonArray();
     JsonArray pipeline = new JsonArray();
     JsonArray lookUpStages = new JsonArray();
@@ -33,6 +34,7 @@ public class MongoDbQueryHandler implements QueryHandler {
     params.forEach(entry -> {
       String queryName = entry.getKey();
       String value = entry.getValue();
+      String[] orCondition = value.split(",");
       if (queryName.equals(MongoDbQuery._content.getQueryName())) {
         pipeline.add(new JsonObject()
           .put("$match", MongoDbQuery._content
@@ -53,7 +55,7 @@ public class MongoDbQueryHandler implements QueryHandler {
             if (mongoDbQuery.getQueryName().equals(queryName)) {
               //one can make or conditions with "," on param. For each param create normal queries but added in
               //or condition
-              String[] orCondition = value.split(",");
+
               if (orCondition.length > 1) {
                 JsonArray orConditionsJsonArray = new JsonArray();
 
@@ -84,12 +86,27 @@ public class MongoDbQueryHandler implements QueryHandler {
       }
     });
 
-    andOperations.add(new JsonObject());
-    pipeline.add(new JsonObject()
-      .put("$match", new JsonObject()
-        .put("$expr", new JsonObject()
-          .put("$and", andOperations))
-      ))
+    andOperations
+      .add(new JsonObject());
+    pipeline
+      .add(new JsonObject()
+        .put("$match", new JsonObject()
+          .put("$expr", new JsonObject()
+            .put("$eq", new JsonArray()
+              .add(false)
+              .add(new JsonObject()
+                .put("$in", new JsonArray()
+                  .add(FhirUtils.DELETED)
+                  .add(new JsonObject()
+                    .put("$ifNull", new JsonArray()
+                      .add("$meta.tag.code")
+                      .add(new JsonArray()))))))
+          )))
+      .add(new JsonObject()
+        .put("$match", new JsonObject()
+          .put("$expr", new JsonObject()
+            .put("$and", andOperations))
+        ))
       .addAll(lookUpStages);
     JsonObject command = new JsonObject()
       .put("aggregationOutputFields", aggregationOutputFields)

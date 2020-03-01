@@ -380,7 +380,7 @@ public class FhirServer extends BaseRestInterface {
       .withFormatHandler(new BaseFormatHandler()
         .withAcceptHeader(acceptableType))
       .createResponseAsync(serverResponse, (service, promise) ->
-        service.fetchDomainResourceVersion(collection, query, null, promise))
+        service.fetchDomainResourceWithQuery(collection, query, null, promise))
       .releaseAsync()
       .future()
       .onSuccess(HttpServerResponse::end)
@@ -620,36 +620,47 @@ public class FhirServer extends BaseRestInterface {
       acceptableType = FhirHttpHeader.APPLICATION_JSON.value();
     }
 
-    JsonObject query = QueryHandler
-      .createMongoDbQuery(queryParams);
+    try {
+      JsonObject query = QueryHandler
+        .createMongoDbQuery(queryParams);
 
-    HttpServerResponse serverResponse = routingContext.response();
-    ResponseHandler
-      .searchResponseHandler()
-      .withService(databaseService)
-      .withFormatHandler(new BaseFormatHandler()
-        .withAcceptHeader(acceptableType))
-      .createResponseAsync(serverResponse, (service, promise)
-        -> service.executeAggregationCommand(collection, query, promise))
-      .releaseAsync()
-      .future()
-      .onSuccess(HttpServerResponse::end)
-      .onFailure(throwable -> {
 
-        if (throwable instanceof ServiceException) {
-          int code = ((ServiceException) throwable).failureCode();
-          String message = throwable.getMessage();
-          ErrorFormat errorFormat = ErrorFormat.createFormat(code);
-          routingContext.put("error", message);
-          routingContext.put("code", errorFormat.getFhirErrorCode());
-          routingContext.fail(code);
+      HttpServerResponse serverResponse = routingContext.response();
+      ResponseHandler
+        .searchResponseHandler()
+        .withService(databaseService)
+        .withFormatHandler(new BaseFormatHandler()
+          .withAcceptHeader(acceptableType))
+        .createResponseAsync(serverResponse, (service, promise)
+          -> service.executeAggregationCommand(collection, query, promise))
+        .releaseAsync()
+        .future()
+        .onSuccess(HttpServerResponse::end)
+        .onFailure(throwable -> {
 
-        } else {
-          routingContext.put("error", throwable.getMessage());
-          routingContext.put("code", "invariant");
-          routingContext.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
-        }
-      });
+          if (throwable instanceof ServiceException) {
+            int code = ((ServiceException) throwable).failureCode();
+            String message = throwable.getMessage();
+            ErrorFormat errorFormat = ErrorFormat.createFormat(code);
+            routingContext.put("error", message);
+            routingContext.put("code", errorFormat.getFhirErrorCode());
+            routingContext.fail(code);
+
+          } else {
+            routingContext.put("error", throwable.getMessage());
+            routingContext.put("code", "invariant");
+            routingContext.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
+          }
+        });
+
+
+    } catch (Exception e) {
+      routingContext.put("error", e.getMessage());
+      routingContext.put("code", "invariant");
+      routingContext.fail(HttpResponseStatus.BAD_REQUEST.code());
+
+    }
+
   }
 
   private void handleBatchOperations(RoutingContext routingContext) {

@@ -27,7 +27,15 @@ public class DiagnosisReferenceQuery extends BaseMongoDbQuery {
   public JsonObject mongoDbPipelineStageQuery() {
     return new JsonObject()
       .put("$regexMatch", new JsonObject()
-        .put("input", "$diagnosis.condition.reference")
+        .put("input", new JsonObject()
+          .put("$reduce", new JsonObject()
+            .put("input", "$diagnosis")
+            .put("initialValue", "")
+            .put("in", new JsonObject()
+              .put("$concat", new JsonArray()
+                .add("$$value")
+                .add("$$this.condition.reference")
+                .add(" ")))))
         .put("regex", value)
         .put("options", "i"));
   }

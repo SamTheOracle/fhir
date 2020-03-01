@@ -58,8 +58,6 @@ public interface DatabaseService {
   DatabaseService findAggregationResource(AggregationType aggregationType, JsonObject query,
                                           Handler<AsyncResult<JsonObject>> handler);
 
-  @Fluent
-  DatabaseService fetchDomainResourceVersion(String collection, JsonObject query, JsonObject fields,
-                                             Handler<AsyncResult<JsonObject>> handler);
+
 
 }

@@ -24,6 +24,15 @@ public class ChainParserHandler {
         FhirQuery fhirQuery = MongoDbQuery
           .valueOf(queryName.replace("-", "_"))
           .getFhirQuery();
+        //value might be a or conditions, e.g. code=1234,678
+        JsonArray orConditions = new JsonArray();
+        for (String orElement : parsedValue.split(",")) {
+          orConditions.add(fhirQuery
+            .setValue(orElement)
+            .setPrefix(prefix)
+            .mongoDbPipelineStageQuery());
+
+        }
         return new JsonObject()
           .put("$lookup", new JsonObject()
             .put("from", type.getCollection())
@@ -34,10 +43,8 @@ public class ChainParserHandler {
                 .put("$match", new JsonObject()
                   .put("$expr", new JsonObject()
                     .put("$and", new JsonArray()
-                      .add(fhirQuery
-                        .setPrefix(prefix)
-                        .setValue(parsedValue)
-                        .mongoDbPipelineStageQuery())
+                      .add(new JsonObject()
+                        .put("$or", orConditions))
                       .add(matchQuery)
                     ))
                 )))
@@ -50,6 +57,7 @@ public class ChainParserHandler {
 
     return null;
   }
+
 }
 
 

@@ -23,10 +23,7 @@ import io.vertx.ext.mongo.MongoClient;
 import io.vertx.serviceproxy.ServiceException;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class DatabaseServiceImpl implements DatabaseService {
@@ -142,7 +139,7 @@ public class DatabaseServiceImpl implements DatabaseService {
           .get();
 
         Metadata metadata = Json.decodeValue(jsonObjectResult.getJsonObject("meta").encode(), Metadata.class);
-        if (metadata.getTag() != null && metadata.getTag().stream().anyMatch(coding -> coding.getCode().equals(FhirUtils.DELETED))) {
+        if (metadata.getTag() != null && metadata.getTag().stream().noneMatch(coding -> coding.getCode().equals(FhirUtils.DELETED))) {
           handler.handle(ServiceException.fail(HttpResponseStatus.GONE.code(), FhirUtils.DELETE_MESSAGE));
         } else {
           handler.handle(Future.succeededFuture(jsonObjectResult));
@@ -172,7 +169,8 @@ public class DatabaseServiceImpl implements DatabaseService {
         .getJsonArray("firstBatch")
         .size() > 0) {
         JsonObject mongoDbBatch = asyncRes.result();
-        List<JsonObject> results = mongoDbBatch.getJsonObject("cursor")
+        Map<String, JsonObject> results = new HashMap<>();
+        mongoDbBatch.getJsonObject("cursor")
           .getJsonArray("firstBatch")
           .stream()
           .map(JsonObject::mapFrom)
@@ -184,16 +182,22 @@ public class DatabaseServiceImpl implements DatabaseService {
               }
             }
             return emptyResults;
-          }).peek(json -> {
+          })
+          .peek(json -> {
             json.remove("_id");
             aggregationOutputFields.stream().map(obj -> (String) obj).forEach(json::remove);
-          }).collect(Collectors.toList());
+          })
+          .collect(Collectors.groupingBy(jsonObject -> jsonObject.getString("id")))
+          .forEach((id, list) ->
+            results.put(id, list.stream().max(Comparator.comparing(jsonObject -> Json
+              .decodeValue(jsonObject.getJsonObject("meta").encode(), Metadata.class).getLastUpdated())).get())
+          );
         if (results.size() == 0) {
           handler.handle(ServiceException.fail(HttpResponseStatus.NOT_FOUND.code(), "No resource found"));
 
         } else {
           Bundle bundle = new Bundle().setTimestamp(Instant.now()).setTotal(results.size());
-          results.forEach(json -> {
+          results.forEach((id,json) -> {
 
             Metadata metadata = Json.decodeValue(json.getJsonObject("meta").encode(), Metadata.class);
             bundle.addNewEntry(new BundleEntry()
@@ -337,22 +341,6 @@ public class DatabaseServiceImpl implements DatabaseService {
     return this;
   }
 
-  @Override
-  public DatabaseService fetchDomainResourceVersion(String collection, JsonObject query, JsonObject fields,
-                                                    Handler<AsyncResult<JsonObject>> handler) {
-    this.mongoClient.findOne(collection, query, fields, result -> {
-      if (result.succeeded() && result.result() != null) {
-        JsonObject jsonObjectResult = result.result();
-        jsonObjectResult.remove("_id");
-        handler.handle(Future.succeededFuture(jsonObjectResult));
-
-      } else {
-        handler.handle(
-          ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), result.cause().getMessage()));
-      }
-    });
-    return this;
-  }
 
   private void updateAggregationEncounter(String collection, String id, JsonObject body) {
     this.mongoClient.find("aggregations", new JsonObject()
@@ -371,7 +359,7 @@ public class DatabaseServiceImpl implements DatabaseService {
             JsonObject query = new JsonObject()
               .put("_id", jsonObject.getString("_id"));
             mongoClient.findOneAndReplace("aggregations", query, jsonObject, resultHandler -> {
-              if(resultHandler.succeeded()){
+              if (resultHandler.succeeded()) {
                 JsonObject r = resultHandler.result();
 
               }

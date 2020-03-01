@@ -25,12 +25,13 @@ public class EvidenceDetailReferenceQuery extends BaseMongoDbQuery implements Fh
     JsonObject innerStepReduce = new JsonObject();
     innerStepReduce
       .put("$reduce", new JsonObject()
-        .put("input", "$evidence.detail")
+        .put("input", "$evidence")
         .put("initialValue", new JsonArray())
         .put("in", new JsonObject()
           .put("$concatArrays", new JsonArray()
             .add("$$value")
-            .add("$$this"))));
+            .add("$$this.detail"))));
+
     JsonObject outerStepReduce = new JsonObject()
       .put("$reduce", new JsonObject()
         .put("input", innerStepReduce)
@@ -52,12 +53,12 @@ public class EvidenceDetailReferenceQuery extends BaseMongoDbQuery implements Fh
     JsonObject innerStepReduce = new JsonObject();
     innerStepReduce
       .put("$reduce", new JsonObject()
-        .put("input", "$$searchParam.detail")
+        .put("input", "$$searchParam")
         .put("initialValue", new JsonArray())
         .put("in", new JsonObject()
           .put("$concatArrays", new JsonArray()
             .add("$$value")
-            .add("$$this"))));
+            .add("$$this.detail"))));
     JsonObject outerStepReduce = new JsonObject()
       .put("$reduce", new JsonObject()
         .put("input", innerStepReduce)
