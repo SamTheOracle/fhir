@@ -169,11 +169,12 @@ public class DatabaseServiceImpl implements DatabaseService {
         .getJsonArray("firstBatch")
         .size() > 0) {
         JsonObject mongoDbBatch = asyncRes.result();
-        Map<String, JsonObject> results = new HashMap<>();
+        Bundle bundle = new Bundle().setTimestamp(Instant.now());
         mongoDbBatch.getJsonObject("cursor")
           .getJsonArray("firstBatch")
           .stream()
           .map(JsonObject::mapFrom)
+          //filter objects that did not have any objects in lookup stage
           .filter(json -> {
             boolean emptyResults = true;
             for (Object obj : aggregationOutputFields) {
@@ -187,27 +188,40 @@ public class DatabaseServiceImpl implements DatabaseService {
             json.remove("_id");
             aggregationOutputFields.stream().map(obj -> (String) obj).forEach(json::remove);
           })
+          //group by id
           .collect(Collectors.groupingBy(jsonObject -> jsonObject.getString("id")))
           .forEach((id, list) ->
-            results.put(id, list.stream().max(Comparator.comparing(jsonObject -> Json
-              .decodeValue(jsonObject.getJsonObject("meta").encode(), Metadata.class).getLastUpdated())).get())
+            {
+              //sort by most recent
+              Optional<JsonObject> mostRecentResourceOptional = list.stream().max(Comparator.comparing(jsonObject -> Json
+                .decodeValue(jsonObject.getJsonObject("meta").encode(), Metadata.class).getLastUpdated()));
+
+              mostRecentResourceOptional.ifPresent(jsonObject -> {
+                Metadata metadata = Json.decodeValue(jsonObject.getJsonObject("meta").encode(), Metadata.class);
+                //check if most recent resource is deleted
+                if (metadata.getTag() == null ||
+                  (metadata.getTag() != null && metadata.getTag()
+                    .stream()
+                    .noneMatch(coding -> coding.getCode().equals(FhirUtils.DELETED)))) {
+                  bundle.addNewEntry(new BundleEntry()
+                    .setResponse(
+                      new BundleResponse()
+                        .setLastModified(metadata.getLastUpdated().toString())
+                        .setEtag(metadata.getVersionId()))
+                    .setResource(jsonObject));
+                }
+
+              });
+
+            }
+
           );
-        if (results.size() == 0) {
+        if (bundle.getEntry() == null || bundle.getEntry().size() == 0) {
           handler.handle(ServiceException.fail(HttpResponseStatus.NOT_FOUND.code(), "No resource found"));
 
         } else {
-          Bundle bundle = new Bundle().setTimestamp(Instant.now()).setTotal(results.size());
-          results.forEach((id,json) -> {
 
-            Metadata metadata = Json.decodeValue(json.getJsonObject("meta").encode(), Metadata.class);
-            bundle.addNewEntry(new BundleEntry()
-              .setResponse(
-                new BundleResponse()
-                  .setLastModified(metadata.getLastUpdated().toString())
-                  .setEtag(metadata.getVersionId()))
-              .setResource(json));
-          });
-          handler.handle(Future.succeededFuture(JsonObject.mapFrom(bundle)));
+          handler.handle(Future.succeededFuture(JsonObject.mapFrom(bundle.setTimestamp(Instant.now()).setTotal(bundle.getEntry().size()))));
 
         }
 
