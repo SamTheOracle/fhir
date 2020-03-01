@@ -202,7 +202,9 @@ public class FhirServer extends BaseRestInterface {
         .handler(routingContext -> handleResourceCreate(routingContext, type))
         .failureHandler(this::errorHandler);
       //search
-      restApi.get("/" + FhirUtils.BASE + "/" + type.typeName())
+      restApi.route("/" + FhirUtils.BASE + "/" + type.typeName())
+        .method(HttpMethod.GET)
+        .method(HttpMethod.POST)
         .produces(HttpHeaderValues.APPLICATION_JSON.toString())
         .produces(FhirHttpHeader.APPLICATION_JSON.value())
         .produces(FhirHttpHeader.APPLICATION_JSON.value())
@@ -580,8 +582,7 @@ public class FhirServer extends BaseRestInterface {
   private void handleResourceDelete(RoutingContext routingContext, ResourceType type) {
     String id = routingContext.pathParam(FhirUtils.ID);
     String collection = type.getCollection();
-    JsonObject query = new JsonObject()
-      .put("id", id);
+
 
     HttpServerResponse serverResponse = routingContext.response();
     ResponseHandler
@@ -589,7 +590,7 @@ public class FhirServer extends BaseRestInterface {
       .withService(databaseService)
       .withFormatHandler(new BaseFormatHandler())
       .createResponseAsync(serverResponse, (service, promise) ->
-        service.createDeletedResource(collection, query, promise))
+        service.createDeletedResource(collection, id, promise))
       .releaseAsync()
       .future()
       .onSuccess(HttpServerResponse::end)

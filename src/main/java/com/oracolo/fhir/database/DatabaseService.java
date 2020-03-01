@@ -24,7 +24,7 @@ public interface DatabaseService {
   }
 
   @Fluent
-  DatabaseService createDeletedResource(String collection, JsonObject query, Handler<AsyncResult<JsonObject>> handler);
+  DatabaseService createDeletedResource(String collection, String id, Handler<AsyncResult<JsonObject>> handler);
 
 
   @Fluent

@@ -35,28 +35,40 @@ public class DatabaseServiceImpl implements DatabaseService {
   }
 
   @Override
-  public DatabaseService createDeletedResource(String collection, JsonObject query,
+  public DatabaseService createDeletedResource(String collection, String id,
                                                Handler<AsyncResult<JsonObject>> handler) {
+    JsonObject query = new JsonObject()
+      .put("id", id);
     fetchDomainResourceWithQuery(collection, query, null, res -> {
       // if it is successfull, the resource is not deleted
       if (res.succeeded() && res.result() != null) {
-        JsonObject resultFromFetch = res.result();
-        Metadata metadata = Json.decodeValue(resultFromFetch.getJsonObject("meta").encode(), Metadata.class);
-        metadata.addNewTag(new Coding()
-          .setCode(FhirUtils.DELETED))
-          .setLastUpdated(Instant.now());
 
-        resultFromFetch.put("meta", JsonObject.mapFrom(metadata));
-        this.mongoClient.insert(collection, resultFromFetch, insertRes -> {
-          if (insertRes.succeeded()) {
+        mongoClient.findOne("aggregations", new JsonObject()
+          .put(collection + ".id", id), null, resultFromAggregationAsync -> {
+          if (resultFromAggregationAsync.failed()) {
+            JsonObject resultFromFetch = res.result();
+            Metadata metadata = Json.decodeValue(resultFromFetch.getJsonObject("meta").encode(), Metadata.class);
+            metadata.addNewTag(new Coding()
+              .setCode(FhirUtils.DELETED))
+              .setLastUpdated(Instant.now());
+            resultFromFetch.put("meta", JsonObject.mapFrom(metadata));
+            this.mongoClient.insert(collection, resultFromFetch, insertRes -> {
+              if (insertRes.succeeded()) {
 
-            // vertx mongo client insert _id, when saving, need to get it out
-            resultFromFetch.remove("_id");
-            handler.handle(Future.succeededFuture(resultFromFetch));
-          } else {
-            handler.handle(ServiceException.fail(FhirUtils.MONGODB_CONNECTION_FAIL, insertRes.cause().getMessage()));
+                // vertx mongo client insert _id, when saving, need to get it out
+                resultFromFetch.remove("_id");
+                handler.handle(Future.succeededFuture(resultFromFetch));
+              } else {
+                handler.handle(ServiceException.fail(FhirUtils.MONGODB_CONNECTION_FAIL, insertRes.cause().getMessage()));
+              }
+            });
           }
+          else{
+            handler.handle(ServiceException.fail(HttpResponseStatus.UNPROCESSABLE_ENTITY.code(),"External client cannot modify traumatracker resources"));
+          }
+
         });
+
         // client is trying to delete a resource that does not exist but it is ok
       } else {
         ServiceException exception = (ServiceException) res.cause();
@@ -95,10 +107,8 @@ public class DatabaseServiceImpl implements DatabaseService {
           if (insertRes.succeeded()) {
             // vertx mongo client insert _id, when saving, need to get it out
             body.remove("_id");
-            handler.handle(Future.succeededFuture(JsonObject.mapFrom(new UpdateResult()
-              .setBody(body.encode())
-              .setStatus(HttpResponseStatus.OK.code()))));
-            updateAggregationEncounter(collection, body.getString("id"), body);
+
+            updateAggregationEncounter(collection, body.getString("id"), body, handler);
           } else {
             handler.handle(
               ServiceException.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code(), insertRes.cause().getMessage()));
@@ -109,10 +119,8 @@ public class DatabaseServiceImpl implements DatabaseService {
           if (insertRes.succeeded()) {
             // vertx mongo client insert _id, when saving, need to get it out
             body.remove("_id");
-            handler.handle(Future.succeededFuture(JsonObject.mapFrom(new UpdateResult()
-              .setBody(body.encode())
-              .setStatus(HttpResponseStatus.CREATED.code()))));
-            updateAggregationEncounter(collection, body.getString("id"), body);
+
+            updateAggregationEncounter(collection, body.getString("id"), body, handler);
 
           } else {
             handler.handle(
@@ -139,7 +147,7 @@ public class DatabaseServiceImpl implements DatabaseService {
           .get();
 
         Metadata metadata = Json.decodeValue(jsonObjectResult.getJsonObject("meta").encode(), Metadata.class);
-        if (metadata.getTag() != null && metadata.getTag().stream().noneMatch(coding -> coding.getCode().equals(FhirUtils.DELETED))) {
+        if (metadata.getTag() != null && metadata.getTag().stream().anyMatch(coding -> coding.getCode().equals(FhirUtils.DELETED))) {
           handler.handle(ServiceException.fail(HttpResponseStatus.GONE.code(), FhirUtils.DELETE_MESSAGE));
         } else {
           handler.handle(Future.succeededFuture(jsonObjectResult));
@@ -356,30 +364,34 @@ public class DatabaseServiceImpl implements DatabaseService {
   }
 
 
-  private void updateAggregationEncounter(String collection, String id, JsonObject body) {
+  private void updateAggregationEncounter(String collection, String id, JsonObject body, Handler<AsyncResult<JsonObject>> mainHandler) {
     this.mongoClient.find("aggregations", new JsonObject()
       .put(collection + ".id", id), aggregationAsyncRes -> {
       if (aggregationAsyncRes.succeeded() && aggregationAsyncRes.result() != null && aggregationAsyncRes.result().size() > 0) {
-        aggregationAsyncRes.result()
-          .forEach(jsonObject -> {
-            JsonArray resources = jsonObject.getJsonArray(collection);
-            Optional<JsonObject> toRemove = resources.
-              stream()
-              .map(obj -> (JsonObject) obj)
-              .filter(j -> j.getString("id").equals(id))
-              .findAny();
-            toRemove.ifPresent(resources::remove);
-            resources.add(body);
-            JsonObject query = new JsonObject()
-              .put("_id", jsonObject.getString("_id"));
-            mongoClient.findOneAndReplace("aggregations", query, jsonObject, resultHandler -> {
-              if (resultHandler.succeeded()) {
-                JsonObject r = resultHandler.result();
-
-              }
-            });
-          });
-
+//        aggregationAsyncRes.result()
+//          .forEach(jsonObject -> {
+//            JsonArray resources = jsonObject.getJsonArray(collection);
+//            Optional<JsonObject> toRemove = resources.
+//              stream()
+//              .map(obj -> (JsonObject) obj)
+//              .filter(j -> j.getString("id").equals(id))
+//              .findAny();
+//            toRemove.ifPresent(resources::remove);
+//            resources.add(body);
+//            JsonObject query = new JsonObject()
+//              .put("_id", jsonObject.getString("_id"));
+//            mongoClient.findOneAndReplace("aggregations", query, jsonObject, resultHandler -> {
+//              if (resultHandler.succeeded()) {
+//                JsonObject r = resultHandler.result();
+//
+//              }
+//            });
+//          });
+        mainHandler.handle(ServiceException.fail(HttpResponseStatus.UNPROCESSABLE_ENTITY.code(), "External client cannot modify traumatracker resources"));
+      } else {
+        mainHandler.handle(Future.succeededFuture(JsonObject.mapFrom(new UpdateResult()
+          .setBody(body.encode())
+          .setStatus(HttpResponseStatus.OK.code()))));
       }
     });
   }
