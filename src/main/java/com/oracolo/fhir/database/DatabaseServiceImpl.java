@@ -45,7 +45,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
         mongoClient.findOne("aggregations", new JsonObject()
           .put(collection + ".id", id), null, resultFromAggregationAsync -> {
-          if (resultFromAggregationAsync.succeeded() && resultFromAggregationAsync.result().isEmpty()) {
+          if (resultFromAggregationAsync.succeeded() && resultFromAggregationAsync.result()==null) {
             JsonObject resultFromFetch = res.result();
             Metadata metadata = Json.decodeValue(resultFromFetch.getJsonObject("meta").encode(), Metadata.class);
             metadata.addNewTag(new Coding()
