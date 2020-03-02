@@ -3,9 +3,10 @@ package com.oracolo.fhir.handlers.query.mongo.queries.reference;
 import com.oracolo.fhir.handlers.query.FhirQuery;
 import com.oracolo.fhir.handlers.query.mongo.BaseMongoDbQuery;
 import com.oracolo.fhir.handlers.query.mongo.parser.chain.ChainParserHandler;
+import com.oracolo.fhir.handlers.query.mongo.parser.prefix.QueryPrefixResult;
 import io.vertx.core.json.JsonObject;
 
-public class EncounterReferenceQuery extends BaseMongoDbQuery implements FhirQuery {
+public class EncounterReferenceQuery extends BaseMongoDbQuery implements FhirQuery,ReferenceQuery {
 
   @Override
   public String name() {
@@ -37,7 +38,9 @@ public class EncounterReferenceQuery extends BaseMongoDbQuery implements FhirQue
   }
 
   @Override
-  public JsonObject mongoDbPipelineStageQuery(String paramName) {
+  public JsonObject createMongoDbLookUpStage(String paramName, QueryPrefixResult result) {
+    super.prefix = result.prefix();
+    super.value = result.parsedValue();
     return ChainParserHandler.createLookupPipelineStage(paramName, value,prefix, new JsonObject()
       .put("$regexMatch", new JsonObject()
         .put("input", "$$searchParam.reference")

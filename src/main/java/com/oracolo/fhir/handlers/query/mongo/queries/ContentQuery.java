@@ -25,10 +25,6 @@ public class ContentQuery extends BaseMongoDbQuery {
         .put("$search", value));
   }
 
-  @Override
-  public JsonObject mongoDbPipelineStageQuery(String paramName) {
-    return null;
-  }
 
 
 

@@ -82,10 +82,7 @@ public class IdentifierQuery extends BaseMongoDbQuery {
 
   }
 
-  @Override
-  public JsonObject mongoDbPipelineStageQuery(String paramName) {
-    return null;
-  }
+
 
 
 }

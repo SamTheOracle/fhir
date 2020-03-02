@@ -6,6 +6,8 @@ import com.oracolo.fhir.handlers.query.mongo.parser.chain.ChainParserHandler;
 import com.oracolo.fhir.handlers.query.mongo.parser.chain.ChainParserResult;
 import com.oracolo.fhir.handlers.query.mongo.parser.prefix.QueryPrefixHandler;
 import com.oracolo.fhir.handlers.query.mongo.parser.prefix.QueryPrefixResult;
+import com.oracolo.fhir.handlers.query.mongo.queries.reference.ReferenceQuery;
+import com.oracolo.fhir.model.datatypes.Reference;
 import com.oracolo.fhir.utils.FhirUtils;
 import io.vertx.core.MultiMap;
 import io.vertx.core.json.JsonArray;
@@ -45,10 +47,11 @@ public class MongoDbQueryHandler implements QueryHandler {
         for (MongoDbQuery mongoDbQuery : MongoDbQuery.values()) {
           if (queryName.contains(".") && mongoDbQuery.getType().equals("Reference") && queryName.split(":(.*)\\.")[0].equals(mongoDbQuery.getQueryName())) {
             QueryPrefixResult result = QueryPrefixHandler.parsePrefix(value);
-            JsonObject fhirQueryJson = mongoDbQuery.getFhirQuery()
-              .setValue(result.parsedValue())
-              .setPrefix(result.prefix())
-              .mongoDbPipelineStageQuery(queryName);
+
+            JsonObject fhirQueryJson = Objects.requireNonNull(ReferenceQuery
+              .createReferenceQuery(mongoDbQuery))
+              .createMongoDbLookUpStage(queryName,result);
+
             lookUpStages.add(fhirQueryJson);
             aggregationOutputFields.add(fhirQueryJson.getJsonObject("$lookup").getString("as"));
           } else {

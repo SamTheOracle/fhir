@@ -26,9 +26,6 @@ public class ValueQuantityQuery extends BaseMongoDbQuery {
         .add(Boolean.parseBoolean(value)));
   }
 
-  @Override
-  public JsonObject mongoDbPipelineStageQuery(String paramName) {
-    return null;
-  }
+
 
 }

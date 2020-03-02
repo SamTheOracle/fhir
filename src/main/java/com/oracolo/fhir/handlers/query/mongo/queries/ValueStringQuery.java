@@ -26,9 +26,6 @@ public class ValueStringQuery extends BaseMongoDbQuery {
         .add(value));
   }
 
-  @Override
-  public JsonObject mongoDbPipelineStageQuery(String paramName) {
-    return null;
-  }
+
 
 }

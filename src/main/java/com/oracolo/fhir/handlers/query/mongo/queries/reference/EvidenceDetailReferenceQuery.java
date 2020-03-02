@@ -3,10 +3,11 @@ package com.oracolo.fhir.handlers.query.mongo.queries.reference;
 import com.oracolo.fhir.handlers.query.FhirQuery;
 import com.oracolo.fhir.handlers.query.mongo.BaseMongoDbQuery;
 import com.oracolo.fhir.handlers.query.mongo.parser.chain.ChainParserHandler;
+import com.oracolo.fhir.handlers.query.mongo.parser.prefix.QueryPrefixResult;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-public class EvidenceDetailReferenceQuery extends BaseMongoDbQuery implements FhirQuery {
+public class EvidenceDetailReferenceQuery extends BaseMongoDbQuery implements FhirQuery,ReferenceQuery {
 
 
   @Override
@@ -49,7 +50,9 @@ public class EvidenceDetailReferenceQuery extends BaseMongoDbQuery implements Fh
   }
 
   @Override
-  public JsonObject mongoDbPipelineStageQuery(String paramName) {
+  public JsonObject createMongoDbLookUpStage(String paramName, QueryPrefixResult result) {
+    super.prefix = result.prefix();
+    super.value = result.parsedValue();
     JsonObject innerStepReduce = new JsonObject();
     innerStepReduce
       .put("$reduce", new JsonObject()

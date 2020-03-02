@@ -46,9 +46,5 @@ public class ValueIntegerQuery extends BaseMongoDbQuery {
         .add(Integer.valueOf(value)));
   }
 
-  @Override
-  public JsonObject mongoDbPipelineStageQuery(String paramName) {
-    return null;
-  }
 
 }
