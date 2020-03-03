@@ -131,7 +131,7 @@ public class QuerySearchTest {
     int port = Optional.ofNullable(Integer.getInteger("http.port")).orElse(8000);
     WebClient.create(vertx)
       .get(port, host, "/" + FhirUtils.BASE + "/Condition")
-      .addQueryParam("evidence-detail:Observation.code", "67494-5")
+      .addQueryParam("evidence-detail:Observation.code", "85353-1")
       .addQueryParam("_lastUpdated", "le" + Instant.now())
       .send(vertxTestContext.succeeding((response) -> {
         JsonObject jsonObject = response.bodyAsJsonObject();

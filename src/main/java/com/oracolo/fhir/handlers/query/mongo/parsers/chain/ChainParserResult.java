@@ -1,4 +1,4 @@
-package com.oracolo.fhir.handlers.query.mongo.parser.chain;
+package com.oracolo.fhir.handlers.query.mongo.parsers.chain;
 
 import io.vertx.core.json.JsonObject;
 

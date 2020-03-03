@@ -1,17 +1,16 @@
 package com.oracolo.fhir.handlers.query;
 
-import com.oracolo.fhir.handlers.query.mongo.parser.prefix.Prefix;
 import io.vertx.core.json.JsonObject;
 
+/**
+ * Fhir Query Interface. Useful if SQL, RDF queries need to be added
+ */
 public interface FhirQuery {
 
-  String name();
 
-  JsonObject mongoDbPipelineStageQuery();
+  JsonObject mongoDbPipelineStageQuery(String paramName, String paramValue);
 
-  FhirQuery setPrefix(Prefix prefix);
 
-  FhirQuery setValue(String value);
 
 
 }

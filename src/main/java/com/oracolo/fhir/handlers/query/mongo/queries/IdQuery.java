@@ -1,16 +1,13 @@
 package com.oracolo.fhir.handlers.query.mongo.queries;
 
-import com.oracolo.fhir.handlers.query.mongo.BaseMongoDbQuery;
+import com.oracolo.fhir.handlers.query.FhirQuery;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-public class IdQuery extends BaseMongoDbQuery {
+public class IdQuery implements FhirQuery {
 
 
-  @Override
-  public String name() {
-    return "_id";
-  }
+
 
 //  @Override
 //  public JsonObject mongoDbQuery() {
@@ -19,12 +16,14 @@ public class IdQuery extends BaseMongoDbQuery {
 //  }
 
   @Override
-  public JsonObject mongoDbPipelineStageQuery() {
+  public JsonObject mongoDbPipelineStageQuery(String paramName, String paramValue) {
+
     return new JsonObject()
       .put("$eq", new JsonArray()
         .add("$id")
-        .add(value));
+        .add(paramValue));
   }
+
 
 
 }

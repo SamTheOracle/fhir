@@ -1,16 +1,13 @@
 package com.oracolo.fhir.handlers.query.mongo.queries.reference;
 
-import com.oracolo.fhir.handlers.query.mongo.BaseMongoDbQuery;
+import com.oracolo.fhir.handlers.query.FhirQuery;
+import com.oracolo.fhir.handlers.query.mongo.parsers.chain.ChainParserHandler;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-public class EvidenceDetailReferenceQuery extends BaseMongoDbQuery implements ReferenceQuery {
+public class EvidenceDetailReferenceQuery  implements FhirQuery, ReferenceQuery {
 
 
-  @Override
-  public String name() {
-    return "evidence-detail";
-  }
 
 //  @Override
 //  public JsonObject mongoDbQuery() {
@@ -19,16 +16,17 @@ public class EvidenceDetailReferenceQuery extends BaseMongoDbQuery implements Re
 //  }
 
   @Override
-  public JsonObject mongoDbPipelineStageQuery() {
+  public JsonObject mongoDbPipelineStageQuery(String paramName, String paramValue) {
     JsonObject innerStepReduce = new JsonObject();
     innerStepReduce
       .put("$reduce", new JsonObject()
-        .put("input", "$evidence.detail")
+        .put("input", "$evidence")
         .put("initialValue", new JsonArray())
         .put("in", new JsonObject()
           .put("$concatArrays", new JsonArray()
             .add("$$value")
-            .add("$$this"))));
+            .add("$$this.detail"))));
+
     JsonObject outerStepReduce = new JsonObject()
       .put("$reduce", new JsonObject()
         .put("input", innerStepReduce)
@@ -41,21 +39,22 @@ public class EvidenceDetailReferenceQuery extends BaseMongoDbQuery implements Re
     return new JsonObject()
       .put("$regexMatch", new JsonObject()
         .put("input", outerStepReduce)
-        .put("regex", value)
+        .put("regex", paramValue)
         .put("options", "i"));
   }
 
   @Override
-  public JsonObject mongoDbMatchQuery(String mongoDbStageVariable) {
+  public JsonObject createMongoDbLookUpStage(String paramName, String paramValue) {
+
     JsonObject innerStepReduce = new JsonObject();
     innerStepReduce
       .put("$reduce", new JsonObject()
-        .put("input", "$$" + mongoDbStageVariable + ".detail")
+        .put("input", "$$searchParam")
         .put("initialValue", new JsonArray())
         .put("in", new JsonObject()
           .put("$concatArrays", new JsonArray()
             .add("$$value")
-            .add("$$this"))));
+            .add("$$this.detail"))));
     JsonObject outerStepReduce = new JsonObject()
       .put("$reduce", new JsonObject()
         .put("input", innerStepReduce)
@@ -65,10 +64,13 @@ public class EvidenceDetailReferenceQuery extends BaseMongoDbQuery implements Re
             .add("$$value")
             .add("$$this.reference")
             .add(" "))));
-    return new JsonObject()
-      .put("$regexMatch", new JsonObject()
+    return ChainParserHandler.createLookupPipelineStage(paramName, paramValue,
+      new JsonObject().put("$regexMatch", new JsonObject()
         .put("input", outerStepReduce)
         .put("regex", "$id")
-        .put("options", "i"));
+        .put("options", "i")),
+      "evidence");
   }
+
+
 }

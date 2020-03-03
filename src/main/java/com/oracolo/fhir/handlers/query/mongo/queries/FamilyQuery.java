@@ -1,15 +1,9 @@
 package com.oracolo.fhir.handlers.query.mongo.queries;
 
-import com.oracolo.fhir.handlers.query.mongo.BaseMongoDbQuery;
+import com.oracolo.fhir.handlers.query.FhirQuery;
 import io.vertx.core.json.JsonObject;
 
-public class FamilyQuery extends BaseMongoDbQuery {
-
-
-  @Override
-  public String name() {
-    return "_content";
-  }
+public class FamilyQuery implements FhirQuery {
 
 //  @Override
 //  public JsonObject mongoDbQuery() {
@@ -20,12 +14,13 @@ public class FamilyQuery extends BaseMongoDbQuery {
 //  }
 
   @Override
-  public JsonObject mongoDbPipelineStageQuery() {
+  public JsonObject mongoDbPipelineStageQuery(String paramName, String paramValue) {
+
     return new JsonObject()
       .put("$regexMatch",
         new JsonObject()
           .put("input", "$name.family")
-          .put("regex", value)
+          .put("regex", paramValue)
           .put("options", "i"));
   }
 

@@ -1,15 +1,11 @@
 package com.oracolo.fhir.handlers.query.mongo.queries;
 
-import com.oracolo.fhir.handlers.query.mongo.BaseMongoDbQuery;
+import com.oracolo.fhir.handlers.query.FhirQuery;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-public class GivenQuery extends BaseMongoDbQuery {
+public class GivenQuery implements FhirQuery {
 
-  @Override
-  public String name() {
-    return "given";
-  }
 
 //  @Override
 //  public JsonObject mongoDbQuery() {
@@ -20,7 +16,8 @@ public class GivenQuery extends BaseMongoDbQuery {
 //  }
 
   @Override
-  public JsonObject mongoDbPipelineStageQuery() {
+  public JsonObject mongoDbPipelineStageQuery(String paramName, String paramValue) {
+
 
     //$in cannot be used in regex, so i need to reduce the array to a single string
     return new JsonObject()
@@ -35,7 +32,7 @@ public class GivenQuery extends BaseMongoDbQuery {
                 .add("$$this")
                 .add(" ")))
           ))
-        .put("regex", value)
+        .put("regex", paramValue)
         .put("options", "i")
       );
   }

@@ -12,6 +12,8 @@ public class ErrorFormat {
   public static ErrorFormat createFormat(int code) {
 
     switch (code) {
+      case 422:
+        return new ErrorFormat("business-rule");
       case 410:
         return new ErrorFormat("deleted");
       case 404:

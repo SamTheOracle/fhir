@@ -4,33 +4,55 @@
     {
       "$match": {
         "$expr": {
+          "$eq": [
+            false,
+            {
+              "$in": [
+                "DELETED",
+                {
+                  "$ifNull": [
+                    "$meta.tag",
+                    []
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "$match": {
+        "$expr": {
           "$and": [
             {
               "$or": [
                 {
-                  "$gt": [
-                    "$valueInteger",
-                    20
-                  ]
-                },
-                {
-                  "$eq": [
-                    "$valueInteger",
-                    16
-                  ]
-                }
-              ]
-            },
-            {
-              "$gt": [
-                {
-                  "$dateFromString": {
-                    "dateString": "$meta.lastUpdated"
+                  "$regexMatch": {
+                    "input": "$code.text",
+                    "regex": "12345",
+                    "options": "i"
                   }
                 },
                 {
-                  "$dateFromString": {
-                    "dateString": "2019-01-21T05:47:26.853Z"
+                  "$regexMatch": {
+                    "input": {
+                      "$reduce": {
+                        "input": "$code.coding",
+                        "initialValue": "",
+                        "in": {
+                          "$concat": [
+                            "$$value",
+                            "$$this.code",
+                            " ",
+                            "$$this.display",
+                            " "
+                          ]
+                        }
+                      }
+                    },
+                    "regex": "12345",
+                    "options": "i"
                   }
                 }
               ]

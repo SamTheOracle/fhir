@@ -1,4 +1,4 @@
-package com.oracolo.fhir.handlers.query.mongo.parser.prefix;
+package com.oracolo.fhir.handlers.query.mongo.parsers.prefix;
 
 public enum Prefix {
   EQUAL("eq", "$eq"),
