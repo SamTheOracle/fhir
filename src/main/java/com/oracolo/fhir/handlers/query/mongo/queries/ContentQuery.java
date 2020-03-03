@@ -1,15 +1,10 @@
 package com.oracolo.fhir.handlers.query.mongo.queries;
 
-import com.oracolo.fhir.handlers.query.mongo.BaseMongoDbQuery;
+import com.oracolo.fhir.handlers.query.FhirQuery;
 import io.vertx.core.json.JsonObject;
 
-public class ContentQuery extends BaseMongoDbQuery {
+public class ContentQuery implements FhirQuery{
 
-
-  @Override
-  public String name() {
-    return "_content";
-  }
 
 //  @Override
 //  public JsonObject mongoDbQuery() {
@@ -19,10 +14,11 @@ public class ContentQuery extends BaseMongoDbQuery {
 //  }
 
   @Override
-  public JsonObject mongoDbPipelineStageQuery() {
+  public JsonObject mongoDbPipelineStageQuery(String paramName, String paramValue) {
+
     return new JsonObject()
       .put("$text", new JsonObject()
-        .put("$search", value));
+        .put("$search", paramValue));
   }
 
 

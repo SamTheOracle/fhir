@@ -1,17 +1,13 @@
 package com.oracolo.fhir.handlers.query.mongo.queries.reference;
 
-import com.oracolo.fhir.handlers.query.mongo.BaseMongoDbQuery;
-import com.oracolo.fhir.handlers.query.mongo.parser.chain.ChainParserHandler;
-import com.oracolo.fhir.handlers.query.mongo.parser.prefix.QueryPrefixResult;
+import com.oracolo.fhir.handlers.query.FhirQuery;
+import com.oracolo.fhir.handlers.query.mongo.parsers.chain.ChainParserHandler;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-public class DiagnosisReferenceQuery extends BaseMongoDbQuery implements ReferenceQuery {
+public class DiagnosisReferenceQuery implements ReferenceQuery, FhirQuery {
 
-  @Override
-  public String name() {
-    return "_content";
-  }
+
 
 //  @Override
 //  public JsonObject mongoDbQuery() {
@@ -25,7 +21,7 @@ public class DiagnosisReferenceQuery extends BaseMongoDbQuery implements Referen
 //  }
 
   @Override
-  public JsonObject mongoDbPipelineStageQuery() {
+  public JsonObject mongoDbPipelineStageQuery(String paramName, String paramValue) {
     return new JsonObject()
       .put("$regexMatch", new JsonObject()
         .put("input", new JsonObject()
@@ -37,15 +33,14 @@ public class DiagnosisReferenceQuery extends BaseMongoDbQuery implements Referen
                 .add("$$value")
                 .add("$$this.condition.reference")
                 .add(" ")))))
-        .put("regex", value)
+        .put("regex", paramValue)
         .put("options", "i"));
   }
 
   @Override
-  public JsonObject createMongoDbLookUpStage(String paramName, QueryPrefixResult result) {
-    super.prefix = result.prefix();
-    super.value = result.parsedValue();
-    return ChainParserHandler.createLookupPipelineStage(paramName, value, prefix, new JsonObject()
+  public JsonObject createMongoDbLookUpStage(String paramName, String paramValue) {
+
+    return ChainParserHandler.createLookupPipelineStage(paramName, paramValue, new JsonObject()
       .put("$regexMatch", new JsonObject()
         .put("input", new JsonObject()
           .put("$reduce", new JsonObject()

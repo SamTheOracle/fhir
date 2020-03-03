@@ -1,19 +1,13 @@
 package com.oracolo.fhir.handlers.query.mongo.queries.reference;
 
 import com.oracolo.fhir.handlers.query.FhirQuery;
-import com.oracolo.fhir.handlers.query.mongo.BaseMongoDbQuery;
-import com.oracolo.fhir.handlers.query.mongo.parser.chain.ChainParserHandler;
-import com.oracolo.fhir.handlers.query.mongo.parser.prefix.QueryPrefixResult;
+import com.oracolo.fhir.handlers.query.mongo.parsers.chain.ChainParserHandler;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-public class EvidenceDetailReferenceQuery extends BaseMongoDbQuery implements FhirQuery,ReferenceQuery {
+public class EvidenceDetailReferenceQuery  implements FhirQuery, ReferenceQuery {
 
 
-  @Override
-  public String name() {
-    return "evidence-detail";
-  }
 
 //  @Override
 //  public JsonObject mongoDbQuery() {
@@ -22,7 +16,7 @@ public class EvidenceDetailReferenceQuery extends BaseMongoDbQuery implements Fh
 //  }
 
   @Override
-  public JsonObject mongoDbPipelineStageQuery() {
+  public JsonObject mongoDbPipelineStageQuery(String paramName, String paramValue) {
     JsonObject innerStepReduce = new JsonObject();
     innerStepReduce
       .put("$reduce", new JsonObject()
@@ -45,14 +39,13 @@ public class EvidenceDetailReferenceQuery extends BaseMongoDbQuery implements Fh
     return new JsonObject()
       .put("$regexMatch", new JsonObject()
         .put("input", outerStepReduce)
-        .put("regex", value)
+        .put("regex", paramValue)
         .put("options", "i"));
   }
 
   @Override
-  public JsonObject createMongoDbLookUpStage(String paramName, QueryPrefixResult result) {
-    super.prefix = result.prefix();
-    super.value = result.parsedValue();
+  public JsonObject createMongoDbLookUpStage(String paramName, String paramValue) {
+
     JsonObject innerStepReduce = new JsonObject();
     innerStepReduce
       .put("$reduce", new JsonObject()
@@ -71,7 +64,7 @@ public class EvidenceDetailReferenceQuery extends BaseMongoDbQuery implements Fh
             .add("$$value")
             .add("$$this.reference")
             .add(" "))));
-    return ChainParserHandler.createLookupPipelineStage(paramName, value,prefix,
+    return ChainParserHandler.createLookupPipelineStage(paramName, paramValue,
       new JsonObject().put("$regexMatch", new JsonObject()
         .put("input", outerStepReduce)
         .put("regex", "$id")

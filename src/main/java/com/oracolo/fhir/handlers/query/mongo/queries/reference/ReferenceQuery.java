@@ -2,13 +2,11 @@ package com.oracolo.fhir.handlers.query.mongo.queries.reference;
 
 import com.oracolo.fhir.handlers.query.FhirQuery;
 import com.oracolo.fhir.handlers.query.mongo.MongoDbQuery;
-import com.oracolo.fhir.handlers.query.mongo.parser.prefix.QueryPrefixHandler;
-import com.oracolo.fhir.handlers.query.mongo.parser.prefix.QueryPrefixResult;
 import io.vertx.core.json.JsonObject;
 
 public interface ReferenceQuery extends FhirQuery {
 
-  JsonObject createMongoDbLookUpStage(String paramName, QueryPrefixResult result);
+  JsonObject createMongoDbLookUpStage(String paramName, String paramValue);
 
   static ReferenceQuery createReferenceQuery(MongoDbQuery mongoDbQuery) {
     switch (mongoDbQuery) {

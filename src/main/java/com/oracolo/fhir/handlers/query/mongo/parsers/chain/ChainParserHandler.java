@@ -1,8 +1,7 @@
-package com.oracolo.fhir.handlers.query.mongo.parser.chain;
+package com.oracolo.fhir.handlers.query.mongo.parsers.chain;
 
 import com.oracolo.fhir.handlers.query.FhirQuery;
 import com.oracolo.fhir.handlers.query.mongo.MongoDbQuery;
-import com.oracolo.fhir.handlers.query.mongo.parser.prefix.Prefix;
 import com.oracolo.fhir.utils.ResourceType;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -10,7 +9,7 @@ import io.vertx.core.json.JsonObject;
 public class ChainParserHandler {
 
 
-  public static JsonObject createLookupPipelineStage(String paramName, String parsedValue, Prefix prefix, JsonObject matchQuery, String field) {
+  public static JsonObject createLookupPipelineStage(String paramName, String value, JsonObject matchQuery, String field) {
     for (ResourceType type : ResourceType.values()) {
       //subject:Patient.name becomes split["subject","name"]
       if (paramName.contains(type.typeName())) {
@@ -23,11 +22,9 @@ public class ChainParserHandler {
           .getFhirQuery();
         //value might be a or conditions, e.g. code=1234,678
         JsonArray orConditions = new JsonArray();
-        for (String orElement : parsedValue.split(",")) {
+        for (String orElement : value.split(",")) {
           orConditions.add(fhirQuery
-            .setValue(orElement)
-            .setPrefix(prefix)
-            .mongoDbPipelineStageQuery());
+            .mongoDbPipelineStageQuery(paramName, orElement));
 
         }
         return new JsonObject()

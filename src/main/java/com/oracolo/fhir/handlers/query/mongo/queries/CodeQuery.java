@@ -1,16 +1,10 @@
 package com.oracolo.fhir.handlers.query.mongo.queries;
 
-import com.oracolo.fhir.handlers.query.mongo.BaseMongoDbQuery;
+import com.oracolo.fhir.handlers.query.FhirQuery;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-public class CodeQuery extends BaseMongoDbQuery {
-
-
-  @Override
-  public String name() {
-    return "_id";
-  }
+public class CodeQuery implements FhirQuery{
 
 //  @Override
 //  public JsonObject mongoDbQuery() {
@@ -32,15 +26,16 @@ public class CodeQuery extends BaseMongoDbQuery {
 
 
   @Override
-  public JsonObject mongoDbPipelineStageQuery() {
-    String[] splitResult = value.split("\\|");
+  public JsonObject mongoDbPipelineStageQuery(String paramName, String paramValue) {
+
+    String[] splitResult = paramValue.split("\\|");
     if (splitResult.length == 1) {
       return new JsonObject()
         .put("$or", new JsonArray()
           .add(new JsonObject()
             .put("$regexMatch", new JsonObject()
               .put("input", "$code.text")
-              .put("regex", value)
+              .put("regex", paramValue)
               .put("options", "i")
             )
           )
@@ -59,13 +54,13 @@ public class CodeQuery extends BaseMongoDbQuery {
                       .add(" ")
                     ))
                 ))
-              .put("regex", value)
+              .put("regex", paramValue)
               .put("options", "i")
             ))
         );
     } else {
-      String system = value.split("\\|")[0];
-      String code = value.split("\\|")[1];
+      String system = paramValue.split("\\|")[0];
+      String code = paramValue.split("\\|")[1];
 
       return new JsonObject()
         .put("$or", new JsonArray()

@@ -1,15 +1,11 @@
 package com.oracolo.fhir.handlers.query.mongo.queries;
 
-import com.oracolo.fhir.handlers.query.mongo.BaseMongoDbQuery;
+import com.oracolo.fhir.handlers.query.FhirQuery;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-public class IdentifierQuery extends BaseMongoDbQuery {
+public class IdentifierQuery implements FhirQuery {
 
-  @Override
-  public String name() {
-    return "identifier";
-  }
 
 //  @Override
 //  public JsonObject mongoDbQuery() {
@@ -18,8 +14,9 @@ public class IdentifierQuery extends BaseMongoDbQuery {
 //  }
 
   @Override
-  public JsonObject mongoDbPipelineStageQuery() {
-    String[] splitResult = value.split("\\|");
+  public JsonObject mongoDbPipelineStageQuery(String paramName, String paramValue) {
+
+    String[] splitResult = paramValue.split("\\|");
     if (splitResult.length == 1) {
       return new JsonObject()
         .put("$regexMatch", new JsonObject()
@@ -34,12 +31,12 @@ public class IdentifierQuery extends BaseMongoDbQuery {
                   .add(" ")
                 ))
             ))
-          .put("regex", value)
+          .put("regex", paramValue)
           .put("options", "i")
         );
     } else {
-      String system = value.split("\\|")[0];
-      String identifierValue = value.split("\\|")[1];
+      String system = paramValue.split("\\|")[0];
+      String identifierValue = paramValue.split("\\|")[1];
 
       return new JsonObject()
         .put("$and", new JsonArray()

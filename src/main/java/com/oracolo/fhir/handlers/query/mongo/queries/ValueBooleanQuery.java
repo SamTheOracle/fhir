@@ -1,16 +1,15 @@
 package com.oracolo.fhir.handlers.query.mongo.queries;
 
-import com.oracolo.fhir.handlers.query.mongo.BaseMongoDbQuery;
+import com.oracolo.fhir.handlers.query.FhirQuery;
+import com.oracolo.fhir.handlers.query.mongo.parsers.prefix.OperatorParser;
+import com.oracolo.fhir.handlers.query.mongo.parsers.prefix.Prefix;
+import com.oracolo.fhir.handlers.query.mongo.parsers.prefix.OperatorParserResult;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-public class ValueBooleanQuery extends BaseMongoDbQuery {
+public class ValueBooleanQuery implements FhirQuery {
 
 
-  @Override
-  public String name() {
-    return "valueInteger";
-  }
 
 //  @Override
 //  public JsonObject mongoDbQuery() {
@@ -19,7 +18,10 @@ public class ValueBooleanQuery extends BaseMongoDbQuery {
 //  }
 
   @Override
-  public JsonObject mongoDbPipelineStageQuery() {
+  public JsonObject mongoDbPipelineStageQuery(String paramName, String paramValue) {
+    OperatorParserResult operatorParserResult = OperatorParser.parsePrefix(paramValue);
+    String value = operatorParserResult.parsedValue();
+    Prefix prefix = operatorParserResult.prefix();
     return new JsonObject()
       .put(prefix.operator(), new JsonArray()
         .add("$valueBoolean")

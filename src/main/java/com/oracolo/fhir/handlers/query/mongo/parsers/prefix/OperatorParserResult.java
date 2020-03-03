@@ -1,10 +1,10 @@
-package com.oracolo.fhir.handlers.query.mongo.parser.prefix;
+package com.oracolo.fhir.handlers.query.mongo.parsers.prefix;
 
-public class QueryPrefixResult {
+public class OperatorParserResult {
   private Prefix prefix;
   private String parsedValue;
 
-  public QueryPrefixResult(Prefix prefix, String parsedValue) {
+  public OperatorParserResult(Prefix prefix, String parsedValue) {
     this.prefix = prefix;
     this.parsedValue = parsedValue;
   }
