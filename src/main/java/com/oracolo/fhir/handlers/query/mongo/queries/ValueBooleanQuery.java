@@ -10,7 +10,6 @@ import io.vertx.core.json.JsonObject;
 public class ValueBooleanQuery implements FhirQuery {
 
 
-
 //  @Override
 //  public JsonObject mongoDbQuery() {
 //    return new JsonObject()
@@ -19,15 +18,10 @@ public class ValueBooleanQuery implements FhirQuery {
 
   @Override
   public JsonObject mongoDbPipelineStageQuery(String paramName, String paramValue) {
-    OperatorParserResult operatorParserResult = OperatorParser.parsePrefix(paramValue);
-    String value = operatorParserResult.parsedValue();
-    Prefix prefix = operatorParserResult.prefix();
-    return new JsonObject()
-      .put(prefix.operator(), new JsonArray()
-        .add("$valueBoolean")
-        .add(Boolean.parseBoolean(value)));
-  }
 
+    return new JsonObject()
+      .put("$valueBoolean", paramValue);
+  }
 
 
 }

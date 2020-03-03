@@ -12,11 +12,8 @@ public class ValueStringQuery implements FhirQuery {
 
   @Override
   public JsonObject mongoDbPipelineStageQuery(String paramName, String paramValue) {
-    OperatorParserResult operatorParserResult = OperatorParser.parsePrefix(paramValue);
     return new JsonObject()
-      .put(operatorParserResult.prefix().operator(), new JsonArray()
-        .add("$valueString")
-        .add(operatorParserResult.parsedValue()));
+      .put("$valueString", paramValue);
   }
 
 
