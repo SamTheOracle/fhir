@@ -46,14 +46,17 @@ public class MongoDbQueryHandler implements QueryHandler {
       } else {
         for (MongoDbQuery mongoDbQuery : MongoDbQuery.values()) {
           if (queryName.contains(".") && mongoDbQuery.getType().equals("Reference") && queryName.split(":(.*)\\.")[0].equals(mongoDbQuery.getQueryName())) {
-            QueryPrefixResult result = QueryPrefixHandler.parsePrefix(value);
+            for (String orConditionElement : orCondition) {
+              QueryPrefixResult result = QueryPrefixHandler.parsePrefix(value);
 
-            JsonObject fhirQueryJson = Objects.requireNonNull(ReferenceQuery
-              .createReferenceQuery(mongoDbQuery))
-              .createMongoDbLookUpStage(queryName,result);
+              JsonObject fhirQueryJson = Objects.requireNonNull(ReferenceQuery
+                .createReferenceQuery(mongoDbQuery))
+                .createMongoDbLookUpStage(queryName, result);
 
-            lookUpStages.add(fhirQueryJson);
-            aggregationOutputFields.add(fhirQueryJson.getJsonObject("$lookup").getString("as"));
+              lookUpStages.add(fhirQueryJson);
+              aggregationOutputFields.add(fhirQueryJson.getJsonObject("$lookup").getString("as"));
+            }
+
           } else {
             if (mongoDbQuery.getQueryName().equals(queryName)) {
               //one can make or conditions with "," on param. For each param create normal queries but added in
