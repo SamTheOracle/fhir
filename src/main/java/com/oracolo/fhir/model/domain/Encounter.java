@@ -215,7 +215,7 @@ public class Encounter extends FhirDomainResourceAbstract {
     return clazz;
   }
 
-  public Encounter setClazz(Coding clazz) {
+  public Encounter setClass(Coding clazz) {
     this.clazz = clazz;
     return this;
   }

@@ -55,44 +55,50 @@ public class TraumaTracker extends BaseRestInterface {
   }
 
   private void handleReports(RoutingContext routingContext) {
-    LOGGER.info("handling reports");
     List<Resource> domainResources = new ArrayList<>();
     //Main json
     JsonObject reportJson = routingContext.getBodyAsJson();
 
     Encounter encounterAll = new Encounter()
       .setId(UUID.randomUUID().toString());
+
+
     Encounter encounterPreh = new Encounter()
       .setId(UUID.randomUUID().toString())
+      .addNewIdentifier(new Identifier()
+        .setValue(reportJson.getString("_id")))
+      .addNewIdentifier(new Identifier()
+        .setValue(reportJson.getString("_version")))
       .setPartOf(new Reference()
-        .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterAll.getId()));
-    Encounter encounterIntervention = new Encounter()
-      //patient initial condition, vital signs
-      .setId(UUID.randomUUID().toString())
-      .setPartOf(new Reference()
-        .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterAll.getId()));
-
-    encounterPreh
+        .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterAll.getId()))
       .setId(UUID.randomUUID().toString())
       .setServiceType(new CodeableConcept()
         .addNewCoding(new Coding()
           .setCode("117")
           .setDisplay("Emergency Medical"))
         .setText("Emergency intervention"))
-      .setClazz(new Coding()
+      .setClass(new Coding()
         .setCode("EMER")
         .setDisplay("Emergency"))
       .setStatus("finished")
       .setServiceProvider(new Reference()
         .setDisplay("Ospedale Bufalini"));
 
-
-    encounterIntervention.setServiceType(new CodeableConcept()
-      .addNewCoding(new Coding()
-        .setCode("117")
-        .setDisplay("Emergency Medical"))
-      .setText("Emergency intervention"))
-      .setClazz(new Coding()
+    Encounter encounterIntervention = new Encounter()
+      //patient initial condition, vital signs
+      .setId(UUID.randomUUID().toString())
+      .addNewIdentifier(new Identifier()
+        .setValue(reportJson.getString("_id")))
+      .addNewIdentifier(new Identifier()
+        .setValue(reportJson.getString("_version")))
+      .setPartOf(new Reference()
+        .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterAll.getId()))
+      .setServiceType(new CodeableConcept()
+        .addNewCoding(new Coding()
+          .setCode("117")
+          .setDisplay("Emergency Medical"))
+        .setText("Emergency intervention"))
+      .setClass(new Coding()
         .setCode("EMER")
         .setDisplay("Emergency"))
       .setStatus("finished")
@@ -108,6 +114,11 @@ public class TraumaTracker extends BaseRestInterface {
           .setDisplay("Traumatic AND/OR non-traumatic injury (disorder)")
           .setSystem("http://www.snomed.org/"))
         .setText("Trauma Condition gestione pre ospedaliera"))
+      .addNewCategory(new CodeableConcept()
+        .addNewCoding(new Coding()
+          .setDisplay("Encounter Diagnosis")
+          .setSystem("https://www.hl7.org/fhir/codesystem-condition-category.html")
+          .setCode("encounter-diagnosis")))
       .setEncounter(new Reference()
         .setType(ResourceType.ENCOUNTER.typeName())
         .setDisplay("Encounter pre ospedalizzazione")
@@ -137,11 +148,39 @@ public class TraumaTracker extends BaseRestInterface {
           .setDisplay("Traumatic AND/OR non-traumatic injury (disorder)")
           .setSystem("http://www.snomed.org/"))
         .setText("Patient Initial Condition"))
+      .addNewCategory(new CodeableConcept()
+        .addNewCoding(new Coding()
+          .setDisplay("Encounter Diagnosis")
+          .setSystem("https://www.hl7.org/fhir/codesystem-condition-category.html")
+          .setCode("encounter-diagnosis")))
       .setEncounter(new Reference()
         .setDisplay("Encounter intervention")
         .setType(ResourceType.ENCOUNTER.typeName())
         .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterIntervention.getId()));
 
+    //iss
+    Condition issCondition = new Condition()
+      .setId(UUID.randomUUID().toString())
+      .setCode(new CodeableConcept()
+        .addNewCoding(new Coding()
+          .setCode("417163006")
+          .setSystem("https://www.hl7.org/fhir/codesystem-snomedct.html")
+          .setDisplay("Traumatic AND/OR non-traumatic injury (disorder)"))
+        .setText("Physical Condition after intervention"))
+      .setEncounter(new Reference()
+        .setType(ResourceType.ENCOUNTER.typeName())
+        .setDisplay("Encounter intervention")
+        .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounterIntervention.getId()))
+      .addNewCategory(new CodeableConcept()
+        .addNewCoding(new Coding()
+          .setDisplay("Encounter Diagnosis")
+          .setSystem("https://www.hl7.org/fhir/codesystem-condition-category.html")
+          .setCode("encounter-diagnosis")))
+      .setClinicalStatus(new CodeableConcept()
+        .addNewCoding(new Coding()
+          .setCode("active")
+          .setDisplay("Active")
+          .setSystem("http://terminology.hl7.org/CodeSystem/condition-clinicalversion4.0.1")));
     domainResources.add(patientInitialCondition);
 
     encounterIntervention.addNewDiagnosis(
@@ -156,6 +195,17 @@ public class TraumaTracker extends BaseRestInterface {
           .setDisplay("Patient Initial Condition")
           .setReference("/" + ResourceType.CONDITION.typeName() + "/" + patientInitialCondition.getId()))
     );
+
+    encounterIntervention.addNewDiagnosis(new EncounterDiagnosis()
+      .setUse(new CodeableConcept()
+        .addNewCoding(new Coding()
+          .setDisplay("post-op diagnosis")
+          .setCode("post-op")))
+      .setCondition(new Reference()
+        .setType(ResourceType.CONDITION.typeName())
+        .setDisplay("Injury Severity Score")
+        .setReference("/" + FhirUtils.BASE + "/" + ResourceType.CONDITION.typeName() + "/"
+          + issCondition.getId())));
 
 
     JsonObject traumaInfo = reportJson.getJsonObject("traumaInfo");
@@ -174,9 +224,6 @@ public class TraumaTracker extends BaseRestInterface {
     addPeriodToEncounter(encounterAll, startDate, startTime, endDate, endTime);
 
 
-    //iss
-    Condition issCondition = new Condition()
-      .setId(UUID.randomUUID().toString());
     if (iss != null) {
       addIssToEncounterIntervention(iss, encounterIntervention, issCondition, domainResources);
     }
@@ -189,7 +236,7 @@ public class TraumaTracker extends BaseRestInterface {
 
     Patient patient = null;
     if (traumaInfo != null) {
-      patient = addTraumaInformation(traumaInfo, encounterPreh, encounterIntervention, traumaCondition, domainResources);
+      patient = addTraumaInformation(traumaInfo, encounterPreh, traumaCondition, domainResources);
     }
     Reference patientReference = encounterPreh.getSubject();
 
@@ -233,22 +280,12 @@ public class TraumaTracker extends BaseRestInterface {
           .setCode("117")
           .setDisplay("Emergency Medical"))
         .setText("Emergency intervention"))
-      .setClazz(new Coding()
+      .setClass(new Coding()
         .setCode("EMER")
         .setDisplay("Emergency"))
       .setStatus("finished")
       .setServiceProvider(new Reference()
         .setDisplay("Ospedale Bufalini"))
-      .addNewIdentifier(new Identifier()
-        .setValue(reportJson.getString("_id")))
-      .addNewIdentifier(new Identifier()
-        .setValue(reportJson.getString("_version")));
-    encounterPreh
-      .addNewIdentifier(new Identifier()
-        .setValue(reportJson.getString("_id")))
-      .addNewIdentifier(new Identifier()
-        .setValue(reportJson.getString("_version")));
-    encounterIntervention
       .addNewIdentifier(new Identifier()
         .setValue(reportJson.getString("_id")))
       .addNewIdentifier(new Identifier()
@@ -1958,8 +1995,7 @@ public class TraumaTracker extends BaseRestInterface {
           .setSystem("http://www.snomed.org/")
           .setDisplay("Information gathering (procedure)")
           .setCode("311791003")
-        )
-        .setText("Anamnesis")
+        ).setText("Anamnesis")
       ).setStatus("completed")
       .setId(UUID.randomUUID().toString())
       .setSubject(encounter.getSubject())
@@ -2049,10 +2085,7 @@ public class TraumaTracker extends BaseRestInterface {
     Boolean dynamic = majorTraumaCriteria.getBoolean("dynamic");
     Boolean physiological = majorTraumaCriteria.getBoolean("physiological");
     Boolean anatomical = majorTraumaCriteria.getBoolean("anatomical");
-
     if (dynamic != null && dynamic) {
-
-
       condition.addNewConditionEvidence(new ConditionEvidence()
         .addNewCode(new CodeableConcept()
           .addNewCoding(new Coding()
@@ -2062,7 +2095,6 @@ public class TraumaTracker extends BaseRestInterface {
           .setText("Major Trauma Criteria - Dynamic")));
     }
     if (anatomical != null && anatomical) {
-
       condition.addNewConditionEvidence(new ConditionEvidence()
         .addNewCode(new CodeableConcept()
           .addNewCoding(new Coding()
@@ -2154,27 +2186,6 @@ public class TraumaTracker extends BaseRestInterface {
 
   private void addIssToEncounterIntervention(JsonObject iss, Encounter encounter, Condition conditionIssAssessment, List<Resource> resources) {
     //Condition for iss, referenced in encounter resource
-    conditionIssAssessment
-      .setCode(new CodeableConcept()
-        .addNewCoding(new Coding()
-          .setCode("417746004")
-          .setSystem("https://www.hl7.org/fhir/codesystem-snomedct.html")
-          .setDisplay("Traumatic injury"))
-        .setText("Physical Condition after intervention"))
-      .setEncounter(new Reference()
-        .setType(ResourceType.ENCOUNTER.typeName())
-        .setDisplay("Encounter intervention")
-        .setReference("/" + ResourceType.ENCOUNTER.typeName() + "/" + encounter.getId()))
-      .addNewCategory(new CodeableConcept()
-        .addNewCoding(new Coding()
-          .setDisplay("Encounter Diagnosis")
-          .setSystem("https://www.hl7.org/fhir/codesystem-condition-category.html")
-          .setCode("encounter-diagnosis")))
-      .setClinicalStatus(new CodeableConcept()
-        .addNewCoding(new Coding()
-          .setCode("active")
-          .setDisplay("Active")
-          .setSystem("http://terminology.hl7.org/CodeSystem/condition-clinicalversion4.0.1")));
 
     Integer totalIssScore = iss.getInteger("totalIss");
     Observation totalIssObservation = new Observation()
@@ -2207,16 +2218,6 @@ public class TraumaTracker extends BaseRestInterface {
 
     resources.add(totalIssObservation);
     resources.add(conditionIssAssessment);
-    encounter.addNewDiagnosis(new EncounterDiagnosis()
-      .setUse(new CodeableConcept()
-        .addNewCoding(new Coding()
-          .setDisplay("post-op diagnosis")
-          .setCode("post-op")))
-      .setCondition(new Reference()
-        .setType(ResourceType.CONDITION.typeName())
-        .setDisplay("Injury Severity Score")
-        .setReference("/" + FhirUtils.BASE + "/" + ResourceType.CONDITION.typeName() + "/"
-          + conditionIssAssessment.getId())));
 
     iss.forEach(entry -> {
       String key = entry.getKey();
@@ -2254,7 +2255,7 @@ public class TraumaTracker extends BaseRestInterface {
 
   }
 
-  private Patient addTraumaInformation(JsonObject traumaInfo, Encounter encounterPreh, Encounter encounterShock, Condition traumaCondition, List<Resource> domainResources) {
+  private Patient addTraumaInformation(JsonObject traumaInfo, Encounter encounterPreh, Condition traumaCondition, List<Resource> domainResources) {
 
     EncounterHospitalization encounterHospitalization = new EncounterHospitalization();
     String vehicle = traumaInfo.getString("vehicle");
@@ -2296,7 +2297,7 @@ public class TraumaTracker extends BaseRestInterface {
     if (otherEmergency != null) {
       encounterPreh.addNewLocation(new EncounterLocation()
         .setLocation(new Reference()
-          .setReference(otherEmergency))
+          .setDisplay(otherEmergency))
         .setStatus("completed")
         .setPhysicalType(new CodeableConcept()
           .addNewCoding(new Coding()
@@ -2311,14 +2312,13 @@ public class TraumaTracker extends BaseRestInterface {
           .setDisplay("Transferred from other hospital"))
         .setText(otherEmergency));
     }
-
     if (admissionCode != null) {
       //set admission code
       encounterPreh.setPriority(new CodeableConcept()
         .addNewCoding(new Coding()
-          .setSystem("http://www.eena.it/")
+          .setSystem("http://www.salute.gov.it/portale/home.html")
           .setCode(admissionCode)
-          .setDisplay("Codice ammissione pronto soccorso"))
+          .setDisplay("Emergency Admission Code"))
       );
     }
     if (code != null) {

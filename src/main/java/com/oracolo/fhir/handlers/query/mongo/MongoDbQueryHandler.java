@@ -56,7 +56,7 @@ public class MongoDbQueryHandler implements QueryHandler {
               JsonArray orConditionsJsonArray = new JsonArray();
               for (String valueFromOrCondition : orCondition) {
                 JsonObject fhirQuery = mongoDbQuery.getFhirQuery()
-                  .mongoDbPipelineStageQuery(queryName, queryValue);
+                  .mongoDbPipelineStageQuery(queryName, valueFromOrCondition);
                 orConditionsJsonArray.add(fhirQuery);
               }
               andOperations.add(new JsonObject()

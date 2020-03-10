@@ -30,6 +30,7 @@ import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.serviceproxy.ServiceException;
 
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;

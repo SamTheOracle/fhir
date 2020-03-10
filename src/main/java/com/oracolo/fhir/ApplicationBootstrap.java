@@ -9,17 +9,20 @@ import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class ApplicationBootstrap extends AbstractVerticle {
   //local bootstrap
   public static void main(String[] args) {
     Vertx vertx = Vertx.vertx();
     vertx.deployVerticle(new ApplicationBootstrap());
+
   }
 
   @Override
   public void start(Promise<Void> startPromise) {
-
     Promise<String> dbVerticle = Promise.promise();
     vertx.deployVerticle(new DatabaseServiceVerticle(), dbVerticle);
 
