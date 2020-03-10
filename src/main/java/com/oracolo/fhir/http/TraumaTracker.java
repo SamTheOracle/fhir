@@ -357,8 +357,14 @@ public class TraumaTracker extends BaseRestInterface {
       .filter(resource -> resource.getString("resourceType").equals(ResourceType.OBSERVATION.typeName()))
       .peek(json -> {
         json.put("subject", JsonObject.mapFrom(patientReference));
-        json.put("contained", new JsonArray()
-          .add(patientJson));
+        JsonArray jsonArray = json.getJsonArray("contained");
+        if(jsonArray!=null){
+          jsonArray.add(patientJson);
+        }
+        else {
+          json.put("contained", new JsonArray()
+            .add(patientJson));
+        }
       })
       .map(JsonObject::mapFrom)
       .collect(Collectors.toList());
@@ -368,8 +374,14 @@ public class TraumaTracker extends BaseRestInterface {
       .map(JsonObject::mapFrom)
       .peek(json -> {
         json.put("subject", JsonObject.mapFrom(patientReference));
-        json.put("contained", new JsonArray()
-          .add(patientJson));
+        JsonArray jsonArray = json.getJsonArray("contained");
+        if(jsonArray!=null){
+          jsonArray.add(patientJson);
+        }
+        else {
+          json.put("contained", new JsonArray()
+            .add(patientJson));
+        }
       }).collect(Collectors.toList());
     List<JsonObject> encountersJson = domainResources
       .stream()
@@ -377,8 +389,14 @@ public class TraumaTracker extends BaseRestInterface {
       .map(JsonObject::mapFrom)
       .peek(json -> {
         json.put("subject", JsonObject.mapFrom(patientReference));
-        json.put("contained", new JsonArray()
-          .add(patientJson));
+        JsonArray jsonArray = json.getJsonArray("contained");
+        if(jsonArray!=null){
+          jsonArray.add(patientJson);
+        }
+        else {
+          json.put("contained", new JsonArray()
+            .add(patientJson));
+        }
       }).collect(Collectors.toList());
     List<JsonObject> conditionsJson = domainResources
       .stream()
@@ -386,8 +404,15 @@ public class TraumaTracker extends BaseRestInterface {
       .map(JsonObject::mapFrom)
       .peek(json -> {
         json.put("subject", JsonObject.mapFrom(patientReference));
-        json.put("contained", new JsonArray()
-          .add(patientJson));
+        JsonArray jsonArray = json.getJsonArray("contained");
+        if(jsonArray!=null){
+          jsonArray.add(patientJson);
+        }
+        else {
+          json.put("contained", new JsonArray()
+            .add(patientJson));
+        }
+
       }).collect(Collectors.toList());
 
 
@@ -2159,6 +2184,7 @@ public class TraumaTracker extends BaseRestInterface {
           .setDisplay(startOperatorDescription));
       encounter.addNewEncounterParticipant(encounterParticipant)
         .addNewContained(practitioner);
+
 
 
     }
