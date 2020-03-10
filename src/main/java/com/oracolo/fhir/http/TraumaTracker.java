@@ -910,6 +910,7 @@ public class TraumaTracker extends BaseRestInterface {
           String drugUnit = content.getString("unit");
           String event = content.getString("start");
           drugAdministration
+            .setEffectiveDateTime(fhirDate)
             .setMedicationCodeableConcept(new CodeableConcept()
               .setText(drugId))
             .addNewNote(new Annotation()

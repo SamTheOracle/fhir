@@ -144,8 +144,9 @@ public class MedicationAdministration extends FhirDomainResourceAbstract {
     return effectiveDateTime;
   }
 
-  public void setEffectiveDateTime(String effectiveDateTime) {
+  public MedicationAdministration setEffectiveDateTime(String effectiveDateTime) {
     this.effectiveDateTime = effectiveDateTime;
+    return this;
   }
 
   public Period getEffectivePeriod() {
