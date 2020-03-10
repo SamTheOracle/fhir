@@ -358,10 +358,9 @@ public class TraumaTracker extends BaseRestInterface {
       .peek(json -> {
         json.put("subject", JsonObject.mapFrom(patientReference));
         JsonArray jsonArray = json.getJsonArray("contained");
-        if(jsonArray!=null){
+        if (jsonArray != null) {
           jsonArray.add(patientJson);
-        }
-        else {
+        } else {
           json.put("contained", new JsonArray()
             .add(patientJson));
         }
@@ -375,10 +374,9 @@ public class TraumaTracker extends BaseRestInterface {
       .peek(json -> {
         json.put("subject", JsonObject.mapFrom(patientReference));
         JsonArray jsonArray = json.getJsonArray("contained");
-        if(jsonArray!=null){
+        if (jsonArray != null) {
           jsonArray.add(patientJson);
-        }
-        else {
+        } else {
           json.put("contained", new JsonArray()
             .add(patientJson));
         }
@@ -390,10 +388,9 @@ public class TraumaTracker extends BaseRestInterface {
       .peek(json -> {
         json.put("subject", JsonObject.mapFrom(patientReference));
         JsonArray jsonArray = json.getJsonArray("contained");
-        if(jsonArray!=null){
+        if (jsonArray != null) {
           jsonArray.add(patientJson);
-        }
-        else {
+        } else {
           json.put("contained", new JsonArray()
             .add(patientJson));
         }
@@ -405,10 +402,9 @@ public class TraumaTracker extends BaseRestInterface {
       .peek(json -> {
         json.put("subject", JsonObject.mapFrom(patientReference));
         JsonArray jsonArray = json.getJsonArray("contained");
-        if(jsonArray!=null){
+        if (jsonArray != null) {
           jsonArray.add(patientJson);
-        }
-        else {
+        } else {
           json.put("contained", new JsonArray()
             .add(patientJson));
         }
@@ -552,7 +548,8 @@ public class TraumaTracker extends BaseRestInterface {
               .setText(procedureId));
           }
           if (procedureDescription != null) {
-            procedure.addNewNote(new Annotation());
+            procedure.addNewNote(new Annotation()
+              .setText(procedureDescription));
           }
           if (procedureType != null) {
             procedure.setCategory(new CodeableConcept()
@@ -2184,7 +2181,6 @@ public class TraumaTracker extends BaseRestInterface {
           .setDisplay(startOperatorDescription));
       encounter.addNewEncounterParticipant(encounterParticipant)
         .addNewContained(practitioner);
-
 
 
     }
