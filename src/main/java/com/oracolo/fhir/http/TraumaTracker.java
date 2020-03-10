@@ -212,7 +212,6 @@ public class TraumaTracker extends BaseRestInterface {
     JsonObject iss = reportJson.getJsonObject("iss");
 
 
-    addParticipant(reportJson, encounterPreh);
     addParticipant(reportJson, encounterAll);
     addParticipant(reportJson, encounterIntervention);
 
