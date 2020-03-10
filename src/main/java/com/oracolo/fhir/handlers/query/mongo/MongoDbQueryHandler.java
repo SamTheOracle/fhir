@@ -52,16 +52,23 @@ public class MongoDbQueryHandler implements QueryHandler {
             if (mongoDbQuery.getQueryName().equals(queryName)) {
               //one can make or conditions with "," on param. For each param create normal queries but added in
               //or condition. If only one condition is present, still adds "$or" with second element as empty (true)
+
               String[] orCondition = queryValue.split(",");
-              JsonArray orConditionsJsonArray = new JsonArray();
-              for (String valueFromOrCondition : orCondition) {
-                JsonObject fhirQuery = mongoDbQuery.getFhirQuery()
-                  .mongoDbPipelineStageQuery(queryName, valueFromOrCondition);
-                orConditionsJsonArray.add(fhirQuery);
+              if(orCondition.length > 1){
+                JsonArray orConditionsJsonArray = new JsonArray();
+                for (String valueFromOrCondition : orCondition) {
+                  JsonObject fhirQuery = mongoDbQuery.getFhirQuery()
+                    .mongoDbPipelineStageQuery(queryName, valueFromOrCondition);
+                  orConditionsJsonArray.add(fhirQuery);
+                }
+                andOperations.add(new JsonObject()
+                  .put("$or", orConditionsJsonArray
+                    .add(new JsonObject())));
               }
-              andOperations.add(new JsonObject()
-                .put("$or", orConditionsJsonArray
-                  .add(new JsonObject())));
+              else {
+                andOperations.add(mongoDbQuery.getFhirQuery().mongoDbPipelineStageQuery(queryName,queryValue));
+              }
+
             }
           }
         }

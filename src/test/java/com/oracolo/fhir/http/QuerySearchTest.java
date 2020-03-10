@@ -30,7 +30,7 @@ public class QuerySearchTest {
     System.setProperty("db", "fhir_db_test");
     String host = "localhost";
     int port = Optional.ofNullable(Integer.getInteger("http.port")).orElse(8000);
-    InputStream inputStream = MongoDBOperatorsTest.class.getClassLoader().getResourceAsStream("full_rep.json");
+    InputStream inputStream = MongoDBOperatorsTest.class.getClassLoader().getResourceAsStream("resourcemodel/full_rep.json");
     StringBuilder stringBuilder = new StringBuilder();
     if (inputStream != null) {
       Scanner scanner = new Scanner(inputStream);
@@ -38,7 +38,7 @@ public class QuerySearchTest {
         stringBuilder.append(scanner.nextLine());
       }
       InputStream inputStream1 = MongoDBOperatorsTest.class.getClassLoader()
-        .getResourceAsStream("rep-20191013-164404.json");
+        .getResourceAsStream("resourcemodel/rep-20191013-164404.json");
       StringBuilder stringBuilder1 = new StringBuilder();
       if (inputStream1 != null) {
         Scanner scanner1 = new Scanner(inputStream1);
@@ -47,7 +47,7 @@ public class QuerySearchTest {
         }
       }
       InputStream inputStream2 = MongoDBOperatorsTest.class.getClassLoader()
-        .getResourceAsStream("rep-20191012-215226.json");
+        .getResourceAsStream("resourcemodel/rep-20191012-215226.json");
       StringBuilder stringBuilder2 = new StringBuilder();
       if (inputStream2 != null) {
         Scanner scanner2 = new Scanner(inputStream2);

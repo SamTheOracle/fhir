@@ -33,7 +33,7 @@ class MongoDBOperatorsTest {
     System.setProperty("db", "fhir_db_test");
     String host = "localhost";
     int port = Optional.ofNullable(Integer.getInteger("http.port")).orElse(8000);
-    InputStream inputStream = MongoDBOperatorsTest.class.getClassLoader().getResourceAsStream("full_rep.json");
+    InputStream inputStream = MongoDBOperatorsTest.class.getClassLoader().getResourceAsStream("resourcemodel/full_rep.json");
     StringBuilder stringBuilder = new StringBuilder();
     if (inputStream != null) {
       Scanner scanner = new Scanner(inputStream);
