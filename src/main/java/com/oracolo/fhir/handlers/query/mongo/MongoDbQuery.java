@@ -22,7 +22,8 @@ public enum MongoDbQuery {
   diagnosis("diagnosis", new DiagnosisReferenceQuery(), "Reference"),
   evidence_detail("evidence-detail", new EvidenceDetailReferenceQuery(), "Reference"),
   valueString("valueString",new ValueStringQuery(),"String"),
-  valueBoolean("valueBoolean",new ValueBooleanQuery(),"String");
+  valueBoolean("valueBoolean",new ValueBooleanQuery(),"String"),
+  clazz("class",new ClassQuery(),"Token");
 
   private String queryName;
   private FhirQuery query;
